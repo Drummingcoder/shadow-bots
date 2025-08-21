@@ -15,4 +15,5 @@ export default Manifest({
     welcomeImageFunction: WelcomeImageFunction,
   },
   outgoingDomains: [],
+  botScopes: ["chat:write", "chat:write.public"],
 });

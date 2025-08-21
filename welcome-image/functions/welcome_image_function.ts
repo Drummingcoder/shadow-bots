@@ -1,5 +1,5 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
-import { createCanvas, loadImage } from "jsr:@josefabio/deno-canvas@1.5.2";
+import { Font, Image, MIME, Path } from "https://deno.land/x/imagescript@1.3.0/mod.ts";
 import { Base64 } from "https://deno.land/std@0.224.0/encoding/base64.ts";
 /**
  * This custom function generates a welcome image for a specified user.

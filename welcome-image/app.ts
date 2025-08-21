@@ -1,4 +1,4 @@
-import { SlackApp } from "https://deno.land/x/slack_sdk@2.3.0/mod.ts";
+import { SlackApp } from "https://deno.land/x/deno_slack_sdk@2.15.1/mod.ts";
 import manifest from "./manifest.ts";
 
 /**
