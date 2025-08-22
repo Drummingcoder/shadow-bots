@@ -1,6 +1,6 @@
 import { Manifest } from "deno-slack-sdk/mod.ts";
-import { ImageWelcomer } from "./functions/get_image.ts";
-import { WelcomeMessage } from "./functions/message.ts";
+import { getImage } from "./functions/get_image.ts";
+import { welcomeMessage } from "./functions/message.ts";
 import { ShadowHello } from "./workflows/welcome.ts";
 
 /**

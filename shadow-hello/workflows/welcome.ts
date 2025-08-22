@@ -1,6 +1,7 @@
 // workflows/give_kudos.ts
 import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
 import { welcomeMessage } from "../functions/message.ts";
+import { getImage } from "../functions/get_image.ts";
 
 const ShadowHello = DefineWorkflow({
   callback_id: "shadow_hello",
@@ -21,8 +22,8 @@ const initialMessage = ShadowHello.addStep(
   {
     title: "Welcome a new member",
     interactivity: ShadowHello.inputs.interactivity,
-    submit_label: "Share",
-    description: "Continue the positive energy through your written word",
+    submit_label: "Welcome them!",
+    description: "Shadowlight's Welcome App",
     fields: {
       elements: [{
         name: "new_member",
@@ -30,7 +31,7 @@ const initialMessage = ShadowHello.addStep(
         description: "They will get a warm welcome!",
         type: Schema.slack.types.user_id,
       },
-      channel: {
+      {
         name: "channel",
         title: "What channel?",
         description: "This will get the welcome!",
@@ -45,18 +46,17 @@ const welcomeMessageStep = ShadowHello.addStep(welcomeMessage, {
   new_member: initialMessage.outputs.fields.new_member,
 });
 
-const blocks = [
-  {
-    type: "section",
-    text: {
-      type: "mrkdwn",
-      text: welcomeMessageStep.outputs.message,
-    },
-  },
-  {
-    type: "actions",
-    elements: [
-      {
+const _outputChannel1 = ShadowHello.addStep(Schema.slack.functions.SendMessage, {
+  channel_id: initialMessage.outputs.fields.channel,
+  message: " ",
+  interactive_blocks: [
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: welcomeMessageStep.outputs.message,
+      },
+      accessory: {
         type: "button",
         text: {
           type: "plain_text",
@@ -64,14 +64,25 @@ const blocks = [
         },
         action_id: "wave_button",
         value: "wave_clicked",
-      },
-    ],
-  },
-];
+      }
+    }
+  ],
+});
 
-const outputChannel1 = ShadowHello.addStep(Schema.slack.functions.SendMessage, {
+const image = ShadowHello.addStep(getImage, {
+  new_member: initialMessage.outputs.fields.new_member,
+});
+
+ShadowHello.addStep(Schema.slack.functions.SendMessage, {
   channel_id: initialMessage.outputs.fields.channel,
-  blocks: JSON.stringify(blocks),
+  message: " ",
+  interactive_blocks: [
+    {
+      type: "image",
+      image_url: image.outputs.image_url,
+      alt_text: "Sorry, it didn't work!",
+    },
+  ],
 });
 
 export { ShadowHello };

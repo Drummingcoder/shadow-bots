@@ -8,7 +8,7 @@ import { ShadowHello } from "../workflows/welcome.ts";
  * such as a user pressing a button or when a specific event occurs.
  * https://api.slack.com/automation/triggers
  */
-const greetingTrigger: Trigger<typeof GreetingWorkflow.definition> = {
+const greetingTrigger: Trigger<typeof ShadowHello.definition> = {
   type: TriggerTypes.Shortcut,
   name: "Send a greeting",
   description: "Send greeting to channel",
@@ -16,9 +16,6 @@ const greetingTrigger: Trigger<typeof GreetingWorkflow.definition> = {
   inputs: {
     interactivity: {
       value: TriggerContextData.Shortcut.interactivity,
-    },
-    channel: {
-      value: TriggerContextData.Shortcut.channel_id,
     },
   },
 };
