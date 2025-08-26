@@ -1,5 +1,5 @@
 {
   "deno.enable": true,
   "deno.lint": true,
-  "deno.path": "/root/.deno/bin/deno",
+  "deno.path": "/home/codespace/.deno/bin/deno",
 }

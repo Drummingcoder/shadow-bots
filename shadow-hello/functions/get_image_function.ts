@@ -1,14 +1,13 @@
-import { DefineFunction, Schema } from "deno-slack-sdk/mod.ts";
+import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 
-export default function getImage() {
-  return DefineFunction({
+export const getImage = DefineFunction({
     callback_id: "get_image_function",
     title: "Get Image",
     source_file: "functions/get_image_function.ts",
     input_parameters: {
       properties: {
-      new_member: { type: Schema.slack.types.user_id },
-    },
+        new_member: { type: Schema.slack.types.user_id },
+      },
     required: ["new_member"],
   },
   output_parameters: {
@@ -17,5 +16,14 @@ export default function getImage() {
     },
     required: ["image_url"],
   },
-})
-};
+});
+
+export default SlackFunction(
+  getImage,
+  ({ inputs }) => {
+    const { new_member } = inputs;
+    const image_url =
+      `https://img.freepik.com/free-vector/stylish-welcome-lettering-banner-join-with-joy-happiness_1017-57675.jpg?semt=ais_hybrid&w=740&q=80`;
+    return { outputs: { image_url } };
+  },
+);

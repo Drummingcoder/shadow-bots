@@ -1,7 +1,8 @@
-// workflows/give_kudos.ts
 import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
 import { welcomeMessage } from "../functions/message.ts";
-import { getImage } from "../functions/get_image.ts";
+import { getImage } from "../functions/get_image_function.ts";
+import { blockMessage } from "../functions/block.ts";
+import { pingMe } from "../functions/ping_me.ts";
 
 const ShadowHello = DefineWorkflow({
   callback_id: "shadow_hello",
@@ -46,43 +47,19 @@ const welcomeMessageStep = ShadowHello.addStep(welcomeMessage, {
   new_member: initialMessage.outputs.fields.new_member,
 });
 
-const _outputChannel1 = ShadowHello.addStep(Schema.slack.functions.SendMessage, {
-  channel_id: initialMessage.outputs.fields.channel,
-  message: " ",
-  interactive_blocks: [
-    {
-      type: "section",
-      text: {
-        type: "mrkdwn",
-        text: welcomeMessageStep.outputs.message,
-      },
-      accessory: {
-        type: "button",
-        text: {
-          type: "plain_text",
-          text: "Wave Hello",
-        },
-        action_id: "wave_button",
-        value: "wave_clicked",
-      }
-    }
-  ],
-});
-
 const image = ShadowHello.addStep(getImage, {
   new_member: initialMessage.outputs.fields.new_member,
 });
 
-ShadowHello.addStep(Schema.slack.functions.SendMessage, {
+const outputChannel1 = ShadowHello.addStep(blockMessage, {
   channel_id: initialMessage.outputs.fields.channel,
-  message: " ",
-  interactive_blocks: [
-    {
-      type: "image",
-      image_url: image.outputs.image_url,
-      alt_text: "Sorry, it didn't work!",
-    },
-  ],
+  message: welcomeMessageStep.outputs.message,
+  image_url: image.outputs.image_url,
+  interactivity: ShadowHello.inputs.interactivity,
+});
+
+ShadowHello.addStep(pingMe, {
+    interactivity: outputChannel1.outputs.interactivity,
 });
 
 export { ShadowHello };
