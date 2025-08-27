@@ -45,21 +45,19 @@ const initialMessage = ShadowHello.addStep(
 
 const welcomeMessageStep = ShadowHello.addStep(welcomeMessage, {
   new_member: initialMessage.outputs.fields.new_member,
+  interactivity: initialMessage.outputs.interactivity,
 });
 
 const image = ShadowHello.addStep(getImage, {
   new_member: initialMessage.outputs.fields.new_member,
+  interactivity: welcomeMessageStep.outputs.interactivity,
 });
 
 const outputChannel1 = ShadowHello.addStep(blockMessage, {
   channel_id: initialMessage.outputs.fields.channel,
   message: welcomeMessageStep.outputs.message,
   image_url: image.outputs.image_url,
-  interactivity: ShadowHello.inputs.interactivity,
-});
-
-ShadowHello.addStep(pingMe, {
-    interactivity: outputChannel1.outputs.interactivity,
+  interactivity: image.outputs.interactivity,
 });
 
 export { ShadowHello };

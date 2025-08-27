@@ -2,12 +2,6 @@ import type { Trigger } from "deno-slack-sdk/types.ts";
 import { TriggerContextData, TriggerTypes } from "deno-slack-api/mod.ts";
 import { ShadowHello } from "../workflows/welcome.ts";
 
-/**
- * Triggers determine when workflows are executed. A trigger
- * file describes a scenario in which a workflow should be run,
- * such as a user pressing a button or when a specific event occurs.
- * https://api.slack.com/automation/triggers
- */
 const greetingTrigger: Trigger<typeof ShadowHello.definition> = {
   type: TriggerTypes.Shortcut,
   name: "Send a greeting",

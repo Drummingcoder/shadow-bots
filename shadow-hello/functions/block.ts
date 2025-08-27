@@ -22,42 +22,43 @@ export const blockMessage = DefineFunction({
 });
 
 export default SlackFunction(
-  blockMessage,
-  async ({ inputs, client }) => {
-	const blocks = {
-		"blocks": [
-			{
-				"type": "section",
-				"text": {
-					"type": "mrkdwn",
-					"text": inputs.message,
-				}
-			},
-			{
-				"type": "image",
-				"image_url": inputs.image_url,
-				"alt_text": "cute cat"
-			},
-			{
-				"type": "actions",
-				"elements": [
-					{
-						"type": "button",
-						"text": {
-							"type": "plain_text",
-							"text": "Declare your presence"
-						},
-						"value": "ping",
-						"action_id": "ping_me"
+	blockMessage,
+	async ({ inputs, client }) => {
+		const blocks = {
+			"blocks": [
+				{
+					"type": "section",
+					"text": {
+						"type": "mrkdwn",
+						"text": inputs.message,
 					}
-				]
-			}
-		]
-	};
-    await client.chat.postMessage({
-      channel: inputs.channel_id,
-      blocks: blocks.blocks,
-    });
-    return { outputs: { interactivity: inputs.interactivity } };
-  }
+				},
+				{
+					"type": "image",
+					"image_url": inputs.image_url,
+					"alt_text": "cute cat"
+				},
+				{
+					"type": "actions",
+					"elements": [
+						{
+							"type": "button",
+							"text": {
+								"type": "plain_text",
+								"text": "Declare your presence"
+							},
+							"url": "https://slack.com/shortcuts/Ft09CBBA6AJ2/8e257acc6ee4dea496dfdef3f8a61a37",
+							"value": "ping",
+							"action_id": "ping_me"
+						}
+					]
+				}
+			]
+		};
+		await client.chat.postMessage({
+			channel: inputs.channel_id,
+			blocks: blocks.blocks,
+		});
+		return { outputs: { interactivity: inputs.interactivity }};
+	}
 );

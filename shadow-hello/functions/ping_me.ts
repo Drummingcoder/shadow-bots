@@ -12,20 +12,23 @@ export const pingMe = DefineFunction({
   },
   output_parameters: {
     properties: {
-      message: { type: Schema.types.string },
+      interactivity: { type: Schema.slack.types.interactivity },
     },
-    required: ["message"],
+    required: ["interactivity"],
   },
 });
 
 export default SlackFunction(
   pingMe,
   async ({ inputs, client }) => {
-    // Respond to the button click
     await client.chat.postMessage({
       channel: inputs.interactivity.channel.id,
-      text: `<@${inputs.interactivity.user.id}> declared their presence!`,
+      text: "@Shadowlight!",
     });
-    return { outputs: {} };
+    return { 
+      outputs: { 
+        interactivity: inputs.interactivity 
+      } 
+    };
   }
 );

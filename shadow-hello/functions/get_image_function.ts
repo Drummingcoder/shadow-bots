@@ -7,14 +7,16 @@ export const getImage = DefineFunction({
     input_parameters: {
       properties: {
         new_member: { type: Schema.slack.types.user_id },
+        interactivity: { type: Schema.slack.types.interactivity },
       },
-    required: ["new_member"],
+    required: ["new_member", "interactivity"],
   },
   output_parameters: {
     properties: {
       image_url: { type: Schema.types.string },
+      interactivity: { type: Schema.slack.types.interactivity },
     },
-    required: ["image_url"],
+    required: ["image_url", "interactivity"],
   },
 });
 
@@ -24,6 +26,6 @@ export default SlackFunction(
     const { new_member } = inputs;
     const image_url =
       `https://img.freepik.com/free-vector/stylish-welcome-lettering-banner-join-with-joy-happiness_1017-57675.jpg?semt=ais_hybrid&w=740&q=80`;
-    return { outputs: { image_url } };
+    return { outputs: { image_url, interactivity: inputs.interactivity } };
   },
 );
