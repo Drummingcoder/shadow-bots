@@ -47,8 +47,7 @@ export default SlackFunction(
 								"type": "plain_text",
 								"text": "Declare your presence"
 							},
-							"url": "https://slack.com/shortcuts/Ft09CBBA6AJ2/8e257acc6ee4dea496dfdef3f8a61a37",
-							"value": "ping",
+							"value": inputs.channel_id,
 							"action_id": "ping_me"
 						}
 					]
@@ -59,6 +58,42 @@ export default SlackFunction(
 			channel: inputs.channel_id,
 			blocks: blocks.blocks,
 		});
-		return { outputs: { interactivity: inputs.interactivity }};
+		return {
+			completed: false,
+			outputs: undefined,
+		};
 	}
-);
+).addBlockActionsHandler("ping_me", async ({ body, client }) => {
+	const { actions } = body;
+	if (!actions) return;
+
+	for (const action of actions) {
+		if (action.action_id === "ping_me") {
+			await client.chat.postMessage({
+				channel: action.value,
+				text: `<@${body.user.id}> the GOAT is here, <@U091EPSQ3E3>!`,
+			});
+
+			if ((body.message && body.channel)) {
+				await client.chat.update({
+					channel: body.channel.id,
+					ts: body.message.ts,
+					blocks: [
+						...body.message.blocks.slice(0, -1), // Keep all blocks except the last (actions)
+						{
+							"type": "context",
+							"elements": [
+								{
+									"type": "mrkdwn",
+									"text": `You dare ping me? /j`
+								}
+							]
+						}
+					]
+				});
+			}
+
+			return { completed: true, outputs: { interactivity: body.interactivity } };
+		}
+	}
+});

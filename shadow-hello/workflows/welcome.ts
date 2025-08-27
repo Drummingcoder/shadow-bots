@@ -2,7 +2,6 @@ import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
 import { welcomeMessage } from "../functions/message.ts";
 import { getImage } from "../functions/get_image_function.ts";
 import { blockMessage } from "../functions/block.ts";
-import { pingMe } from "../functions/ping_me.ts";
 
 const ShadowHello = DefineWorkflow({
   callback_id: "shadow_hello",
@@ -24,7 +23,7 @@ const initialMessage = ShadowHello.addStep(
     title: "Welcome a new member",
     interactivity: ShadowHello.inputs.interactivity,
     submit_label: "Welcome them!",
-    description: "Shadowlight's Welcome App",
+    description: "Send an amazing welcome to this member",
     fields: {
       elements: [{
         name: "new_member",
@@ -35,7 +34,7 @@ const initialMessage = ShadowHello.addStep(
       {
         name: "channel",
         title: "What channel?",
-        description: "This will get the welcome!",
+        description: "This channel will get the welcome!",
         type: Schema.slack.types.channel_id,
       }],
       required: ["new_member", "channel"],
@@ -53,7 +52,7 @@ const image = ShadowHello.addStep(getImage, {
   interactivity: welcomeMessageStep.outputs.interactivity,
 });
 
-const outputChannel1 = ShadowHello.addStep(blockMessage, {
+ShadowHello.addStep(blockMessage, {
   channel_id: initialMessage.outputs.fields.channel,
   message: welcomeMessageStep.outputs.message,
   image_url: image.outputs.image_url,
