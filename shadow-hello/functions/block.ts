@@ -79,7 +79,7 @@ export default SlackFunction(
 					channel: body.channel.id,
 					ts: body.message.ts,
 					blocks: [
-						...body.message.blocks.slice(0, -1), // Keep all blocks except the last (actions)
+						...body.message.blocks.slice(0, -1),
 						{
 							"type": "context",
 							"elements": [

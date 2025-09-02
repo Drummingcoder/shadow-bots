@@ -10,6 +10,12 @@ export default Manifest({
   icon: "assets/deku.jpeg",
   functions: [getImage, welcomeMessage, blockMessage],
   workflows: [ShadowHello],
-  outgoingDomains: [],
-  botScopes: ["commands", "chat:write", "chat:write.public"],
+  outgoingDomains: [
+    "api.github.com",
+    "gist.githubusercontent.com",
+    "avatars.slack-edge.com",
+    "secure.gravatar.com",
+    "ca.slack-edge.com",
+  ],
+  botScopes: ["commands", "chat:write", "chat:write.public", "files:write", "users:read"],
 });
