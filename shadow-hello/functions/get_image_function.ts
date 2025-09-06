@@ -42,9 +42,12 @@ export default SlackFunction(
       if (githubToken) {
         const image = new Image(580, 580);
 
-        const background = await Image.decode(await Deno.readFile("./assets/anime-club.png"));
+        const background = await fetch("https://raw.githubusercontent.com/Drummingcoder/slack-images/main/assets/anime-club.png");
+        const backgroundArrayBuffer = await background.arrayBuffer();
+        const backgroundUint8Array = new Uint8Array(backgroundArrayBuffer);
+        const backgroundImage = await Image.decode(backgroundUint8Array);
 
-        image.composite(background, 0, 97.5);
+        image.composite(backgroundImage, 0, 97.5);
 
         if (userProfile?.profile_pic_url) {
           const response = await fetch(userProfile?.profile_pic_url);
@@ -58,8 +61,9 @@ export default SlackFunction(
           const profileImage = await Image.decode(uint8Array);
 
           image.composite(profileImage, 275, 375);
-          const font = "./fonts/Coolvetica Rg.otf";
-          const fData = await Deno.readFile(font);
+          const font = "https://raw.githubusercontent.com/Drummingcoder/slack-images/main/fonts/Coolvetica%20Rg.otf";
+          const fontFetch = await fetch(font);
+          const fData = new Uint8Array(await fontFetch.arrayBuffer());
           image.composite(await Image.renderText(fData, 70, `Yo ${userInfo.user.profile.real_name}!`, 0x000000FF), 45, 0);
           image.composite(await Image.renderText(fData, 48, `Welcome to the gang!`, 0x000000FF), 50, 480);
         }
