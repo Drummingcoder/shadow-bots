@@ -12,6 +12,9 @@ const ShadowHello = DefineWorkflow({
       interactivity: {
         type: Schema.slack.types.interactivity,
       },
+      new_member: {
+        type: Schema.slack.types.user_id,
+      },
     },
     required: ["interactivity"],
   },

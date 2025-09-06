@@ -36,7 +36,7 @@ export default SlackFunction(
 				{
 					"type": "image",
 					"image_url": inputs.image_url,
-					"alt_text": "cute cat"
+					"alt_text": "Welcome image"
 				},
 				{
 					"type": "actions",

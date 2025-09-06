@@ -44,7 +44,7 @@ export default SlackFunction(
 
         const background = await Image.decode(await Deno.readFile("./assets/anime-club.png"));
 
-        image.composite(background, 0, 195);
+        image.composite(background, 0, 97.5);
 
         if (userProfile?.profile_pic_url) {
           const response = await fetch(userProfile?.profile_pic_url);
@@ -57,7 +57,11 @@ export default SlackFunction(
           
           const profileImage = await Image.decode(uint8Array);
 
-          image.composite(profileImage, 400, 400);
+          image.composite(profileImage, 275, 375);
+          const font = "./fonts/Coolvetica Rg.otf";
+          const fData = await Deno.readFile(font);
+          image.composite(await Image.renderText(fData, 70, `Yo ${userInfo.user.profile.real_name}!`, 0x000000FF), 45, 0);
+          image.composite(await Image.renderText(fData, 48, `Welcome to the gang!`, 0x000000FF), 50, 480);
         }
         const imageData = await image.encode();
         const image_url = await uploadToGithubRepo(imageData, `welcome_${new_member}.png`);
@@ -77,17 +81,26 @@ async function uploadToGithubRepo(imageData: Uint8Array, filename: string): Prom
   const owner = "Drummingcoder";
   const repo = "slack-images";
   const path = `slack/${filename}`;
+  
+  let fileSha: string | undefined;
   const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-  const fileResponse = await fetch(apiUrl, {
-      method: 'HEAD',
-      headers: {
-          'Authorization': `Bearer ${githubToken}`,
-          'Accept': 'application/vnd.github.v3+json',
-      },
-  });
+  
+  try {
+    const fileResponse = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${githubToken}`,
+            'Accept': 'application/vnd.github.v3+json',
+        },
+    });
 
-  if (fileResponse.ok) {
-      return `https://raw.githubusercontent.com/${owner}/${repo}/main/${path}`;
+    if (fileResponse.ok) {
+        const fileData = await fileResponse.json();
+        fileSha = fileData.sha;
+        console.log("📁 File exists, will update with SHA:", fileSha);
+    }
+  } catch (error) {
+    console.log("📝 File doesn't exist, creating new");
   }
   
   let binaryString = '';
@@ -96,11 +109,15 @@ async function uploadToGithubRepo(imageData: Uint8Array, filename: string): Prom
   }
   const content = btoa(binaryString);
 
-  const apiData = {
+  const apiData: any = {
     message: `Upload image for Slack: ${filename}`,
     content: content,
     branch: "main"
   };
+  
+  if (fileSha) {
+    apiData.sha = fileSha;
+  }
 
   const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
 
@@ -115,11 +132,12 @@ async function uploadToGithubRepo(imageData: Uint8Array, filename: string): Prom
   });
 
   if (!response.ok) {
-    throw new Error(`GitHub upload failed: ${response.statusText}`);
+    const errorText = await response.text();
+    throw new Error(`GitHub upload failed: ${response.status} - ${errorText}`);
   }
 
   const _result = await response.json();
   const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/main/${path}`;
   
-  return rawUrl;
+  return `${rawUrl}?t=${Date.now()}`;
 }

@@ -17,5 +17,5 @@ export default Manifest({
     "secure.gravatar.com",
     "ca.slack-edge.com",
   ],
-  botScopes: ["commands", "chat:write", "chat:write.public", "files:write", "users:read"],
+  botScopes: ["commands", "chat:write", "chat:write.public", "files:write", "users:read", "channels:read", "groups:read"],
 });
