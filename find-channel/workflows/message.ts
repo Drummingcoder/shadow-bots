@@ -18,8 +18,18 @@ const exposeChannels = DefineWorkflow({
   },
 });
 
+exposeChannels.addStep(Schema.slack.functions.SendMessage, {
+  channel_id: exposeChannels.inputs.channel,
+  message: "Looking for the channels the target is in...",
+});
+
 exposeChannels.addStep(theMessage, {
   message: exposeChannels.inputs.message,
+});
+
+exposeChannels.addStep(Schema.slack.functions.SendMessage, {
+  channel_id: exposeChannels.inputs.channel,
+  message: "Done!",
 });
 
 export default exposeChannels;

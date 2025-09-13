@@ -30,6 +30,11 @@ export default SlackFunction(
         console.log("target:" , target_id);
     }
     const result = [];
+
+    do {
+      console.log("Before pause");
+      await new Promise(resolve => setTimeout(resolve, 100));
+      console.log("After pause");
         const response = await client.conversations.list({
             types: "public_channel",
             limit: 100,
@@ -42,6 +47,7 @@ export default SlackFunction(
 
         if (!response.ok || !Array.isArray(response.channels)) {
             console.log("End of channel list:", response);
+            break;
         }
 
         let calls = 0;
@@ -49,17 +55,49 @@ export default SlackFunction(
           console.log("before puase");
           await new Promise(resolve => setTimeout(resolve, 100));
           console.log("after puase ", calls);
-          const place = await client.conversations.members({
+          let place = await client.conversations.members({
             channel: channel.id,
             cursor: cursor,
           });
           calls++;
           console.log ("place:", place);
-          if (place.members && place.members.includes(target_id)) {
+          if (place.members && place.members.includes("U0266FRGP")) {
             console.log("channel:", channel.name);
             result.push(channel.name);
           }
+          while (place.response_metadata?.next_cursor) {
+            const cursor1 = place.response_metadata?.next_cursor;
+            const newplace = await client.conversations.members({
+              channel: channel.id,
+              cursor: cursor1,
+            });
+            if (newplace.members && newplace.members.includes(target_id)) {
+              console.log("channel:", channel.name);
+              result.push(channel.name);
+            }
+            place = newplace;
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
         }
+
+        const next_cursor = response.response_metadata?.next_cursor;
+        if (next_cursor) {
+          await client.workflows.triggers.create({
+            type: "webhook",
+            name: "Expose channels re",
+            description: "Paginate channel listing",
+            workflow: "#/workflows/expose_channels_re",
+            inputs: {
+              message: { value: myMessage },
+              cursor: { value: next_cursor },
+            },
+          });
+          
+        }
+
+        allChannels = allChannels.concat(response.channels);
+        cursor = response.response_metadata?.next_cursor;
+    } while (cursor);
 
     let content = "List of channels <@" + target_id + "> is in:\n\n";
 
@@ -68,15 +106,14 @@ export default SlackFunction(
     console.log("result length:", result.length);
 
     for (const channel of result) {
-      content += `#${channel}\n\n`;
+      content += `#${channel}\n`;
     }
     console.log ("content:" , content);
     
     const re = await client.canvases.create({
       title: target_id + "'s Channels",
-      document_content: {"type": "markdown", "markdown": `${content}`},
+      description: content,
       channel_id: "C09AHN6V1U7",
-      owner_id: "U091EPSQ3E3",
     });
     console.log("Canvas created successfully", re);
     
