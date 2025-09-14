@@ -54,7 +54,6 @@ export default SlackFunction(
             cursor: cursor,
           });
           calls++;
-          console.log ("place:", place);
           if (place.members && place.members.includes(target_id)) {
             console.log("channel:", channel.name);
             result.push(channel.name);

@@ -1,6 +1,6 @@
 import { Manifest } from "deno-slack-sdk/mod.ts";
 import exposeChannels from "./workflows/message.ts";
-import exposeChannels1 from "./workflows/message_re.ts";
+import exposeChannels1 from "./workflows/user_re.ts";
 
 export default Manifest({
   name: "Jester",

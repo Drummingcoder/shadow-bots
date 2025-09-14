@@ -24,6 +24,7 @@ const step = exposeChannels.addStep(check, {
   message: exposeChannels.inputs.message,
 });
 
+if (step.outputs.strin == "Specific") {
   exposeChannels.addStep(Schema.slack.functions.SendMessage, {
     channel_id: exposeChannels.inputs.channel,
     message: "Checking...",
@@ -32,6 +33,18 @@ const step = exposeChannels.addStep(check, {
     message: exposeChannels.inputs.message,
     channel_id: exposeChannels.inputs.channel,
   });
-
+} else {
+  exposeChannels.addStep(Schema.slack.functions.SendMessage, {
+    channel_id: exposeChannels.inputs.channel,
+    message: "Looking for the channels the target is in...",
+  });
+  exposeChannels.addStep(theMessage, {
+    message: exposeChannels.inputs.message,
+  });
+  exposeChannels.addStep(Schema.slack.functions.SendMessage, {
+    channel_id: exposeChannels.inputs.channel,
+    message: "Done!",
+  });
+}
 
 export default exposeChannels;
