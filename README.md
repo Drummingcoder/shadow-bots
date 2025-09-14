@@ -32,4 +32,4 @@ It's as easy as that!
 
 Video of the bot in action:
 
-https://github.com/Drummingcoder/find-the-channel/blob/main/Screen%20recording%202025-09-14%203.21.21%20PM.webm
+[https://github.com/Drummingcoder/find-the-channel/blob/main/Screen%20recording%202025-09-14%203.21.21%20PM.webm](https://github.com/user-attachments/assets/a17aed3b-d09f-4444-9b0b-bd9b1c4da554)
