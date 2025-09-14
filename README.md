@@ -2,7 +2,7 @@
 
 ## Description:
 This Slack bot checks to see if a certain person is in a channel. Right now,
-it can't check if a user is in a channel with more than 1000 people yet,
+it can't check if a user is in a channel with more than 1000 people yet or is in a private channel,
 but I'm working on removing that limit.
 
 

@@ -36,9 +36,10 @@ export default SlackFunction(
     if (target_id) {
       console.log("target:" , target_id);
     }
-    const channel = matches[2]?.replace("<#", "").replace("|>", "");
-    const place = await client.conversations.members({
-      channel: channel,
+    const channel = matches[2]?.split("|");
+    const theChannel = channel[0].replace("<#", "");
+    let place = await client.conversations.members({
+      channel: theChannel,
       cursor: cursor,
     });
     if (place.ok) {
@@ -55,6 +56,10 @@ export default SlackFunction(
       }
       if (place.response_metadata?.next_cursor) {
         cursor = place.response_metadata.next_cursor;
+        place = await client.conversations.members({
+          channel: theChannel,
+          cursor: cursor,
+        });
       }
     } while (place?.response_metadata?.next_cursor);
 
