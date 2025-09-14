@@ -69,12 +69,12 @@ export default SlackFunction(
     if (result) {
       await client.chat.postMessage({
         channel: inputs.channel_id,
-        text: `Yes, <@${target_id}> is in <#${channel}>`,
+        text: `Yes, <@${target_id}> is in <#${theChannel}>`,
       });
     } else {
       await client.chat.postMessage({
         channel: inputs.channel_id,
-        text: `No, <@${target_id}> is not in <#${channel}>`,
+        text: `No, <@${target_id}> is not in <#${theChannel}>`,
       });
     }
 
