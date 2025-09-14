@@ -36,13 +36,15 @@ export default SlackFunction(
     if (target_id) {
       console.log("target:" , target_id);
     }
-    const channel = matches[2]?.replace("<#", "").replace(">", "");
+    const channel = matches[2]?.replace("<#", "").replace("|>", "");
     const place = await client.conversations.members({
       channel: channel,
       cursor: cursor,
     });
     if (place.ok) {
       console.log(place);
+    } else {
+      console.log("Error fetching members:", place);
     }
 
     let result = false;
