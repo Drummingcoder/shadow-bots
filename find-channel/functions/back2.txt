@@ -1,0 +1,21 @@
+if (place.response_metadata?.next_cursor) {
+      console.log("triggerResponse:", "https://hooks.slack.com/triggers/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");
+      const dataToSend = {
+        place_var: place,
+        cursor: place.response_metadata?.next_cursor,
+        target_id: target_id,
+        target_channel: theChannel,
+        post_channel: inputs.channel_id,
+      };
+      const response = await fetch("https://hooks.slack.com/triggers/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", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToSend),
+      });
+      if (!response.ok) {
+        console.error("Error invoking webhook:", response.statusText);
+      }
+      return { outputs: {} };
+    }

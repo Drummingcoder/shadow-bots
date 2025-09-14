@@ -1,4 +1,6 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
+import exposeChannels1 from "../workflows/user_re.ts";
+import { TriggerTypes } from "deno-slack-api/mod.ts";
 
 export const channelCheck = DefineFunction({
   callback_id: "channel_check",
@@ -38,6 +40,7 @@ export default SlackFunction(
     }
     const channel = matches[2]?.split("|");
     const theChannel = channel[0].replace("<#", "");
+
     let place = await client.conversations.members({
       channel: theChannel,
       cursor: cursor,
@@ -66,12 +69,12 @@ export default SlackFunction(
     if (result) {
       await client.chat.postMessage({
         channel: inputs.channel_id,
-        text: `<@${target_id}> is in <#${channel}>`,
+        text: `Yes, <@${target_id}> is in <#${channel}>`,
       });
     } else {
       await client.chat.postMessage({
         channel: inputs.channel_id,
-        text: `<@${target_id}> is not in <#${channel}>`,
+        text: `No, <@${target_id}> is not in <#${channel}>`,
       });
     }
 

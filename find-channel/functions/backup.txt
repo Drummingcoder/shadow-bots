@@ -1,25 +1,4 @@
-import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
-
-export const theMessage = DefineFunction({
-  callback_id: "canvas_post",
-  title: "Really",
-  description: "Post a canvas with the list of channels the target is in",
-  source_file: "functions/get_message.ts",
-  input_parameters: {
-    properties: {
-      message: {
-        type: Schema.types.string,
-        description: "Message to be posted",
-      },
-    },
-    required: ["message"],
-  },
-});
-
-export default SlackFunction(
-  theMessage,
-  async ({ inputs, client }) => {
-    const myMessage = `${inputs.message}`;
+  const myMessage = `${inputs.message}`;
     let allChannels: any[] = [];
     let cursor: string | undefined = undefined;
     let getID = myMessage.split(" ");
@@ -118,5 +97,3 @@ export default SlackFunction(
     console.log("Canvas created successfully", re);
     
     return { outputs: {} };
-  },
-);
