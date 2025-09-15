@@ -1,5 +1,4 @@
 import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
-import { theMessage } from "../functions/get_message.ts";
 import { check } from "../functions/check_step.ts";
 import { channelCheck } from "../functions/check_channel.ts";
 
@@ -24,14 +23,14 @@ const step = exposeChannels.addStep(check, {
   message: exposeChannels.inputs.message,
 });
 
-  exposeChannels.addStep(Schema.slack.functions.SendMessage, {
-    channel_id: exposeChannels.inputs.channel,
-    message: "Checking...",
-  });
-  exposeChannels.addStep(channelCheck, {
-    message: exposeChannels.inputs.message,
-    channel_id: exposeChannels.inputs.channel,
-  });
+exposeChannels.addStep(Schema.slack.functions.SendMessage, {
+  channel_id: exposeChannels.inputs.channel,
+  message: "Checking...",
+});
+exposeChannels.addStep(channelCheck, {
+  message: exposeChannels.inputs.message,
+  channel_id: exposeChannels.inputs.channel,
+});
 
 
 export default exposeChannels;

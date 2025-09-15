@@ -1,5 +1,5 @@
 import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
-import { theMessage } from "../functions/loop_user.ts";
+import { theMessage } from "../../extra/user_re.ts";
 
 const exposeChannels1 = DefineWorkflow({
   callback_id: "expose_channels_re",

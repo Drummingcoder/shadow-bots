@@ -1,5 +1,4 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
-import exposeChannels1 from "../workflows/user_re.ts";
 import { TriggerTypes } from "deno-slack-api/mod.ts";
 
 export const channelCheck = DefineFunction({
