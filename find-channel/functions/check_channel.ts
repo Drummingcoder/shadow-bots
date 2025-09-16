@@ -16,14 +16,23 @@ export const channelCheck = DefineFunction({
         type: Schema.slack.types.channel_id,
         description: "Channel ID",
       },
+      timestamp: {
+        type: Schema.types.string,
+        description: "Timestamp reply",
+      },
     },
-    required: ["message", "channel_id"],
+    required: ["message", "channel_id", "timestamp"],
   },
 });
 
 export default SlackFunction(
   channelCheck,
   async ({ inputs, client }) => {
+    await client.chat.postMessage({
+      channel: inputs.channel_id,
+      text: "Checking...",
+      thread_ts: inputs.timestamp,
+    });
     const myMessage = `${inputs.message}`;
     let cursor: string | undefined = undefined;
     const matches = myMessage.match(/<([^>]+)>/g);
@@ -51,11 +60,10 @@ export default SlackFunction(
     }
 
     let result = false;
+    if (place.members && place.members.includes(target_id)) {
+      result = true;
+    }
     do {
-      if (place.members && place.members.includes(target_id)) {
-        result = true;
-        break;
-      }
       if (place.response_metadata?.next_cursor) {
         cursor = place.response_metadata.next_cursor;
         place = await client.conversations.members({
@@ -63,17 +71,23 @@ export default SlackFunction(
           cursor: cursor,
         });
       }
+      if (place.members && place.members.includes(target_id)) {
+        result = true;
+        break;
+      }
     } while (place?.response_metadata?.next_cursor);
 
     if (result) {
       await client.chat.postMessage({
         channel: inputs.channel_id,
         text: `Yes, <@${target_id}> is in <#${theChannel}>`,
+        thread_ts: inputs.timestamp,
       });
     } else {
       await client.chat.postMessage({
         channel: inputs.channel_id,
         text: `No, <@${target_id}> is not in <#${theChannel}>`,
+        thread_ts: inputs.timestamp,
       });
     }
 

@@ -14,22 +14,22 @@ const exposeChannels = DefineWorkflow({
       message: {
         type: Schema.types.string,
       },
+      timestamp: {
+        type: Schema.types.string,
+      }
     },
-    required: ["channel", "message"],
+    required: ["channel", "message", "timestamp"],
   },
 });
 
-const step = exposeChannels.addStep(check, {
+const _step = exposeChannels.addStep(check, {
   message: exposeChannels.inputs.message,
 });
 
-exposeChannels.addStep(Schema.slack.functions.SendMessage, {
-  channel_id: exposeChannels.inputs.channel,
-  message: "Checking...",
-});
 exposeChannels.addStep(channelCheck, {
   message: exposeChannels.inputs.message,
   channel_id: exposeChannels.inputs.channel,
+  timestamp: exposeChannels.inputs.timestamp,
 });
 
 

@@ -9,7 +9,7 @@ const myTrigger: Trigger<typeof exposeChannels.definition> = {
   workflow: `#/workflows/${exposeChannels.definition.callback_id}`,
   event: {
     event_type: TriggerEventTypes.AppMentioned,
-    channel_ids: ["C09AHN6V1U7", "C08SKC6P85V"],
+    all_resources: true,
   },
   inputs: {
     channel: {
@@ -18,6 +18,9 @@ const myTrigger: Trigger<typeof exposeChannels.definition> = {
     message: {
       value: TriggerContextData.Event.AppMentioned.text,
     },
+    timestamp: {
+      value: TriggerContextData.Event.AppMentioned.message_ts,
+    }
   },
 };
 
