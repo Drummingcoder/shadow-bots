@@ -9,5 +9,5 @@ export default Manifest({
   icon: "assets/jesterhat.png",
   workflows: [exposeChannels, anonReact],
   outgoingDomains: [],
-  botScopes: [ "channels:read", "channels:history", "reactions:write", "commands", "canvases:read", "canvases:write", "chat:write", "chat:write.public", "app_mentions:read", "users:read", "triggers:read", "triggers:write"],
+  botScopes: [ "channels:read", "channels:history", "reactions:write", "commands", "canvases:read", "canvases:write", "chat:write", "chat:write.public", "app_mentions:read", "users:read", "triggers:read", "triggers:write", "groups:history", "groups:read", "groups:write"],
 });
