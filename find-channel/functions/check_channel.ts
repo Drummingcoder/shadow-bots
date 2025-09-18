@@ -41,6 +41,11 @@ export default SlackFunction(
     if (matches && matches.length >= 2) {
       target_id = matches[1]?.replace("<@", "").replace(">", "");
     } else {
+      await client.chat.postMessage({
+        channel: inputs.channel_id,
+        text: "Sorry, this response isn't supposed yet.",
+        thread_ts: inputs.timestamp,
+      });
       return { outputs: { error: "Please provide user_id" } };
     }
     if (target_id) {

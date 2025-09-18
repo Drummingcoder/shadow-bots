@@ -1,12 +1,12 @@
 import type { Trigger } from "deno-slack-sdk/types.ts";
 import { TriggerContextData, TriggerTypes } from "deno-slack-api/mod.ts";
-import anonReact from "../workflows/anon_emoji.ts";
+import annoyReacter from "../workflows/annoy.ts";
 
-const myTrigger: Trigger<typeof anonReact.definition> = {
+const newTrigger: Trigger<typeof annoyReacter.definition> = {
   type: TriggerTypes.Shortcut,
-  name: "anon-emoji",
-  description: "Anonymously react to a message",
-  workflow: `#/workflows/${anonReact.definition.callback_id}`,
+  name: "annoy-emoji",
+  description: "React to someone's message all the time!",
+  workflow: `#/workflows/${annoyReacter.definition.callback_id}`,
   inputs: {
     interactivity: {
       value: TriggerContextData.Shortcut.interactivity,
@@ -17,4 +17,4 @@ const myTrigger: Trigger<typeof anonReact.definition> = {
   },
 };
 
-export default myTrigger;
+export default newTrigger;
