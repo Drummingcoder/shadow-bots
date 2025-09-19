@@ -36,6 +36,8 @@ export default SlackFunction(
               id: inputs.user_id,
           },
     );
+
+    console.log(getRe);
     
     if (getRe.ok) {
       const re = await client.reactions.add({

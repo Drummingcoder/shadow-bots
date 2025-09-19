@@ -28,25 +28,46 @@ export const annoyFunct = DefineFunction({
 export default SlackFunction(
   annoyFunct,
   async ({ inputs, client }) => {
-    
-    const putResp = await client.apps.datastore.put<
+
+    const getResp = await client.apps.datastore.get<
       typeof emojiuser.definition
     >({
       datastore: emojiuser.name,
-      item: {
-        user_id: inputs.user,
-        emoji: inputs.reaction,
-      },
+      id: inputs.user,
     });
-    console.log(putResp);
-    if (!putResp.ok) {
-      await client.chat.postEphemeral({
-        channel: "C09AHN6V1U7",
-        user: inputs.user_id,
-        text: `Something went wrong...`,
+    if (getResp.item.emoji === inputs.reaction) {
+      const deleteResp = await client.apps.datastore.delete({
+        datastore: emojiuser.name,
+        id: inputs.user,
       });
+      console.log(deleteResp);
+      if (!deleteResp.ok) {
+        await client.chat.postEphemeral({
+          channel: "C09AHN6V1U7",
+          user: inputs.user_id,
+          text: `Something went wrong...`,
+        });
+      }
+    } else {
+      const putResp = await client.apps.datastore.put<
+        typeof emojiuser.definition
+      >({
+        datastore: emojiuser.name,
+        item: {
+          user_id: inputs.user,
+          emoji: inputs.reaction,
+        },
+      });
+      console.log(putResp);
+      if (!putResp.ok) {
+        await client.chat.postEphemeral({
+          channel: "C09AHN6V1U7",
+          user: inputs.user_id,
+          text: `Something went wrong...`,
+        });
+      }
     }
-
+    
     return { outputs: {} };
   },
 );
