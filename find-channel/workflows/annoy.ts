@@ -23,7 +23,7 @@ const form = annoyReacter.addStep(Schema.slack.functions.OpenForm,
       title: "Anonymous Annoy",
       interactivity: annoyReacter.inputs.interactivity,
       submit_label: "Go!",
-      description: "A user whose messages will always be reacted to.",
+      description: "A user whose messages will always be reacted to. To remove the auto-react, just re-submit the same user and emoji.",
       fields: {
         elements: [{
           name: "user",
