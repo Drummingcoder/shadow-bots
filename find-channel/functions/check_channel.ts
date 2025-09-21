@@ -35,13 +35,19 @@ export default SlackFunction(
     });
     const myMessage = `${inputs.message}`;
     let cursor: string | undefined = undefined;
+    let realID = true;
     const matches = myMessage.match(/<([^>]+)>/g);
     console.log("getID:" , matches);
     let target_id = "";
-    if (matches && matches.length >= 2) {
+    const userMatch = myMessage.match(/user:(\w+)/);
+    console.log("userID:" , userMatch);
+    if (matches && matches.length > 2) {
       target_id = matches[1]?.replace("<@", "").replace(">", "");
+    } else if ((matches && matches.length == 2) && (userMatch && userMatch.length >= 1)) {
+      target_id = userMatch[1];
+      realID = false;
     } else {
-      if (myMessage.includes("fuck you")) {
+      if (myMessage.includes("fuck") && ((myMessage.includes("u") || myMessage.includes("you")) || myMessage.includes("Jester"))) {
         await client.chat.postMessage({
           channel: inputs.channel_id,
           text: "You wanna do it with me? UwU",
@@ -59,7 +65,13 @@ export default SlackFunction(
     if (target_id) {
       console.log("target:" , target_id);
     }
-    const channel = matches[2]?.split("|");
+    let channel = [""];
+    if (realID) {
+      channel = matches[2]?.split("|");
+    } else {
+      channel = matches[1]?.split("|");
+    }
+    console.log("channel:" , channel);
     const theChannel = channel[0].replace("<#", "");
 
     let place = await client.conversations.members({
@@ -73,9 +85,23 @@ export default SlackFunction(
     }
 
     let result = false;
-    if (place.members && place.members.includes(target_id)) {
-      result = true;
+    if (realID) {
+      if (place.members && place.members.includes(target_id)) {
+        result = true;
+      }
+    } else {
+      if (place.members) {
+        for (const member of place.members) {
+          const userInfo = await client.users.info({ user: member });
+          if (userInfo.ok && (userInfo.user?.profile.real_name.toLowerCase() === target_id.toLowerCase() || userInfo.user?.profile.display_name.toLowerCase() === target_id.toLowerCase())) {
+            result = true;
+            break;
+          }
+          console.log("user:", userInfo);
+        }
+      }
     }
+    
     do {
       if (place.response_metadata?.next_cursor) {
         cursor = place.response_metadata.next_cursor;
@@ -84,24 +110,51 @@ export default SlackFunction(
           cursor: cursor,
         });
       }
-      if (place.members && place.members.includes(target_id)) {
-        result = true;
-        break;
+      if (realID) {
+        if (place.members && place.members.includes(target_id)) {
+          result = true;
+        }
+      } else {
+        if (place.members) {
+          for (const member of place.members) {
+            const userInfo = await client.users.info({ user: member });
+            if (userInfo.ok && userInfo.user?.name.toLowerCase() === target_id.toLowerCase()) {
+              result = true;
+              break;
+            }
+          }
+        }
       }
     } while (place?.response_metadata?.next_cursor);
 
     if (result) {
-      await client.chat.postMessage({
-        channel: inputs.channel_id,
-        text: `Yes, <@${target_id}> is in <#${theChannel}>`,
-        thread_ts: inputs.timestamp,
-      });
+      if (realID) {
+        await client.chat.postMessage({
+          channel: inputs.channel_id,
+          text: `Yes, <@${target_id}> is in <#${theChannel}>`,
+          thread_ts: inputs.timestamp,
+        });
+      } else {
+        await client.chat.postMessage({
+          channel: inputs.channel_id,
+          text: `Yes, ${target_id} is in <#${theChannel}>`,
+          thread_ts: inputs.timestamp,
+        });
+      }
     } else {
-      await client.chat.postMessage({
-        channel: inputs.channel_id,
-        text: `No, <@${target_id}> is not in <#${theChannel}>`,
-        thread_ts: inputs.timestamp,
-      });
+      if (realID) {
+        await client.chat.postMessage({
+          channel: inputs.channel_id,
+          text: `No, <@${target_id}> is not in <#${theChannel}>`,
+          thread_ts: inputs.timestamp,
+        });
+      } else {
+        await client.chat.postMessage({
+          channel: inputs.channel_id,
+          text: `No, ${target_id} is not in <#${theChannel}>`,
+          thread_ts: inputs.timestamp,
+        });
+      }
     }
 
     return { outputs: {} };

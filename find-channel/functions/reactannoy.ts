@@ -39,7 +39,7 @@ export default SlackFunction(
 
     console.log(getRe);
     
-    if (getRe.ok) {
+    if (getRe.item.emoji) {
       const re = await client.reactions.add({
         channel: inputs.channel_id,
         name: getRe.item.emoji,
