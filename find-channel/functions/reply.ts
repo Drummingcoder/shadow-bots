@@ -37,11 +37,27 @@ export default SlackFunction(
       return { error: "Unauthorized user" };
     }
     if (inputs.reply_link == "" || inputs.reply_link == undefined) {
+      let toPost = message[0];
       const responce = await client.chat.postMessage({
         channel: channelToPost,
-        text: message,
+        text: toPost,
       });
-      console.log(responce);
+      for (let i = 1; i < message.length; i++) {
+        const timeout = (ms: number) => new Promise((res) => setTimeout(res, ms));
+        await timeout(200);
+        toPost += message[i];
+        await client.chat.update({
+          channel: channelToPost,
+          text: toPost,
+          ts: responce.ts,
+        });
+      }
+      const response = await client.chat.update({
+        channel: channelToPost,
+        text: message + `\n\n -sent by <@${inputs.user_id}>`,
+        ts: responce.ts,
+      });
+      console.log(response);
     } else {
       const msglink = inputs.reply_link.split("/");
       let timestamp = msglink[5];
@@ -55,12 +71,28 @@ export default SlackFunction(
       const seconds = timestamp.slice(0, 10);
       const microseconds = timestamp.slice(10);
       const realTs = `${seconds}.${microseconds}`;
+      let toPost = message[0];
       const responce = await client.chat.postMessage({
         channel: channelToPost,
-        text: message,
+        text: toPost,
         thread_ts: realTs,
       });
-      console.log(responce);
+      for (let i = 1; i < message.length; i++) {
+        const timeout = (ms: number) => new Promise((res) => setTimeout(res, ms));
+        await timeout(100);
+        toPost += message[i];
+        await client.chat.update({
+          channel: channelToPost,
+          text: toPost,
+          ts: responce.ts,
+        });
+      }
+      const response = await client.chat.update({
+        channel: channelToPost,
+        text: message + `\n\n -sent by <@${inputs.user_id}>`,
+        ts: responce.ts,
+      });
+      console.log(response);
     }
 
     console.log("Person who sent message:", inputs.user_id);

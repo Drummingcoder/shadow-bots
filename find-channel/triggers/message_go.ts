@@ -4,8 +4,8 @@ import anonMes from "../workflows/anon_message.ts";
 
 const newTrigger: Trigger<typeof anonMes.definition> = {
   type: TriggerTypes.Shortcut,
-  name: "anon-message",
-  description: "Need to anonymously message or reply?",
+  name: "bot-message",
+  description: "Need to bot message or reply?",
   workflow: `#/workflows/${anonMes.definition.callback_id}`,
   inputs: {
     interactivity: {
