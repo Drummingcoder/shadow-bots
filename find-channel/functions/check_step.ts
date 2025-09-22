@@ -35,6 +35,13 @@ export default SlackFunction(
       return { outputs: { strin: "AddAll" } };
     }
 
+    if (inputs.message.includes("get out of all channels")) {
+
+
+
+      return { outputs: { strin: "RemoveAll" } };
+    }
+
     if (inputs.message.includes("in")) {
       return { outputs: { strin: "Specific" } };
     }

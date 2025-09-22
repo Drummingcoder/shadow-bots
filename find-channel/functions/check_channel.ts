@@ -33,6 +33,17 @@ export default SlackFunction(
       text: "Checking...",
       thread_ts: inputs.timestamp,
     });
+    if ((inputs.message.includes("kys") || inputs.message.includes("kill yourself")) || (inputs.message.includes("leave"))) {
+      await client.conversations.leave({
+        channel: inputs.channel_id,
+      });
+      await client.chat.postMessage({
+        channel: inputs.channel_id,
+        text: "I have left the channel. If you want me to rejoin, please invite me again!",
+        thread_ts: inputs.timestamp,
+      });
+      return { outputs: { } };
+    }
     const myMessage = `${inputs.message}`;
     let cursor: string | undefined = undefined;
     let realID = true;

@@ -33,7 +33,9 @@ export default SlackFunction(
   async ({ inputs, client }) => {
     const channelToPost = inputs.channel;
     const message = inputs.message;
-    
+    if (inputs.user_id != "U091EPSQ3E3") {
+      return { error: "Unauthorized user" };
+    }
     if (inputs.reply_link == "" || inputs.reply_link == undefined) {
       const responce = await client.chat.postMessage({
         channel: channelToPost,
