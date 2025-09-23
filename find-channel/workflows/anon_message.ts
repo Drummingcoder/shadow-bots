@@ -26,10 +26,10 @@ const anonMes = DefineWorkflow({
 
 const form = anonMes.addStep(Schema.slack.functions.OpenForm,
   {
-      title: "Anonymous Message",
+      title: "Slow Message",
       interactivity: anonMes.inputs.interactivity,
-      submit_label: "Send anonymously!",
-      description: "Anonymously message or reply to a thread",
+      submit_label: "Send!",
+      description: "Slowly message or reply to a thread",
       fields: {
         elements: [
         {
