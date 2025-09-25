@@ -1,11 +1,10 @@
 import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
-import { check } from "../functions/check_step.ts";
 import { channelCheck } from "../functions/check_channel.ts";
 
-const exposeChannels = DefineWorkflow({
-  callback_id: "expose_channels",
-  title: "Expose Channels",
-  description: "Know all public channels that the target is in",
+const updater = DefineWorkflow({
+  callback_id: "talk_to_user",
+  title: "Dokeshi Talks",
+  description: "Interact with the bot to find out more about it",
   input_parameters: {
     properties: {
       channel: {
@@ -22,15 +21,10 @@ const exposeChannels = DefineWorkflow({
   },
 });
 
-const _step = exposeChannels.addStep(check, {
-  message: exposeChannels.inputs.message,
+updater.addStep(channelCheck, {
+  message: updater.inputs.message,
+  channel_id: updater.inputs.channel,
+  timestamp: updater.inputs.timestamp,
 });
 
-exposeChannels.addStep(channelCheck, {
-  message: exposeChannels.inputs.message,
-  channel_id: exposeChannels.inputs.channel,
-  timestamp: exposeChannels.inputs.timestamp,
-});
-
-
-export default exposeChannels;
+export default updater;

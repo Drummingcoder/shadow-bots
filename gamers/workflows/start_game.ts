@@ -20,34 +20,35 @@ const starting = DefineWorkflow({
 
 const form = starting.addStep(Schema.slack.functions.OpenForm,
   {
-      title: "Anonymous Message",
-      interactivity: starting.inputs.interactivity,
-      submit_label: "Send anonymously!",
-      description: "Anonymously message or reply to a thread",
-      fields: {
-        elements: [
-        {
-          name: "Player 2",
-          title: "Who to play against?",
-          description: "Who is going to be your opponent?",
-          type: Schema.slack.types.user_id,
-        },
-        {
-          name: "channel",
-          title: "What channel to play in?",
-          description: "Pick any channel!",
-          type: Schema.slack.types.channel_id,
-        }
-      ],
-        required: ["Player 2", "channel"],
+    title: "Rock, Paper, Scissors",
+    interactivity: starting.inputs.interactivity,
+    submit_label: "Start!",
+    description: "Still a Work in Progress!",
+    fields: {
+      elements: [
+      {
+        name: "player2",
+        title: "Who to play against?",
+        description: "Who is going to be your opponent?",
+        type: Schema.slack.types.user_id,
       },
+      {
+        name: "channel",
+        title: "What channel to play in?",
+        description: "Pick any channel!",
+        type: Schema.slack.types.channel_id,
+      }
+    ],
+      required: ["player2", "channel"],
     },
+  },
 );
 
 starting.addStep(start, {
-  other_user: form.outputs.fields.Player_2,
+  other_user: form.outputs.fields.player2,
   channel: form.outputs.fields.channel,
   user_id: starting.inputs.user_id,
+  interactivity: form.outputs.interactivity,
 });
 
 export default starting;

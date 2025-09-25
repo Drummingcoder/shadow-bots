@@ -1,11 +1,11 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
-import { _internals } from "deno-slack-api/base-client-helpers.ts";
+import { InteractivityType } from "deno-slack-sdk/schema/slack/types/custom/interactivity.ts";
 
 export const start = DefineFunction({
   callback_id: "start_ga",
   title: "Start Game",
   description: "Start a game of Omniscient Rock, Paper, Scissors",
-  source_file: "functions/reply.ts",
+  source_file: "functions/startRps.ts",
   input_parameters: {
     properties: {
       channel: {
@@ -20,8 +20,12 @@ export const start = DefineFunction({
         type: Schema.slack.types.user_id,
         description: "user invoking app",
       },
+	  interactivity: {
+		type: Schema.slack.types.interactivity,
+		description: "Interactivity",
+	  }
     },
-    required: ["channel", "other_user"],
+    required: ["channel", "other_user", "user_id"],
   },
 });
 
@@ -31,41 +35,103 @@ export default SlackFunction(
     const channelToPost = inputs.channel;
     const firstText = await client.chat.postMessage({
       channel: channelToPost,
-      text: `<@${inputs.user_id}> has challenged <@${inputs.other_user}> to a game of Omniscient Rock, Paper, Scissors!`,
+      text: `<@${inputs.user_id}> has challenged <@${inputs.other_user}> to a game of Rock, Paper, Scissors!`,
     });
-    const challenge = await client.chat.postMessage({
+    const _challenge = await client.chat.postMessage({
       channel: channelToPost,
       thread_ts: firstText.ts,
       blocks: [
         {
-					"type": "section",
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Put your inputs in!",
+			}
+		},
+		{
+			"type": "actions",
+			"elements": [
+				{
+					"type": "button",
 					"text": {
-						"type": "mrkdwn",
-						"text": inputs.message,
-					}
+						"type": "plain_text",
+						"text": "Player 1, go!"
+					},
+					"value": inputs.user_id,
+					"action_id": "p1_input",
+					"style": "primary"
 				},
 				{
-					"type": "image",
-					"image_url": inputs.image_url,
-					"alt_text": "Welcome image"
-				},
-				{
-					"type": "actions",
-					"elements": [
-						{
-							"type": "button",
-							"text": {
-								"type": "plain_text",
-								"text": "Declare your presence"
-							},
-							"value": inputs.channel_id,
-							"action_id": "ping_me"
-						}
-					]
+					"type": "button",
+					"text": {
+						"type": "plain_text",
+						"text": "Player 2, go!"
+					},
+					"value": inputs.other_user,
+					"action_id": "p2_input",
+					"style": "danger"
 				}
+			]
+		}
       ],
     });
 
-    return { outputs: {} };
+    return {
+		completed: false,
+		outputs: undefined,
+	};
   },
-);
+).addBlockActionsHandler("p1_input", async ({ body, client }) => {
+	const { actions } = body;
+	if (!actions) return;
+	
+  const response = await client.views.open({
+      interactivity_pointer: body.interactivity?.interactivity_pointer,
+      view: {
+          type: "modal",
+          title: {
+              type: "plain_text",
+              text: "Your Move"
+          },
+          submit: {
+              type: "plain_text",
+              text: "Submit"
+          },
+          blocks: [
+              {
+                  type: "section",
+                  text: {
+                      type: "mrkdwn",
+                      text: "Choose your move:"
+                  }
+              },
+              {
+                  type: "actions",
+                  elements: [
+                      {
+                          type: "radio_buttons",
+                          action_id: "rps_choice",
+                          options: [
+                              {
+                                  text: { type: "plain_text", text: "Rock" },
+                                  value: "rock"
+                              },
+                              {
+                                  text: { type: "plain_text", text: "Paper" },
+                                  value: "paper"
+                              },
+                              {
+                                  text: { type: "plain_text", text: "Scissors" },
+                                  value: "scissors"
+                              }
+                          ]
+                      }
+                  ]
+              }
+          ]
+      }
+  });
+  console.log(response);
+
+	return { completed: true, outputs: { interactivity: body.interactivity } };
+});
