@@ -5,7 +5,7 @@ import games from "../datastores/gametrack.ts";
 export const start = DefineFunction({
   callback_id: "start_ga",
   title: "Start Game",
-  description: "Start a game of Omniscient Rock, Paper, Scissors",
+  description: "Start a game of Rock, Paper, Scissors",
   source_file: "functions/startRps.ts",
   input_parameters: {
     properties: {
@@ -34,10 +34,6 @@ export default SlackFunction(
   start,
   async ({ inputs, client }) => {
     const channelToPost = inputs.channel;
-    const firstText = await client.chat.postMessage({
-      channel: channelToPost,
-      text: `<@${inputs.user_id}> has challenged <@${inputs.other_user}> to a game of Rock, Paper, Scissors!`,
-    });
     let gamenum = 0;
     let getResp1 = await client.apps.datastore.get<
       typeof games.definition
@@ -54,6 +50,36 @@ export default SlackFunction(
         id: gamenum.toString(),
       });
     }
+    const getGame = await client.apps.datastore.get<
+      typeof game.definition
+    >({
+      datastore: game.name,
+      id: "input",
+    });
+
+    if (getGame.item.value != 2) {
+      await client.chat.postEphemeral({
+        channel: channelToPost,
+        user: inputs.user_id,
+        text: `A game is still ongoing!`,
+      });
+      return { outputs: {}};
+    } else {
+      const putResp = await client.apps.datastore.put<
+        typeof game.definition
+      >({
+        datastore: game.name,
+        item: {
+          name: "input",
+          value: 0,
+        },
+      });
+      console.log(putResp);
+    }
+    const firstText = await client.chat.postMessage({
+      channel: channelToPost,
+      text: `<@${inputs.user_id}> has challenged <@${inputs.other_user}> to a game of Rock, Paper, Scissors!`,
+    });
 
     const putResp = await client.apps.datastore.put<
       typeof games.definition
@@ -119,14 +145,21 @@ export default SlackFunction(
 	const { actions } = body;
 	if (!actions) return;
 
-  /*if (body.user.id !== actions[0].value) {
+  const getResp2 = await client.apps.datastore.get<
+    typeof games.definition
+  >({
+    datastore: games.name,
+    id: actions[0].value.toString(),
+  });
+
+  if (body.user.id !== getResp2.item.player1) {
     await client.chat.postEphemeral({
       channel: body.channel?.id!,
       user: body.user.id,
       text: "This button isn't for you!",
     });
     return { completed: false, outputs: {} };
-  }*/
+  }
 
   const getResp = await client.apps.datastore.get<
     typeof game.definition
@@ -181,7 +214,7 @@ export default SlackFunction(
       datastore: game.name,
       item: {
         name: "input",
-        value: 0,
+        value: 2,
       },
     });
     console.log(putResp);
@@ -275,14 +308,21 @@ export default SlackFunction(
   const { actions } = body;
 	if (!actions) return;
 
-  /*if (body.user.id !== actions[0].value) {
+  const getResp3 = await client.apps.datastore.get<
+    typeof games.definition
+  >({
+    datastore: games.name,
+    id: actions[0].value.toString(),
+  });
+
+  if (body.user.id !== getResp3.item.player2) {
     await client.chat.postEphemeral({
       channel: body.channel?.id!,
       user: body.user.id,
       text: "This button isn't for you!",
     });
     return { completed: false, outputs: {} };
-  }*/
+  }
 
   const getResp = await client.apps.datastore.get<
     typeof game.definition
@@ -337,7 +377,7 @@ export default SlackFunction(
       datastore: game.name,
       item: {
         name: "input",
-        value: 0,
+        value: 2,
       },
     });
     console.log(putResp);

@@ -7,7 +7,7 @@ import games from "./datastores/gametrack.ts";
 export default Manifest({
   name: "Dokeshi",
   description: "Feeling a bit bored?",
-  longDescription: "This is a work in progress! A bot that hosts games for you and your friends to play in Slack. I'm starting with a rock-paper-scissors game, but I have plans for more! And just to reiterate, this is a work in progress (WIP)!",
+  longDescription: "A bot that hosts games for you and your friends to play in Slack. I'm starting with a rock-paper-scissors game, but I have plans for more!\n\nUse the command `/playOmniRPS` to get started. At the current moment, it's a simple game of rock, paper, scissors. Choose a partner to play with, and a channel to play in! Use the buttons in the reply to the start message to make your move. Have fun!\n\nMore details at: https://hackclub.slack.com/docs/T0266FRGM/F09HJ4A4AGN",
   icon: "assets/jester.jpeg",
   workflows: [updater, starting],
   outgoingDomains: [],

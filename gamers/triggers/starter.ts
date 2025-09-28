@@ -5,7 +5,7 @@ import starting from "../workflows/start_game.ts";
 const newTrigger: Trigger<typeof starting.definition> = {
   type: TriggerTypes.Shortcut,
   name: "playOmniRPS",
-  description: "RPS, but you can use anything",
+  description: "A regular game of Rock, Paper, Scissors",
   workflow: `#/workflows/${starting.definition.callback_id}`,
   inputs: {
     interactivity: {
