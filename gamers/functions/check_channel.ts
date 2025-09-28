@@ -9,11 +9,11 @@ export const channelCheck = DefineFunction({
     properties: {
       message: {
         type: Schema.types.string,
-        description: "Message to be check",
+        description: "Message to check",
       },
       channel_id: {
         type: Schema.slack.types.channel_id,
-        description: "Channel ID",
+        description: "Channel",
       },
       timestamp: {
         type: Schema.types.string,
