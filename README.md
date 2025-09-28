@@ -23,4 +23,5 @@ The Dokeshi bot's code is stored inside the gamers folder.
 It's as easy as that!
 
 ## Video:
-
+Video of RPS in action:
+https://github.com/user-attachments/assets/66f3820a-1926-4501-b9f5-b58e5c238adc
