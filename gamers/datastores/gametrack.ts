@@ -5,7 +5,7 @@ const games = DefineDatastore({
   primary_key: "number",
   attributes: {
     number: {
-      type: Schema.types.number,
+      type: Schema.types.string,
     },
     player1: {
       type: Schema.slack.types.user_id,

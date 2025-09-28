@@ -43,7 +43,7 @@ export default SlackFunction(
       typeof games.definition
     >({
       datastore: games.name,
-      id: gamenum,
+      id: gamenum.toString(),
     });
     for (let i = 1; getResp1.item.finished && getResp1.item.finished == true; i++) {
       gamenum++;
@@ -51,7 +51,7 @@ export default SlackFunction(
         typeof games.definition
       >({
         datastore: games.name,
-        id: gamenum,
+        id: gamenum.toString(),
       });
     }
 
@@ -60,7 +60,7 @@ export default SlackFunction(
     >({
       datastore: games.name,
       item: {
-        number: gamenum,
+        number: gamenum.toString(),
         player1: inputs.user_id,
         p1input: "",
         player2: inputs.other_user,
@@ -70,7 +70,7 @@ export default SlackFunction(
     });
     console.log(putResp);
     
-    const _challenge = await client.chat.postMessage({
+    const challenge = await client.chat.postMessage({
       channel: channelToPost,
       thread_ts: firstText.ts,
       blocks: [
@@ -90,7 +90,7 @@ export default SlackFunction(
                 "type": "plain_text",
                 "text": "Player 1, go!"
               },
-              "value": gamenum,
+              "value": gamenum.toString(),
               "action_id": "p1_input",
               "style": "primary"
             },
@@ -100,7 +100,7 @@ export default SlackFunction(
                 "type": "plain_text",
                 "text": "Player 2, go!"
               },
-              "value": gamenum,
+              "value": gamenum.toString(),
               "action_id": "p2_input",
               "style": "danger"
             }
@@ -108,6 +108,7 @@ export default SlackFunction(
         }
       ],
     });
+    console.log(challenge);
 
     return {
       completed: false,
@@ -118,14 +119,14 @@ export default SlackFunction(
 	const { actions } = body;
 	if (!actions) return;
 
-  if (body.user.id !== actions[0].value) {
+  /*if (body.user.id !== actions[0].value) {
     await client.chat.postEphemeral({
       channel: body.channel?.id!,
       user: body.user.id,
       text: "This button isn't for you!",
     });
     return { completed: false, outputs: {} };
-  }
+  }*/
 
   const getResp = await client.apps.datastore.get<
     typeof game.definition
@@ -215,8 +216,8 @@ export default SlackFunction(
   
   const response = await client.views.open({
     interactivity_pointer: body.interactivity?.interactivity_pointer,
-    callback_id: "p1_inpu",
     view: {
+        callback_id: "p1_inpu",
         type: "modal",
         title: {
             type: "plain_text",
@@ -269,19 +270,19 @@ export default SlackFunction(
   });
   console.log(response);
 
-	return { completed: false, outputs: undefined };
+	return { completed: true, outputs: { interactivity: body.interactivity } };
 }).addBlockActionsHandler("p2_input", async ({ body, client }) => {
   const { actions } = body;
 	if (!actions) return;
 
-  if (body.user.id !== actions[0].value) {
+  /*if (body.user.id !== actions[0].value) {
     await client.chat.postEphemeral({
       channel: body.channel?.id!,
       user: body.user.id,
       text: "This button isn't for you!",
     });
     return { completed: false, outputs: {} };
-  }
+  }*/
 
   const getResp = await client.apps.datastore.get<
     typeof game.definition
@@ -371,8 +372,8 @@ export default SlackFunction(
   
   const response = await client.views.open({
       interactivity_pointer: body.interactivity?.interactivity_pointer,
-      callback_id: "p2_inpu",
       view: {
+        callback_id: "p2_inpu",
         type: "modal",
         title: {
             type: "plain_text",
@@ -425,59 +426,147 @@ export default SlackFunction(
   });
   console.log(response);
 
-	return { completed: false, outputs: undefined };
+	return { completed: true, outputs: { interactivity: body.interactivity } };
 }).addViewSubmissionHandler("p1_inpu", async ({ body, client }) => {
-  try {
-    const metadata = JSON.parse(body.view.private_metadata || "{}");
-    const userId = body.user.id;
-    const state = body.view.state?.values;
-    let selectedMove = "";
-    if (state) {
-      for (const blockId in state) {
-        if (state[blockId].rps_choice && state[blockId].rps_choice.selected_option) {
-          selectedMove = state[blockId].rps_choice.selected_option.value;
-          break;
-        }
+  const metadata = JSON.parse(body.view.private_metadata || "{}");
+  const state = body.view.state?.values;
+  let selectedMove = "";
+  if (state) {
+    for (const blockId in state) {
+      if (state[blockId].rps_choice && state[blockId].rps_choice.selected_option) {
+        selectedMove = state[blockId].rps_choice.selected_option.value;
+        break;
       }
     }
+  }
 
+  const pullValues = await client.apps.datastore.get<
+    typeof games.definition
+  >({
+    datastore: games.name,
+    id: metadata.gameId.toString(),
+  });
 
+  let p2Input = "";
+  let fin = false;
+  if (pullValues.item.p2input) {
+    p2Input = pullValues.item.p2input;
+    fin = true;
+  }
 
-    console.log(`${metadata.player} (${metadata.userId}) chose: ${selectedMove}`);
+  const trythis = await client.apps.datastore.put<
+    typeof games.definition
+  >({
+    datastore: games.name,
+    item: {
+      number: metadata.gameId.toString(),
+      player1: pullValues.item.player1,
+      p1input: selectedMove,
+      player2: pullValues.item.player2,
+      p2input: p2Input,
+      finished: fin
+    },
+  });
+  console.log(trythis);
+  console.log(`${metadata.player} (${metadata.userId}) chose: ${selectedMove}`);
+
+  if (fin) {
+    const p1 = selectedMove;
+    const p2 = p2Input;
     
-    return { completed: true, outputs: { interactivity: body.interactivity } };
-  } catch (err) {
-    console.error("Error in view submission handler:", err);
-    return { completed: true, outputs: { interactivity: body.interactivity } };
+    if (p1 === p2) {
+      await client.chat.postMessage({
+        channel: metadata.channelId,
+        thread_ts: metadata.messageTs,
+        text: `It's a tie! Both players chose *${p1}*.`,
+      });
+    } else if ((p1 == "rock" && p2 == "scissors") ||
+               (p1 == "scissors" && p2 == "paper") ||
+               (p1 == "paper" && p2 == "rock")) {
+      await client.chat.postMessage({
+        channel: metadata.channelId,
+        thread_ts: metadata.messageTs,
+        text: `<@${pullValues.item.player1}> wins! They threw ${p1} while <@${pullValues.item.player2}> threw ${p2}.`,
+      });
+    } else if ((p2 == "rock" && p1 == "scissors") ||
+               (p2 == "scissors" && p1 == "paper") ||
+               (p2 == "paper" && p1 == "rock")) {
+      await client.chat.postMessage({
+        channel: metadata.channelId,
+        thread_ts: metadata.messageTs,
+        text: `<@${pullValues.item.player2}> wins! They threw ${p2} while <@${pullValues.item.player1}> threw ${p1}.`,
+      });
+    }
   }
 }).addViewSubmissionHandler("p2_inpu", async ({ body, client }) => {
-  try {
-    const metadata = JSON.parse(body.view.private_metadata || "{}");
-    const userId = body.user.id;
-    const state = body.view.state?.values;
-    let selectedMove = "";
-    if (state) {
-      for (const blockId in state) {
-        if (state[blockId].rps_choice && state[blockId].rps_choice.selected_option) {
-          selectedMove = state[blockId].rps_choice.selected_option.value;
-          break;
-        }
+  const metadata = JSON.parse(body.view.private_metadata || "{}");
+  const state = body.view.state?.values;
+  let selectedMove = "";
+  if (state) {
+    for (const blockId in state) {
+      if (state[blockId].rps_choice && state[blockId].rps_choice.selected_option) {
+        selectedMove = state[blockId].rps_choice.selected_option.value;
+        break;
       }
     }
+  }
 
-    console.log(`${metadata.player} (${metadata.userId}) chose: ${selectedMove}`);
+  const pullValues = await client.apps.datastore.get<
+    typeof games.definition
+  >({
+    datastore: games.name,
+    id: metadata.gameId.toString(),
+  });
 
-    // Send a confirmation message to the user
-    client.chat.postMessage({
-      channel: userId,
-      text: selectedMove
-        ? `You chose: ${selectedMove}`
-        : "You did not select a move.",
-    });
+  let p1Input = "";
+  let fin = false;
+  if (pullValues.item.p1input) {
+    p1Input = pullValues.item.p1input;
+    fin = true;
+  }
+
+  const trythis = await client.apps.datastore.put<
+    typeof games.definition
+  >({
+    datastore: games.name,
+    item: {
+      number: metadata.gameId.toString(),
+      player1: pullValues.item.player1,
+      p1input: p1Input,
+      player2: pullValues.item.player2,
+      p2input: selectedMove,
+      finished: fin
+    },
+  });
+  console.log(trythis);
+  console.log(`${metadata.player} (${metadata.userId}) chose: ${selectedMove}`);
+
+  if (fin) {
+    const p1 = p1Input;
+    const p2 = selectedMove;
     
-    return { completed: true, outputs: { interactivity: body.interactivity } };
-  } catch (err) {
-    console.error("Error in view submission handler:", err);
-    return { completed: true, outputs: { interactivity: body.interactivity } };
+    if (p1 === p2) {
+      await client.chat.postMessage({
+        channel: metadata.channelId,
+        thread_ts: metadata.messageTs,
+        text: `It's a tie! Both players chose *${p1}*.`,
+      });
+    } else if ((p1 == "rock" && p2 == "scissors") ||
+               (p1 == "scissors" && p2 == "paper") ||
+               (p1 == "paper" && p2 == "rock")) {
+      await client.chat.postMessage({
+        channel: metadata.channelId,
+        thread_ts: metadata.messageTs,
+        text: `<@${pullValues.item.player1}> wins! They threw ${p1} while <@${pullValues.item.player2}> threw ${p2}.`,
+      });
+    } else if ((p2 == "rock" && p1 == "scissors") ||
+               (p2 == "scissors" && p1 == "paper") ||
+               (p2 == "paper" && p1 == "rock")) {
+      await client.chat.postMessage({
+        channel: metadata.channelId,
+        thread_ts: metadata.messageTs,
+        text: `<@${pullValues.item.player2}> wins! They threw ${p2} while <@${pullValues.item.player1}> threw ${p1}.`,
+      });
+    }
   }
 });

@@ -5,7 +5,7 @@ import game from "./datastores/tracker.ts";
 import games from "./datastores/gametrack.ts";
 
 export default Manifest({
-  name: "The Dokeshi",
+  name: "Dokeshi",
   description: "Feeling a bit bored?",
   longDescription: "This is a work in progress! A bot that hosts games for you and your friends to play in Slack. I'm starting with a rock-paper-scissors game, but I have plans for more! And just to reiterate, this is a work in progress (WIP)!",
   icon: "assets/jester.jpeg",
