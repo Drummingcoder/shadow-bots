@@ -1,12 +1,12 @@
 import type { Trigger } from "deno-slack-sdk/types.ts";
 import { TriggerContextData, TriggerTypes } from "deno-slack-api/mod.ts";
-import starting from "../workflows/start_game.ts";
+import startOmni from "../workflows/startOmniGame.ts";
 
-const newTrigger: Trigger<typeof starting.definition> = {
+const newTrigger: Trigger<typeof startOmni.definition> = {
   type: TriggerTypes.Shortcut,
-  name: "playRPS",
-  description: "A regular game of Rock, Paper, Scissors",
-  workflow: `#/workflows/${starting.definition.callback_id}`,
+  name: "playOmniRPS",
+  description: "Rock, Paper, Scissors, but you can use anything",
+  workflow: `#/workflows/${startOmni.definition.callback_id}`,
   inputs: {
     interactivity: {
       value: TriggerContextData.Shortcut.interactivity,

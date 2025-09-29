@@ -1,10 +1,10 @@
 import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
-import { start } from "../functions/startRps.ts";
+import { starteOmni } from "../functions/startOmniRps.ts";
 
-const starting = DefineWorkflow({
-  callback_id: "rps",
-  title: "Rock, Paper, Scissors",
-  description: "Just a normal game of Rock, Paper, Scissors",
+const startOmni = DefineWorkflow({
+  callback_id: "omni_rps",
+  title: "Omniscient Rock, Paper, Scissors",
+  description: "What if you could use anything in a game of RPS?",
   input_parameters: {
     properties: {
       interactivity: {
@@ -18,12 +18,12 @@ const starting = DefineWorkflow({
   },
 });
 
-const form = starting.addStep(Schema.slack.functions.OpenForm,
+const form = startOmni.addStep(Schema.slack.functions.OpenForm,
   {
     title: "Rock, Paper, Scissors",
-    interactivity: starting.inputs.interactivity,
+    interactivity: startOmni.inputs.interactivity,
     submit_label: "Start!",
-    description: "Have a good fashioned rock, paper, scissors match with anyone!",
+    description: "Still a Work in Progress!",
     fields: {
       elements: [
       {
@@ -44,11 +44,11 @@ const form = starting.addStep(Schema.slack.functions.OpenForm,
   },
 );
 
-starting.addStep(start, {
+startOmni.addStep(starteOmni, {
   other_user: form.outputs.fields.player2,
   channel: form.outputs.fields.channel,
-  user_id: starting.inputs.user_id,
+  user_id: startOmni.inputs.user_id,
   interactivity: form.outputs.interactivity,
 });
 
-export default starting;
+export default startOmni;
