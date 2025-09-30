@@ -54,10 +54,19 @@ export default SlackFunction(
       typeof game.definition
     >({
       datastore: game.name,
-      id: "input",
+      id: "omniinput",
     });
 
     if (getGame.item.value != 2) {
+      const putResp = await client.apps.datastore.put< //to remove after running program for the first time
+        typeof game.definition
+      >({
+        datastore: game.name,
+        item: {
+          name: "omniinput",
+          value: 2,
+        },
+      });
       await client.chat.postEphemeral({
         channel: channelToPost,
         user: inputs.user_id,
@@ -70,7 +79,7 @@ export default SlackFunction(
       >({
         datastore: game.name,
         item: {
-          name: "input",
+          name: "omniinput",
           value: 0,
         },
       });
@@ -78,7 +87,7 @@ export default SlackFunction(
     }
     const firstText = await client.chat.postMessage({
       channel: channelToPost,
-      text: `<@${inputs.user_id}> has challenged <@${inputs.other_user}> to a game of Rock, Paper, Scissors!`,
+      text: `<@${inputs.user_id}> has challenged <@${inputs.other_user}> to a game of Omniscient Rock, Paper, Scissors!`,
     });
 
     const putResp = await client.apps.datastore.put<
@@ -165,7 +174,7 @@ export default SlackFunction(
     typeof game.definition
   >({
     datastore: game.name,
-    id: "input",
+    id: "omniinput",
   });
   if (getResp.item.value == 0 || !getResp.item.value) {
     const putResp = await client.apps.datastore.put<
@@ -173,7 +182,7 @@ export default SlackFunction(
     >({
       datastore: game.name,
       item: {
-        name: "input",
+        name: "omniinput",
         value: 1,
       },
     });
@@ -213,7 +222,7 @@ export default SlackFunction(
     >({
       datastore: game.name,
       item: {
-        name: "input",
+        name: "omniinput",
         value: 2,
       },
     });
@@ -272,22 +281,12 @@ export default SlackFunction(
                 type: "actions",
                 elements: [
                     {
-                        type: "radio_buttons",
+                        type: "plain_text_input",
                         action_id: "rps_choice",
-                        options: [
-                            {
-                                text: { type: "plain_text", text: "Rock" },
-                                value: "rock"
-                            },
-                            {
-                                text: { type: "plain_text", text: "Paper" },
-                                value: "paper"
-                            },
-                            {
-                                text: { type: "plain_text", text: "Scissors" },
-                                value: "scissors"
-                            }
-                        ]
+                        placeholder: {
+                          type: "plain_text",
+                          text: "Put anything!"
+                        }
                     }
                 ]
             }
@@ -328,7 +327,7 @@ export default SlackFunction(
     typeof game.definition
   >({
     datastore: game.name,
-    id: "input",
+    id: "omniinput",
   });
   if (getResp.item.value == 0 || !getResp.item.value) {
     const putResp = await client.apps.datastore.put<
@@ -336,7 +335,7 @@ export default SlackFunction(
     >({
       datastore: game.name,
       item: {
-        name: "input",
+        name: "omniinput",
         value: 1,
       },
     });
@@ -376,7 +375,7 @@ export default SlackFunction(
     >({
       datastore: game.name,
       item: {
-        name: "input",
+        name: "omniinput",
         value: 2,
       },
     });

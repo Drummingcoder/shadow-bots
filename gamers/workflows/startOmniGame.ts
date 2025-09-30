@@ -23,7 +23,7 @@ const form = startOmni.addStep(Schema.slack.functions.OpenForm,
     title: "Rock, Paper, Scissors",
     interactivity: startOmni.inputs.interactivity,
     submit_label: "Start!",
-    description: "Still a Work in Progress!",
+    description: "Still a Work in Progress! Not finished yet!",
     fields: {
       elements: [
       {
