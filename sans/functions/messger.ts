@@ -69,6 +69,11 @@ export default SlackFunction(
             text: "There are rules to my tracking, you can't manual set your presence to away like that. What, scared of a green light on your profile? I need that to track you ya know? So uh, kindly turn it on for me?"
           });
         }
+        await client.chat.postMessage({
+          channel: inputs.channel,
+          thread_ts: inputs.messagets,
+          text: "So, have you read the rules yet?"
+        });
         const putResp = await client.apps.datastore.put<
           typeof trackUsers.definition
         >({
@@ -92,7 +97,7 @@ export default SlackFunction(
             tracking: false,
             step: 0,
             coins: 0,
-            messagets: mests,
+            messagets: "",
           },
         });
         console.log(putResp);
@@ -105,10 +110,104 @@ export default SlackFunction(
         await client.chat.postMessage({
           channel: inputs.channel,
           thread_ts: inputs.messagets,
-          text: "There's not a valid answer. Haa...do you really want to have a bad time?"
+          text: "That's not a valid answer. Haa...do you really want to have a bad time?"
         });
         return { outputs: {} };
-      } 
+      }
+    } else if (getResp.item?.step == 2) {
+      if ((message == "yes" || message == "y") || (message == "Yes" || message == "Y")) {
+        await client.chat.postMessage({
+          channel: inputs.channel,
+          thread_ts: inputs.messagets,
+          text: "If you have, you probably know what's next right? This is your final chance to back out. Once you're in, there's no out. Do you want to go forward?"
+        });
+        const putResp = await client.apps.datastore.put<
+          typeof trackUsers.definition
+        >({
+          datastore: trackUsers.name,
+          item: {
+            user_id: userID,
+            tracking: false,
+            step: 3,
+            coins: 0,
+            messagets: mests,
+          },
+        });
+        console.log(putResp);
+      } else if ((message == "no" || message == "n") || (message == "No" || message == "N")) {
+        await client.chat.postMessage({
+          channel: inputs.channel,
+          thread_ts: inputs.messagets,
+          text: `The rules are simple, don't automatically set yourself as away, and just continue to use Slack normally. I will give you a coin for every hour you spend off Slack (minus 7 hours for sleep time). I will ping you every half an hour reminding you your time on Slack in <#${"C09GDF8ETQB"}>, but you can spend coins to avoid the ping. \n\n That's it for the rules, do you want to continue?`
+        });
+        const putResp = await client.apps.datastore.put<
+          typeof trackUsers.definition
+        >({
+          datastore: trackUsers.name,
+          item: {
+            user_id: userID,
+            tracking: false,
+            step: 3,
+            coins: 0,
+            messagets: mests,
+          },
+        });
+        console.log(putResp);
+      } else {
+        await client.chat.postMessage({
+          channel: inputs.channel,
+          thread_ts: inputs.messagets,
+          text: "That's not a valid answer. Haa...do you really want to have a bad time?"
+        });
+        return { outputs: {} };
+      }
+    } else if (getResp.item?.step == 3) {
+      if ((message == "yes" || message == "y") || (message == "Yes" || message == "Y")) {
+        await client.chat.postMessage({
+          channel: inputs.channel,
+          thread_ts: inputs.messagets,
+          text: "Alright, there's no backing out now. Good luck to you..."
+        });
+        const putResp = await client.apps.datastore.put<
+          typeof trackUsers.definition
+        >({
+          datastore: trackUsers.name,
+          item: {
+            user_id: userID,
+            tracking: true,
+            step: 0,
+            coins: 0,
+            messagets: "",
+          },
+        });
+        console.log(putResp);
+      } else if ((message == "no" || message == "n") || (message == "No" || message == "N")) {
+        await client.chat.postMessage({
+          channel: inputs.channel,
+          thread_ts: inputs.messagets,
+          text: `Ok pal, I'll just be over at Grillby's then.`
+        });
+        const putResp = await client.apps.datastore.put<
+          typeof trackUsers.definition
+        >({
+          datastore: trackUsers.name,
+          item: {
+            user_id: userID,
+            tracking: false,
+            step: 0,
+            coins: 0,
+            messagets: "",
+          },
+        });
+        console.log(putResp);
+      } else {
+        await client.chat.postMessage({
+          channel: inputs.channel,
+          thread_ts: inputs.messagets,
+          text: "That's not a valid answer. Haa...do you really want to have a bad time?"
+        });
+        return { outputs: {} };
+      }
     }
 
     return { outputs: {} };
