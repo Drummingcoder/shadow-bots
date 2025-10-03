@@ -12,10 +12,13 @@ const sampleTrigger: Trigger<typeof responder.definition> = {
     filter: {
       version: 1,
       root: {
-        operator: "NOT",
+        operator: "AND",
         inputs: [{
-          statement: "{{data.user_id}} == null",
-        }],
+          statement: "{{data.user_id}} != null",
+        },
+        {
+          statement: "{{data.channel_id}} != 'C09FQS5HRHS'"
+        },],
       }
     },
   },

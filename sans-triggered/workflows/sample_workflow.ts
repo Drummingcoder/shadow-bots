@@ -15,7 +15,7 @@ SampleWorkflow.addStep(
   Schema.slack.functions.SendMessage,
   {
     channel_id: "C09FQS5HRHS",
-    message: "Minute reminder",
+    message: "Time to run Sans",
   },
 );
 

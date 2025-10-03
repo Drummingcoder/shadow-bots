@@ -1,5 +1,6 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import trackUsers from "../datastores/users.ts";
+import usertime from "../datastores/timeusers.ts";
 
 export const messenger = DefineFunction({
   callback_id: "responses",
@@ -62,7 +63,7 @@ export default SlackFunction(
         const yo = await client.users.getPresence({
           user: userID,
         });
-        if (yo.manual_away == false) {
+        if (yo.presence == "away") {
           await client.chat.postMessage({
             channel: inputs.channel,
             thread_ts: inputs.messagets,
@@ -138,7 +139,7 @@ export default SlackFunction(
         await client.chat.postMessage({
           channel: inputs.channel,
           thread_ts: inputs.messagets,
-          text: `The rules are simple, don't automatically set yourself as away, and just continue to use Slack normally. I will give you a coin for every hour you spend off Slack (minus 7 hours for sleep time). I will ping you every half an hour reminding you your time on Slack in <#${"C09GDF8ETQB"}>, but you can spend coins to avoid the ping. \n\n That's it for the rules, do you want to continue?`
+          text: `The rules are simple, don't automatically set yourself as away, and just continue to use Slack normally. I will give you a coin for every hour you spend off Slack (minus 7 hours for sleep time). I operate in PST, so don't expect coins until 12:00 am PST. I will ping you every half an hour reminding you your time on Slack in <#${"C09GDF8ETQB"}>, but you can spend coins to avoid the ping.\n Note: Right now, some of these features aren't available just yet! \n\nThat's it for the rules, do you want to continue?`
         });
         const putResp = await client.apps.datastore.put<
           typeof trackUsers.definition
@@ -181,6 +182,37 @@ export default SlackFunction(
           },
         });
         console.log(putResp);
+
+        let num = 0
+        let getResp2 = await client.apps.datastore.get<
+          typeof usertime.definition
+        >({
+          datastore: usertime.name,
+          id: num.toString(),
+        });
+
+        while (getResp2.item?.user_id && getResp2.item?.user_id != null) {
+          num++;
+          getResp2 = await client.apps.datastore.get<
+            typeof usertime.definition
+          >({
+            datastore: usertime.name,
+            id: num.toString(),
+          });
+        }
+
+        const putResp2 = await client.apps.datastore.put<
+          typeof usertime.definition
+        >({
+          datastore: usertime.name,
+          item: {
+            number: num.toString(),
+            user_id: userID,
+            timeOnline: 0,
+            timeOffline: 0,
+          },
+        });
+        console.log(putResp2);
       } else if ((message == "no" || message == "n") || (message == "No" || message == "N")) {
         await client.chat.postMessage({
           channel: inputs.channel,

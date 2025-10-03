@@ -1,19 +1,19 @@
 import type { Trigger } from "deno-slack-sdk/types.ts";
 import { TriggerTypes } from "deno-slack-api/mod.ts";
-import SampleWorkflow from "../workflows/sample_workflow.ts";
+import checked from "../workflows/coincounter.ts";
 
-const sampleTrigger: Trigger<typeof SampleWorkflow.definition> = {
+const sampleTrigger: Trigger<typeof checked.definition> = {
   type: TriggerTypes.Scheduled,
-  name: "Trigger60",
-  description: "Runs every minute",
-  workflow: `#/workflows/${SampleWorkflow.definition.callback_id}`,
+  name: "CheckCoins",
+  description: "Runs every day",
+  workflow: `#/workflows/${checked.definition.callback_id}`,
   inputs: {},
   schedule: {
-    start_time: `${2025}-${10}-${2}T11:59:00`,
+    start_time: `2025-10-03T00:00:00`,
     end_time: "2050-05-01T14:00:00Z",
     timezone: "America/Los_Angeles",
     frequency: {
-      type: "hourly",
+      type: "daily",
       repeats_every: 1,
     },
   },
