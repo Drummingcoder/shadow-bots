@@ -118,7 +118,7 @@ export default SlackFunction(
               const mins = newResp.item.timeOnline % 60;
               await client.chat.postMessage ({
                 channel: "C09GDF8ETQB",
-                text: `Let's get to the point, <@${getResp.item.user_id}>. You've been online for ${hours} hours and ${mins} minutes today.`,
+                text: `Let's just get to the point, <@${getResp.item.user_id}>. You've been online for ${hours} hours and ${mins} minutes today.`,
               });
             }
           }

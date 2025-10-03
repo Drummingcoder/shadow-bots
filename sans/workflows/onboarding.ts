@@ -28,6 +28,7 @@ first.addStep(messenger, {
   channel: first.inputs.channel,
   user: first.inputs.user,
   messagets: first.inputs.messagets,
+  message: first.inputs.message,
 });
 
 export default first;

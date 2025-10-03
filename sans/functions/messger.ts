@@ -139,7 +139,7 @@ export default SlackFunction(
         await client.chat.postMessage({
           channel: inputs.channel,
           thread_ts: inputs.messagets,
-          text: `The rules are simple, don't automatically set yourself as away, and just continue to use Slack normally. I will give you a coin for every hour you spend off Slack (minus 7 hours for sleep time). I operate in PST, so don't expect coins until 12:00 am PST. I will ping you every half an hour reminding you your time on Slack in <#${"C09GDF8ETQB"}>, but you can spend coins to avoid the ping.\n Note: Right now, some of these features aren't available just yet! \n\nThat's it for the rules, do you want to continue?`
+          text: `The rules are simple, don't automatically set yourself as away, and just continue to use Slack normally. I will give you a coin for every hour you spend off Slack (minus 7 hours for sleep time). I operate in PST, so don't expect coins until 12:00 am PST. I will ping you every half an hour reminding you your time on Slack in <#${"C09GDF8ETQB"}>, but you can spend coins to avoid the ping. Use the command '/timetospend' to spend your coins. \n\nThat's it for the rules, do you want to continue?`
         });
         const putResp = await client.apps.datastore.put<
           typeof trackUsers.definition
