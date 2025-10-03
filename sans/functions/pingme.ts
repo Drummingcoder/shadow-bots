@@ -63,27 +63,27 @@ export default SlackFunction(
           } else if (newResp.item.timeOnline == 60) {
             await client.chat.postMessage ({
               channel: "C09GDF8ETQB",
-              text: `Hey, <@${getResp.item.user_id}>, this is the second reminder. Your Slack time has reached 1 hour.`,
+              text: `Hey, <@${getResp.item.user_id}>, your Slack time has reached 1 hour.`,
             });
           } else if (newResp.item.timeOnline == 90) {
             await client.chat.postMessage ({
               channel: "C09GDF8ETQB",
-              text: `Hey, <@${getResp.item.user_id}>, this is the third reminder today. Your Slack time is now 1 hour and 30 mins.`,
+              text: `Hey, <@${getResp.item.user_id}>, your Slack time is now 1 hour and 30 mins.`,
             });
           } else if (newResp.item.timeOnline == 120) {
             await client.chat.postMessage ({
               channel: "C09GDF8ETQB",
-              text: `Hey, <@${getResp.item.user_id}>, this is the fourth ping today. You've been here for 2 hours now, maybe it's time to get off?`,
+              text: `Hey, <@${getResp.item.user_id}>. You've been here for 2 hours now, maybe it's time to get off?`,
             });
           } else if (newResp.item.timeOnline == 150) {
             await client.chat.postMessage ({
               channel: "C09GDF8ETQB",
-              text: `Hmm, <@${getResp.item.user_id}>, this is the fifth time today. It's been 2 hours and 30 minutes, it's really time to get off now ya know.`,
+              text: `Hmm, <@${getResp.item.user_id}>. It's been 2 hours and 30 minutes, it's really time to get off now ya know.`,
             });
           } else if (newResp.item.timeOnline == 180) {
             await client.chat.postMessage ({
               channel: "C09GDF8ETQB",
-              text: `<@${getResp.item.user_id}>, this is the sixth time. Haa...this is so disappointing. How could you want my help and still stay online for 3 HOURS? Just let me sleep twin...`,
+              text: `<@${getResp.item.user_id}> Haa...this is so disappointing. How could you want my help and still stay online for 3 HOURS? Just let me sleep twin...`,
             });
           } else if (newResp.item.timeOnline % 30 == 0) {
             const hours = Math.floor(newResp.item.timeOnline / 60);
