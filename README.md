@@ -38,7 +38,7 @@ tracked today.
 ## Deploying the Bot
 This bot was made using the Deno Slack SDK, so to install and deploy it yourself,
 you need to install the Slack CLI and Deno SDK to deploy the bot.
-The Dokeshi bot's code is stored inside the gamers folder.
+The Sans Tracker bot's code is stored inside the sans folder.
 
 1. Clone the repository:
     ```bash
