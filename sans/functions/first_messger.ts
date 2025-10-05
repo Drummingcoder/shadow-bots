@@ -65,10 +65,16 @@ export default SlackFunction(
           id: i.toString(),
         });
       }
+
+      const onlineHours = Math.floor(getResp2.item.timeOnline / 60);
+      const onlineMins = getResp2.item.timeOnline % 60;
+      const offlineHours = Math.floor(getResp2.item.timeOffline / 60);
+      const offlineMins = getResp2.item.timeOffline % 60;
+
       await client.chat.postMessage({
         channel: inputs.channel,
         thread_ts: inputs.messagets,
-        text: `You have been online for ${getResp2.item.timeOnline} minutes and offline for ${getResp2.item.timeOffline} minutes today.`
+        text: `You have been online for ${onlineHours} hours and ${onlineMins} minutes and offline for ${offlineHours} hours and ${offlineMins} minutes today.`
       });
     } else if ((myMessage?.toLowerCase().includes("stop") || myMessage?.toLowerCase().includes("fuck")) && getResp.item?.tracking) {
       await client.chat.postMessage({

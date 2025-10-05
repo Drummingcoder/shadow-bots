@@ -43,6 +43,16 @@ export default SlackFunction(
         return { outputs: {} };
       }
 
+      if (inputs.coins < 0) {
+        if (inputs.user_id) {
+          await client.chat.postMessage({
+            channel: inputs.user_id,
+            text: "Really? Negative coins? You wanna have a bad time?"
+          });
+        }
+        return { outputs: {} };
+      }
+
       const getResp1 = await client.apps.datastore.get<
         typeof minusCoins.definition
       >({
@@ -87,6 +97,13 @@ export default SlackFunction(
         },
       });
       console.log(putResp2);
+
+      if (inputs.user_id) {
+        await client.chat.postMessage({
+          channel: inputs.user_id,
+          text: `You have spent ${inputs.coins} to skip ${inputs.coins} pings. Hope you enjoy spending way more time on Slack than necessary...`
+        });
+      }
 
       return { outputs: {} };
     } else {

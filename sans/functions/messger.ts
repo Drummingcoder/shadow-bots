@@ -4,8 +4,8 @@ import usertime from "../datastores/timeusers.ts";
 
 export const messenger = DefineFunction({
   callback_id: "responses",
-  title: "Respond to a DM",
-  description: "A function to respond to direct messages",
+  title: "Respond to a thread",
+  description: "A function to respond to threaded messages",
   source_file: "functions/messger.ts",
   input_parameters: {
     properties: {
@@ -59,7 +59,7 @@ export default SlackFunction(
     } else if ((!getResp.item?.step) || getResp.item?.step == 0) {
       return { outputs: {} };
     } else if (getResp.item?.step == 1) {
-      if ((message == "yes" || message == "y") || (message == "Yes" || message == "Y")) {
+      if (message.toLowerCase() == "yes" || message.toLowerCase() == "y") {
         const yo = await client.users.getPresence({
           user: userID,
         });
@@ -88,7 +88,7 @@ export default SlackFunction(
           },
         });
         console.log(putResp);
-      } else if ((message == "no" || message == "n") || (message == "No" || message == "N")) {
+      } else if (message.toLowerCase() == "no" || message.toLowerCase() == "n") {
         const putResp = await client.apps.datastore.put<
           typeof trackUsers.definition
         >({
@@ -116,7 +116,7 @@ export default SlackFunction(
         return { outputs: {} };
       }
     } else if (getResp.item?.step == 2) {
-      if ((message == "yes" || message == "y") || (message == "Yes" || message == "Y")) {
+      if (message.toLowerCase() == "yes" || message.toLowerCase() == "y") {
         await client.chat.postMessage({
           channel: inputs.channel,
           thread_ts: inputs.messagets,
@@ -135,7 +135,7 @@ export default SlackFunction(
           },
         });
         console.log(putResp);
-      } else if ((message == "no" || message == "n") || (message == "No" || message == "N")) {
+      } else if (message.toLowerCase() == "no" || message.toLowerCase() == "n") {
         await client.chat.postMessage({
           channel: inputs.channel,
           thread_ts: inputs.messagets,
@@ -163,7 +163,7 @@ export default SlackFunction(
         return { outputs: {} };
       }
     } else if (getResp.item?.step == 3) {
-      if ((message == "yes" || message == "y") || (message == "Yes" || message == "Y")) {
+      if (message.toLowerCase() == "yes" || message.toLowerCase() == "y") {
         await client.chat.postMessage({
           channel: inputs.channel,
           thread_ts: inputs.messagets,
@@ -213,7 +213,7 @@ export default SlackFunction(
           },
         });
         console.log(putResp2);
-      } else if ((message == "no" || message == "n") || (message == "No" || message == "N")) {
+      } else if (message.toLowerCase() == "no" || message.toLowerCase() == "n") {
         await client.chat.postMessage({
           channel: inputs.channel,
           thread_ts: inputs.messagets,

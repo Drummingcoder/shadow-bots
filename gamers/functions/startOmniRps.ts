@@ -281,12 +281,12 @@ export default SlackFunction(
                 type: "actions",
                 elements: [
                     {
-                        type: "plain_text_input",
-                        action_id: "rps_choice",
-                        placeholder: {
-                          type: "plain_text",
-                          text: "Put anything!"
-                        }
+                      type: "plain_text_input",
+                      action_id: "rps_choice",
+                      placeholder: {
+                        type: "plain_text",
+                        text: "Put anything!"
+                      }
                     }
                 ]
             }
@@ -431,25 +431,15 @@ export default SlackFunction(
                 }
             },
             {
-                type: "actions",
+                type: "input",
                 elements: [
                     {
-                        type: "radio_buttons",
-                        action_id: "rps_choice",
-                        options: [
-                            {
-                                text: { type: "plain_text", text: "Rock" },
-                                value: "rock"
-                            },
-                            {
-                                text: { type: "plain_text", text: "Paper" },
-                                value: "paper"
-                            },
-                            {
-                                text: { type: "plain_text", text: "Scissors" },
-                                value: "scissors"
-                            }
-                        ]
+                      type: "plain_text_input",
+                      action_id: "rps_choice",
+                      placeholder: {
+                        type: "plain_text",
+                        text: "Put anything!"
+                      }
                     }
                 ]
             }

@@ -20,8 +20,7 @@ coins to skip it.
 Speaking about coins, the bot is programmed to give you 1 coin for every hour you
 spend off Slack. This coin-giving will happen at 12:00 PST, where the bot will
 reset time active and away (perhaps in the future, it can keep a log on this), and
-distribute coins accordingly. There's no confirmation message for when this happens
-let, but I'll might add this soon.
+distribute coins accordingly.
 
 To spend coins to skip the pings, use the command '/timetospend'. A form will show
 up showing you how many coins you have and allow you to enter a number of coins to

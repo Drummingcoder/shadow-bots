@@ -75,6 +75,11 @@ export default SlackFunction(
         id: num.toString(),
       });
     }
+
+    await client.chat.postMessage({
+      channel: "C09GDF8ETQB",
+      text: "Coins have been counted and the times have been reset. Let's see how well you can do today."
+    });
     return { outputs: {} };
   },
 );

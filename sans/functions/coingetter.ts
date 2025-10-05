@@ -15,7 +15,7 @@ export const getterCoins = DefineFunction({
       },
       interactivity: {
         type: Schema.slack.types.interactivity,
-        description: "The user invoking the workflow",
+        description: "To pass to the next step",
       }
     },
     required: ["user_id", "interactivity"],
@@ -44,7 +44,11 @@ export default SlackFunction(
       datastore: trackUsers.name,
       id: inputs.user_id,
     });
-    
-    return { outputs: { num: getResp.item.coins, interactivity: inputs.interactivity } };
+
+    if (getResp.items.coins) {
+      return { outputs: { num: getResp.item.coins, interactivity: inputs.interactivity } };
+    } else {
+      return { outputs: { num: 0, interactivity: inputs.interactivity } };
+    }
   },
 );
