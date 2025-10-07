@@ -270,27 +270,28 @@ export default SlackFunction(
             text: "Submit"
         },
         blocks: [
-            {
-                type: "section",
-                text: {
-                    type: "mrkdwn",
-                    text: "Choose your move:"
-                }
+          {
+            type: "section",
+            text: {
+                type: "mrkdwn",
+                text: "What's your move?"
             },
-            {
-                type: "actions",
-                elements: [
-                    {
-                      type: "plain_text_input",
-                      action_id: "rps_choice",
-                      placeholder: {
-                        type: "plain_text",
-                        text: "Put anything!"
-                      }
-                    }
-                ]
+          },
+          {
+            type: "input",
+            block_id: "input_move",
+            label: {
+              "type": "plain_text",
+              "text": "Pick any move!",
+              "emoji": true
+            },
+            element: {
+              "type": "plain_text_input",
+              "action_id": "rps_choice"
             }
+          }
         ],
+        
         private_metadata: JSON.stringify({ 
           player: "p1", 
           userId: body.user.id,
@@ -423,26 +424,26 @@ export default SlackFunction(
             text: "Submit"
         },
         blocks: [
-            {
-                type: "section",
-                text: {
-                    type: "mrkdwn",
-                    text: "Choose your move:"
-                }
+          {
+            type: "section",
+            text: {
+                type: "mrkdwn",
+                text: "What's your move?"
             },
-            {
-                type: "input",
-                elements: [
-                    {
-                      type: "plain_text_input",
-                      action_id: "rps_choice",
-                      placeholder: {
-                        type: "plain_text",
-                        text: "Put anything!"
-                      }
-                    }
-                ]
+          },
+          {
+            type: "input",
+            block_id: "input_move",
+            label: {
+              "type": "plain_text",
+              "text": "Pick any move!",
+              "emoji": true
+            },
+            element: {
+              "type": "plain_text_input",
+              "action_id": "rps_choice"
             }
+          }
         ],
         private_metadata: JSON.stringify({ 
           player: "p2", 
@@ -462,8 +463,8 @@ export default SlackFunction(
   let selectedMove = "";
   if (state) {
     for (const blockId in state) {
-      if (state[blockId].rps_choice && state[blockId].rps_choice.selected_option) {
-        selectedMove = state[blockId].rps_choice.selected_option.value;
+      if (state[blockId].rps_choice && state[blockId].rps_choice.value) {
+        selectedMove = state[blockId].rps_choice.value;
         break;
       }
     }
@@ -502,28 +503,56 @@ export default SlackFunction(
   if (fin) {
     const p1 = selectedMove;
     const p2 = p2Input;
-    
+
     if (p1 === p2) {
       await client.chat.postMessage({
         channel: metadata.channelId,
         thread_ts: metadata.messageTs,
-        text: `It's a tie! Both players chose *${p1}*.`,
+        text: `It's a tie! Both players chose ${p1}.`,
       });
-    } else if ((p1 == "rock" && p2 == "scissors") ||
-               (p1 == "scissors" && p2 == "paper") ||
-               (p1 == "paper" && p2 == "rock")) {
+    }
+
+    const response = await fetch("https://ai.hackclub.com/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messages: [
+          {
+            role: "user", 
+            content: `Who would win: ${p1} or ${p2}? Just give me the winner and a short explanation (1 sentence) in the form "[Insert winner] wins because [insert reason]". So if ${p1} would win against ${p2}, put "${p1} wins because [insert reason]". Otherwise, put "${p2} wins because [insert reason]." No ties! Don't add any extra punctuation or brackets/parathesis to the response.`
+          }
+        ]
+      })
+    });
+
+    const aiResponse = await response.json();
+    const reAI = aiResponse.choices[0].message.content;
+    const winner = reAI.split("</think>")[1].replace("\n", "");
+    console.log("Resp: ", aiResponse);
+    console.log("\nCut:", reAI);
+    console.log("\nwinner: ", winner);
+
+    const wincondition = winner.split("wins")[0];
+    console.log("\nbro: ", wincondition);
+    if (wincondition.includes(p1)) {
       await client.chat.postMessage({
         channel: metadata.channelId,
         thread_ts: metadata.messageTs,
-        text: `<@${pullValues.item.player1}> wins! They threw ${p1} while <@${pullValues.item.player2}> threw ${p2}.`,
+        text: `<@${pullValues.item.player1}>'s answer of ${p1} won against <@${pullValues.item.player2}>'s answer of ${p2}! ${winner}`,
       });
-    } else if ((p2 == "rock" && p1 == "scissors") ||
-               (p2 == "scissors" && p1 == "paper") ||
-               (p2 == "paper" && p1 == "rock")) {
+    } else if (wincondition.includes(p2)) {
       await client.chat.postMessage({
         channel: metadata.channelId,
         thread_ts: metadata.messageTs,
-        text: `<@${pullValues.item.player2}> wins! They threw ${p2} while <@${pullValues.item.player1}> threw ${p1}.`,
+        text: `<@${pullValues.item.player2}>'s answer of ${p2} won against <@${pullValues.item.player1}>'s answer of ${p1}! ${winner}`,
+      });
+    } else {
+      await client.chat.postMessage({
+        channel: metadata.channelId,
+        thread_ts: metadata.messageTs,
+        text: `Something went wrong.`,
       });
     }
   }
@@ -533,8 +562,8 @@ export default SlackFunction(
   let selectedMove = "";
   if (state) {
     for (const blockId in state) {
-      if (state[blockId].rps_choice && state[blockId].rps_choice.selected_option) {
-        selectedMove = state[blockId].rps_choice.selected_option.value;
+      if (state[blockId].rps_choice && state[blockId].rps_choice.value) {
+        selectedMove = state[blockId].rps_choice.value;
         break;
       }
     }
@@ -573,28 +602,56 @@ export default SlackFunction(
   if (fin) {
     const p1 = p1Input;
     const p2 = selectedMove;
-    
+
     if (p1 === p2) {
       await client.chat.postMessage({
         channel: metadata.channelId,
         thread_ts: metadata.messageTs,
-        text: `It's a tie! Both players chose *${p1}*.`,
+        text: `It's a tie! Both players chose ${p1}.`,
       });
-    } else if ((p1 == "rock" && p2 == "scissors") ||
-               (p1 == "scissors" && p2 == "paper") ||
-               (p1 == "paper" && p2 == "rock")) {
+    }
+
+    const response = await fetch("https://ai.hackclub.com/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messages: [
+          {
+            role: "user", 
+            content: `Who would win: ${p1} or ${p2}? Just give me the winner and a short explanation (1 sentence) in the form "[Insert winner] wins because [insert reason]". So if ${p1} would win against ${p2}, put "${p1} wins because [insert reason]". Otherwise, put "${p2} wins because [insert reason]." No ties! Don't add any extra punctuation or brackets/parathesis to the response.`
+          }
+        ]
+      })
+    });
+
+    const aiResponse = await response.json();
+    const reAI = aiResponse.choices[0].message.content;
+    const winner = reAI.split("</think>")[1].replace("\n", "");
+    console.log("Resp: ", aiResponse);
+    console.log("\nCut:", reAI);
+    console.log("\nwinner: ", winner);
+
+    const wincondition = winner.split("wins")[0];
+    console.log("\nbro: ", wincondition);
+    if (wincondition.includes(p1)) {
       await client.chat.postMessage({
         channel: metadata.channelId,
         thread_ts: metadata.messageTs,
-        text: `<@${pullValues.item.player1}> wins! They threw ${p1} while <@${pullValues.item.player2}> threw ${p2}.`,
+        text: `<@${pullValues.item.player1}>'s answer of "${p1}" won against <@${pullValues.item.player2}>'s answer of "${p2}"! ${winner}`,
       });
-    } else if ((p2 == "rock" && p1 == "scissors") ||
-               (p2 == "scissors" && p1 == "paper") ||
-               (p2 == "paper" && p1 == "rock")) {
+    } else if (wincondition.includes(p2)) {
       await client.chat.postMessage({
         channel: metadata.channelId,
         thread_ts: metadata.messageTs,
-        text: `<@${pullValues.item.player2}> wins! They threw ${p2} while <@${pullValues.item.player1}> threw ${p1}.`,
+        text: `<@${pullValues.item.player2}>'s answer of "${p2}" won against <@${pullValues.item.player1}>'s answer of "${p1}"! ${winner}`,
+      });
+    } else {
+      await client.chat.postMessage({
+        channel: metadata.channelId,
+        thread_ts: metadata.messageTs,
+        text: `Something went wrong.`,
       });
     }
   }

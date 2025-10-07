@@ -1,6 +1,5 @@
 import { DefineFunction, SlackFunction, Schema } from "deno-slack-sdk/mod.ts";
 import trackUsers from "../datastores/users.ts";
-import { InteractivityType } from "deno-slack-sdk/schema/slack/types/custom/interactivity.ts";
 
 export const getterCoins = DefineFunction({
   callback_id: "coinsgetter",
@@ -45,7 +44,7 @@ export default SlackFunction(
       id: inputs.user_id,
     });
 
-    if (getResp.items.coins) {
+    if (getResp.item.coins) {
       return { outputs: { num: getResp.item.coins, interactivity: inputs.interactivity } };
     } else {
       return { outputs: { num: 0, interactivity: inputs.interactivity } };
