@@ -24,6 +24,9 @@ const multi = DefineDatastore({
     },
     listofinputs: {
       type: Schema.types.array,
+      items: {
+        type: Schema.types.string,
+      },
     },
     turn: {
       type: Schema.types.number,

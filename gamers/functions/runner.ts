@@ -88,15 +88,16 @@ export default SlackFunction(
               messageinput: mess,
               score: (getResp1.item.score + 1),
               finished: false,
-              listofinputs: [...getResp1.item.listofinputs, mess],
+              listofinputs: (getResp1.item.listofinputs || []).concat(mess),
             },
           });
+          console.log([...(getResp1.item.listofinputs || []), mess]);
           console.log(putResp);
         } else {
           await client.chat.postMessage({
             channel: channelToPost,
             thread_ts: timestamp,
-            text: `Unfortunately ${winner}\n\nBetter luck next time!`,
+            text: `Unfortunately ${winner}\n\nYou achieved a score of ${getResp1.item.score}!`,
           });
           const putResp = await client.apps.datastore.put<
             typeof multi.definition
@@ -108,7 +109,7 @@ export default SlackFunction(
               messageinput: mess,
               score: (getResp1.item.score),
               finished: true,
-              listofinputs: [...getResp1.item.listofinputs, mess],
+              listofinputs: (getResp1.item.listofinputs || []).concat(mess),
             },
           });
           console.log(putResp);
@@ -146,12 +147,14 @@ export default SlackFunction(
         const reAI = aiResponse.choices[0].message.content;
         const winner = reAI.split("</think>")[1].replace("\n", "");
         const wincondition = winner.split("wins")[0];
-        if (wincondition.includes(mess)) {
+        if (wincondition.toLowerCase().includes(mess)) {
           await client.chat.postMessage({
             channel: channelToPost,
             thread_ts: timestamp,
             text: `${winner}\n\nSo, what would win against "${mess}"?`,
           });
+          const arr = (getResp1.item.listofinputs || []).concat(mess);
+          console.log("array: ", arr);
           const putResp = await client.apps.datastore.put<
             typeof multi.definition
           >({
@@ -162,15 +165,15 @@ export default SlackFunction(
               messageinput: mess,
               score: (getResp1.item.score + 1),
               finished: false,
-              listofinputs: [...getResp1.item.listofinputs, mess],
+              listofinputs: arr,
             },
           });
           console.log(putResp);
-        } else if (wincondition.includes(pre)) {
+        } else if (wincondition.toLowerCase().includes(pre)) {
           await client.chat.postMessage({
             channel: channelToPost,
             thread_ts: timestamp,
-            text: `Unfortunately ${winner}\n\nBetter luck next time!`,
+            text: `Unfortunately ${winner}\n\nYou achieved a score of ${getResp1.item.score}!`,
           });
           const putResp = await client.apps.datastore.put<
             typeof multi.definition
@@ -182,10 +185,17 @@ export default SlackFunction(
               messageinput: mess,
               score: getResp1.item.score,
               finished: true,
-              listofinputs: [...getResp1.item.listofinputs, mess],
+              listofinputs: (getResp1.item.listofinputs || []).concat(mess),
             },
           });
+          console.log([...(getResp1.item.listofinputs || []), mess]);
           console.log(putResp);
+        } else {
+          await client.chat.postMessage({
+            channel: channelToPost,
+            thread_ts: timestamp,
+            text: `Something went wrong: ${winner}, please try again.`,
+          });
         }
       }
     } else {
@@ -211,7 +221,7 @@ export default SlackFunction(
               messageinput: mess,
               score: -1,
               finished: false,
-              listofinputs: [...getResp1.item.listofinputs, mess],
+              listofinputs: (getResp1.item.listofinputs || []).concat(mess),
               turn: 2,
             },
           });
@@ -249,7 +259,7 @@ export default SlackFunction(
         const reAI = aiResponse.choices[0].message.content;
         const winner = reAI.split("</think>")[1].replace("\n", "");
         const wincondition = winner.split("wins")[0];
-        if (wincondition.includes(mess)) {
+        if (wincondition.toLowerCase().includes(mess)) {
           await client.chat.postMessage({
             channel: channelToPost,
             thread_ts: timestamp,
@@ -272,12 +282,12 @@ export default SlackFunction(
               messageinput: mess,
               score: -1,
               finished: false,
-              listofinputs: [...getResp1.item.listofinputs, mess],
+              listofinputs: (getResp1.item.listofinputs || []).concat(mess),
               turn: theturn,
             },
           });
           console.log(putResp);
-        } else if (wincondition.includes(pre)) {
+        } else if (wincondition.toLowerCase().includes(pre)) {
           let the = "", lose = "";
           if (getResp1.item.turn == 1) {
             the = getResp1.item.player2;
@@ -289,7 +299,7 @@ export default SlackFunction(
           await client.chat.postMessage({
             channel: channelToPost,
             thread_ts: timestamp,
-            text: `Unfortunately ${winner}\n\n<@${the}> wins against <@${lose}!`,
+            text: `Unfortunately ${winner}\n\n<@${the}> wins against <@${lose}>!`,
           });
           const putResp = await client.apps.datastore.put<
             typeof multi.definition
@@ -302,7 +312,7 @@ export default SlackFunction(
               messageinput: mess,
               score: -1,
               finished: true,
-              listofinputs: [...getResp1.item.listofinputs, mess],
+              listofinputs: (getResp1.item.listofinputs || []).concat(mess),
             },
           });
           console.log(putResp);

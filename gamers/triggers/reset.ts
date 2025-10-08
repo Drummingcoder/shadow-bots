@@ -34,7 +34,7 @@ const sampleTrigger: Trigger<typeof nextMove.definition> = {
       value: TriggerContextData.Event.MessagePosted.channel_id,
     },
     threadts: {
-      value: TriggerContextData.Event.MessagePosted.message_ts,
+      value: TriggerContextData.Event.MessagePosted.thread_ts,
     },
   },
 };

@@ -27,16 +27,16 @@ const form = startOmni.addStep(Schema.slack.functions.OpenForm,
     fields: {
       elements: [
       {
-        name: "player2",
-        title: "Who to play against?",
-        description: "Who is going to be your opponent? (leave blank to play alone)",
-        type: Schema.slack.types.user_id,
-      },
-      {
         name: "channel",
         title: "What channel to play in?",
         description: "Pick any channel!",
         type: Schema.slack.types.channel_id,
+      },
+      {
+        name: "player2",
+        title: "Who to play against?",
+        description: "Who is going to be your opponent? (leave blank to play alone)",
+        type: Schema.slack.types.user_id,
       },
       {
         name: "mode",

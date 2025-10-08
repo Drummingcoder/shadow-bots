@@ -62,7 +62,7 @@ export default SlackFunction(
           messageinput: "",
           score: 0,
           finished: false,
-          listofinputs: [],
+          listofinputs: ["rock"],
         },
       });
       console.log(putResp);
