@@ -29,6 +29,47 @@ export default SlackFunction(
   async ({ inputs, client }) => {
     const myMessage = `${inputs.message}`;
     if (inputs.message.includes("flip") && inputs.message.includes("coin")) {
+      const mess = myMessage.split(" ");
+      let num = parseInt(mess[2],10);
+
+      if (!isNaN(num) && isFinite(num)) {
+        if (num > 1000000) {
+          await client.chat.postMessage({
+            channel: inputs.channel_id,
+            text: `The limit is 1000000 coins, rolling 1000000 coins instead.`,
+            thread_ts: inputs.timestamp,
+          });
+          num = 1000000;
+        }
+
+        let numHeads = 0, numTails = 0;
+        let message = "You rolled ";
+
+        for (let i = 0; i < num; i++) {
+          if (Math.random() < 0.5) {
+            numHeads++;
+            message += "heads, ";
+          } else {
+            numTails++;
+            message += "tails, ";
+          }
+        }
+
+        await client.chat.postMessage({
+          channel: inputs.channel_id,
+          text: message,
+          thread_ts: inputs.timestamp,
+        });
+
+        await client.chat.postMessage({
+          channel: inputs.channel_id,
+          text: `That's a total of ${numHeads} heads and ${numTails} tails.`,
+          thread_ts: inputs.timestamp,
+        });
+
+        return { outputs: {} };
+      }
+
       const coin = Math.random();
       let result = "";
       if (coin < 0.5) {
@@ -43,7 +84,7 @@ export default SlackFunction(
       });
     } else if (inputs.message.includes("roll") && (inputs.message.includes("dice") || inputs.message.includes("die"))) {
       const mess = myMessage.split(" ");
-      const num = parseInt(mess[2],10);
+      let num = parseInt(mess[2],10);
       if (num == 0) {
         await client.chat.postMessage({
           channel: inputs.channel_id,
@@ -52,6 +93,16 @@ export default SlackFunction(
         });
         return { outputs: {} };
       }
+
+      if (num > 1000000) {
+        await client.chat.postMessage({
+          channel: inputs.channel_id,
+          text: `The limit is 1000000 coins, rolling 1000000 coins instead.`,
+          thread_ts: inputs.timestamp,
+        });
+        num = 1000000;
+      }
+
       await client.chat.postMessage({
         channel: inputs.channel_id,
         text: "Rolling...",

@@ -20,16 +20,16 @@ const startOmni = DefineWorkflow({
 
 const form = startOmni.addStep(Schema.slack.functions.OpenForm,
   {
-    title: "Rock, Paper, Scissors",
+    title: "Omniscient RPS",
     interactivity: startOmni.inputs.interactivity,
     submit_label: "Start!",
-    description: "Still a Work in Progress! Not finished yet!",
+    description: "You can use literally anything in this game!",
     fields: {
       elements: [
       {
         name: "player2",
         title: "Who to play against?",
-        description: "Who is going to be your opponent?",
+        description: "Who is going to be your opponent? (leave blank to play alone)",
         type: Schema.slack.types.user_id,
       },
       {
@@ -37,9 +37,28 @@ const form = startOmni.addStep(Schema.slack.functions.OpenForm,
         title: "What channel to play in?",
         description: "Pick any channel!",
         type: Schema.slack.types.channel_id,
+      },
+      {
+        name: "mode",
+        title: "What mode?",
+        description: "One toss means you only throw only one answer (like RPS). Multiple answers means you keep going until one of you loses (see canvas for more details).",
+        type: Schema.types.string,
+        enum: ["one_toss", "multiple_answers"],
+        choices: [
+          {
+            value: "one_toss",
+            title: "One Toss",
+            description: "Single round like traditional RPS"
+          },
+          {
+            value: "multiple_answers", 
+            title: "Multiple Answers",
+            description: "Keep playing until someone loses"
+          }
+        ]
       }
     ],
-      required: ["player2", "channel"],
+      required: ["channel"],
     },
   },
 );
@@ -49,6 +68,7 @@ startOmni.addStep(starteOmni, {
   channel: form.outputs.fields.channel,
   user_id: startOmni.inputs.user_id,
   interactivity: form.outputs.interactivity,
+  mode: form.outputs.fields.mode,
 });
 
 export default startOmni;

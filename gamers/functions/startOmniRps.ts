@@ -1,6 +1,7 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import game from "../datastores/tracker.ts";
 import omnigames from "../datastores/omnigametrack.ts";
+import multi from "../datastores/multigame.ts";
 
 export const starteOmni = DefineFunction({
   callback_id: "start_om",
@@ -21,12 +22,16 @@ export const starteOmni = DefineFunction({
         type: Schema.slack.types.user_id,
         description: "user invoking app",
       },
-	  interactivity: {
-		type: Schema.slack.types.interactivity,
-		description: "Interactivity",
-	  }
+      interactivity: {
+        type: Schema.slack.types.interactivity,
+        description: "Interactivity",
+      },
+      mode: {
+        type: Schema.types.string,
+        description: "What game mode?"
+      }
     },
-    required: ["channel", "other_user", "user_id"],
+    required: ["channel", "user_id"],
   },
 });
 
@@ -34,6 +39,58 @@ export default SlackFunction(
   starteOmni,
   async ({ inputs, client }) => {
     const channelToPost = inputs.channel;
+
+    if (!inputs.other_user) {
+      const firstText = await client.chat.postMessage({
+        channel: channelToPost,
+        text: `<@${inputs.user_id}>, ready to play infinite RPS? Just reply in this thread with your move, and see how high your score can go!`,
+      });
+
+      await client.chat.postMessage({
+        channel: channelToPost,
+        text: "What can beat rock?",
+        thread_ts: firstText.ts,
+      })
+
+      const putResp = await client.apps.datastore.put<
+        typeof multi.definition
+      >({
+        datastore: multi.name,
+        item: {
+          game: firstText.ts,
+          player1: inputs.user_id,
+          messageinput: "",
+          score: 0,
+          finished: false,
+          listofinputs: [],
+        },
+      });
+      console.log(putResp);
+      return { outputs: { } };
+    } else if (inputs.mode == "multiple_answers") {
+      const firstText = await client.chat.postMessage({
+        channel: channelToPost,
+        text: `<@${inputs.user_id}> has challenged <@${inputs.other_user}> to play infinite RPS? Player 1, make your first move!`,
+      });
+      const putResp = await client.apps.datastore.put<
+        typeof multi.definition
+      >({
+        datastore: multi.name,
+        item: {
+          game: firstText.ts,
+          player1: inputs.user_id,
+          player2: inputs.other_user,
+          messageinput: "",
+          score: -1,
+          finished: false,
+          listofinputs: [],
+          turn: 1,
+        },
+      });
+      console.log(putResp);
+      return { outputs: { } };
+    }
+
     let gamenum = 0;
     let getResp1 = await client.apps.datastore.get<
       typeof omnigames.definition
@@ -58,15 +115,6 @@ export default SlackFunction(
     });
 
     if (getGame.item.value != 2) {
-      const putResp = await client.apps.datastore.put< //to remove after running program for the first time
-        typeof game.definition
-      >({
-        datastore: game.name,
-        item: {
-          name: "omniinput",
-          value: 2,
-        },
-      });
       await client.chat.postEphemeral({
         channel: channelToPost,
         user: inputs.user_id,
@@ -85,6 +133,7 @@ export default SlackFunction(
       });
       console.log(putResp);
     }
+
     const firstText = await client.chat.postMessage({
       channel: channelToPost,
       text: `<@${inputs.user_id}> has challenged <@${inputs.other_user}> to a game of Omniscient Rock, Paper, Scissors!`,
