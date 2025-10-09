@@ -3,8 +3,8 @@ import { dome } from "../functions/addpeople.ts";
 
 const getDeath = DefineWorkflow({
   callback_id: "adding",
-  title: "Death by AI",
-  description: "Let's play Death by AI!",
+  title: "Add to",
+  description: "Let's all play Death by AI!",
   input_parameters: {
     properties: {
       user: {
@@ -18,9 +18,12 @@ const getDeath = DefineWorkflow({
       },
       channel: {
         type: Schema.slack.types.channel_id,
+      }, 
+      message: {
+        type: Schema.types.string,
       }
     },
-    required: [],
+    required: ["channel", "threadts", "messagets"],
   },
 });
 

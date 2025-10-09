@@ -72,7 +72,7 @@ export default SlackFunction(
         const reAI = aiResponse.choices[0].message.content;
         const winner = reAI.split("</think>")[1].replace("\n", "");
         const wincondition = winner.split("wins")[0];
-        if (wincondition.includes(mess)) {
+        if (wincondition.toLowerCase().includes(mess.toLowerCase())) {
           await client.chat.postMessage({
             channel: channelToPost,
             thread_ts: timestamp,
@@ -118,7 +118,7 @@ export default SlackFunction(
         const pre = getResp1.item.messageinput;
 
         for (let i = 0; i < getResp1.item.listofinputs.length; i++) {
-          if (mess == getResp1.item.listofinputs[i]) {
+          if (mess.toLowerCase() == getResp1.item.listofinputs[i].toLowerCase()) {
             await client.chat.postMessage({
               channel: channelToPost,
               thread_ts: timestamp,
@@ -147,7 +147,7 @@ export default SlackFunction(
         const reAI = aiResponse.choices[0].message.content;
         const winner = reAI.split("</think>")[1].replace("\n", "");
         const wincondition = winner.split("wins")[0];
-        if (wincondition.toLowerCase().includes(mess)) {
+        if (wincondition.toLowerCase().includes(mess.toLowerCase())) {
           await client.chat.postMessage({
             channel: channelToPost,
             thread_ts: timestamp,
@@ -169,7 +169,7 @@ export default SlackFunction(
             },
           });
           console.log(putResp);
-        } else if (wincondition.toLowerCase().includes(pre)) {
+        } else if (wincondition.toLowerCase().includes(pre.toLowerCase())) {
           await client.chat.postMessage({
             channel: channelToPost,
             thread_ts: timestamp,
@@ -259,7 +259,7 @@ export default SlackFunction(
         const reAI = aiResponse.choices[0].message.content;
         const winner = reAI.split("</think>")[1].replace("\n", "");
         const wincondition = winner.split("wins")[0];
-        if (wincondition.toLowerCase().includes(mess)) {
+        if (wincondition.toLowerCase().includes(mess.toLowerCase())) {
           await client.chat.postMessage({
             channel: channelToPost,
             thread_ts: timestamp,
@@ -287,7 +287,7 @@ export default SlackFunction(
             },
           });
           console.log(putResp);
-        } else if (wincondition.toLowerCase().includes(pre)) {
+        } else if (wincondition.toLowerCase().includes(pre.toLowerCase())) {
           let the = "", lose = "";
           if (getResp1.item.turn == 1) {
             the = getResp1.item.player2;

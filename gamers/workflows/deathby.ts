@@ -1,5 +1,5 @@
 import { DefineWorkflow, Schema } from "deno-slack-sdk/mod.ts";
-import { starteOmni } from "../functions/startOmniRps.ts";
+import { startDeathGame } from "../functions/deathly.ts";
 
 const startDeath = DefineWorkflow({
   callback_id: "death_by_ai",
@@ -38,7 +38,7 @@ const form = startDeath.addStep(Schema.slack.functions.OpenForm,
   },
 );
 
-startDeath.addStep(starteOmni, {
+startDeath.addStep(startDeathGame, {
   channel: form.outputs.fields.channel,
   user_id: startDeath.inputs.user_id,
   interactivity: form.outputs.interactivity,

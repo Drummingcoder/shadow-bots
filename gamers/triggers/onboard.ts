@@ -36,6 +36,9 @@ const sampleTrigger: Trigger<typeof getDeath.definition> = {
     threadts: {
       value: TriggerContextData.Event.MessagePosted.thread_ts,
     },
+    message: {
+      value: TriggerContextData.Event.MessagePosted.text,
+    }
   },
 };
 

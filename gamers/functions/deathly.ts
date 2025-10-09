@@ -1,7 +1,7 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import myDeath from "../datastores/deathtracker.ts";
 
-export const starteOmni = DefineFunction({
+export const startDeathGame = DefineFunction({
   callback_id: "start_dea",
   title: "Start Death Game",
   description: "Start a game of Death by AI",
@@ -26,7 +26,7 @@ export const starteOmni = DefineFunction({
 });
 
 export default SlackFunction(
-  starteOmni,
+  startDeathGame,
   async ({ inputs, client }) => {
     const host = inputs.user_id;
     const mess = await client.chat.postMessage({

@@ -1,11 +1,11 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
-import multi from "../datastores/multigame.ts";
+import myDeath from "../datastores/deathtracker.ts";
 
 export const dome = DefineFunction({
-  callback_id: "continuegame",
-  title: "Continue game",
-  description: "Continue an Omni game",
-  source_file: "functions/runner.ts",
+  callback_id: "storepeople",
+  title: "Adding to Database",
+  description: "More people partcipate yay!",
+  source_file: "functions/addpeople.ts",
   input_parameters: {
     properties: {
       channel: {
@@ -18,7 +18,7 @@ export const dome = DefineFunction({
       },
       messagets: {
         type: Schema.types.string,
-        description: "the move",
+        description: "correct thread?",
       },
       threadts: {
         type: Schema.types.string,
@@ -38,288 +38,157 @@ export default SlackFunction(
     const user = inputs.user_id;
 
     const getResp1 = await client.apps.datastore.get<
-      typeof multi.definition
+      typeof myDeath.definition
     >({
-      datastore: multi.name,
+      datastore: myDeath.name,
       id: timestamp,
     });
 
-    if (!getResp1.item.player1 || getResp1.item.finished == true) {
+    if (! getResp1.item.player1) {
       return { outputs: { } };
     }
 
-    if (!getResp1.item.player2) {
-      if (getResp1.item.player1 != user) {
-        return { outputs: { } };
-      }
-      if (getResp1.item.messageinput == "") {
-        const response = await fetch("https://ai.hackclub.com/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            messages: [
-              {
-                role: "user", 
-                content: `Which would win: rock or ${mess}? Just give me the winner and a short explanation (1 sentence) in the form "[Insert winner] wins because [insert reason]". So if rock would win against ${mess}, put "rock wins because [insert reason]". Otherwise, put "${mess} wins because [insert reason]." No ties! Don't add any extra punctuation or brackets/parathesis to the response.`
-              }
-            ]
-          })
-        });
-
-        const aiResponse = await response.json();
-        const reAI = aiResponse.choices[0].message.content;
-        const winner = reAI.split("</think>")[1].replace("\n", "");
-        const wincondition = winner.split("wins")[0];
-        if (wincondition.includes(mess)) {
-          await client.chat.postMessage({
-            channel: channelToPost,
-            thread_ts: timestamp,
-            text: `${winner}\n\nSo, what would win against "${mess}"?`,
-          });
-          const putResp = await client.apps.datastore.put<
-            typeof multi.definition
-          >({
-            datastore: multi.name,
-            item: {
-              game: timestamp,
-              player1: getResp1.item.player1,
-              messageinput: mess,
-              score: (getResp1.item.score + 1),
-              finished: false,
-              listofinputs: (getResp1.item.listofinputs || []).concat(mess),
-            },
-          });
-          console.log([...(getResp1.item.listofinputs || []), mess]);
-          console.log(putResp);
-        } else {
-          await client.chat.postMessage({
-            channel: channelToPost,
-            thread_ts: timestamp,
-            text: `Unfortunately ${winner}\n\nYou achieved a score of ${getResp1.item.score}!`,
-          });
-          const putResp = await client.apps.datastore.put<
-            typeof multi.definition
-          >({
-            datastore: multi.name,
-            item: {
-              game: timestamp,
-              player1: getResp1.item.player1,
-              messageinput: mess,
-              score: (getResp1.item.score),
-              finished: true,
-              listofinputs: (getResp1.item.listofinputs || []).concat(mess),
-            },
-          });
-          console.log(putResp);
-        }
-      } else {
-        const pre = getResp1.item.messageinput;
-
-        for (let i = 0; i < getResp1.item.listofinputs.length; i++) {
-          if (mess == getResp1.item.listofinputs[i]) {
-            await client.chat.postMessage({
-              channel: channelToPost,
-              thread_ts: timestamp,
-              text: `You can't reuse answers! Try again!`,
-            });
-            return { outputs: { } };
-          }
-        }
-
-        const response = await fetch("https://ai.hackclub.com/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            messages: [
-              {
-                role: "user", 
-                content: `Which would win: ${pre} or ${mess}? Just give me the winner and a short explanation (1 sentence) in the form "[Insert winner] wins because [insert reason]". So if ${pre} would win against ${mess}, put "rock wins because [insert reason]". Otherwise, put "${mess} wins because [insert reason]." No ties! Don't add any extra punctuation or brackets/parathesis to the response.`
-              }
-            ]
-          })
-        });
-
-        const aiResponse = await response.json();
-        const reAI = aiResponse.choices[0].message.content;
-        const winner = reAI.split("</think>")[1].replace("\n", "");
-        const wincondition = winner.split("wins")[0];
-        if (wincondition.toLowerCase().includes(mess)) {
-          await client.chat.postMessage({
-            channel: channelToPost,
-            thread_ts: timestamp,
-            text: `${winner}\n\nSo, what would win against "${mess}"?`,
-          });
-          const arr = (getResp1.item.listofinputs || []).concat(mess);
-          console.log("array: ", arr);
-          const putResp = await client.apps.datastore.put<
-            typeof multi.definition
-          >({
-            datastore: multi.name,
-            item: {
-              game: timestamp,
-              player1: getResp1.item.player1,
-              messageinput: mess,
-              score: (getResp1.item.score + 1),
-              finished: false,
-              listofinputs: arr,
-            },
-          });
-          console.log(putResp);
-        } else if (wincondition.toLowerCase().includes(pre)) {
-          await client.chat.postMessage({
-            channel: channelToPost,
-            thread_ts: timestamp,
-            text: `Unfortunately ${winner}\n\nYou achieved a score of ${getResp1.item.score}!`,
-          });
-          const putResp = await client.apps.datastore.put<
-            typeof multi.definition
-          >({
-            datastore: multi.name,
-            item: {
-              game: timestamp,
-              player1: getResp1.item.player1,
-              messageinput: mess,
-              score: getResp1.item.score,
-              finished: true,
-              listofinputs: (getResp1.item.listofinputs || []).concat(mess),
-            },
-          });
-          console.log([...(getResp1.item.listofinputs || []), mess]);
-          console.log(putResp);
-        } else {
-          await client.chat.postMessage({
-            channel: channelToPost,
-            thread_ts: timestamp,
-            text: `Something went wrong: ${winner}, please try again.`,
-          });
-        }
-      }
-    } else {
-      if (getResp1.item.player1 != user && getResp1.item.turn != 1) {
-        if (getResp1.item.player2 != user && getResp1.item.turn != 2) {
-          return { outputs: {} };
-        }
-      }
-      if (getResp1.item.messageinput == "") {
-          await client.chat.postMessage({
-            channel: channelToPost,
-            thread_ts: timestamp,
-            text: `So, player 2, what would win against "${mess}"?`,
-          });
-          const putResp = await client.apps.datastore.put<
-            typeof multi.definition
-          >({
-            datastore: multi.name,
-            item: {
-              game: timestamp,
-              player1: getResp1.item.player1,
-              player2: getResp1.item.player2,
-              messageinput: mess,
-              score: -1,
-              finished: false,
-              listofinputs: (getResp1.item.listofinputs || []).concat(mess),
-              turn: 2,
-            },
-          });
-          console.log(putResp);
-      } else {
-        const pre = getResp1.item.messageinput;
-
-        for (let i = 0; i < getResp1.item.listofinputs.length; i++) {
-          if (mess == getResp1.item.listofinputs[i]) {
-            await client.chat.postMessage({
-              channel: channelToPost,
-              thread_ts: timestamp,
-              text: `You can't reuse answers! Try again!`,
-            });
-            return { outputs: { } };
-          }
-        }
-
-        const response = await fetch("https://ai.hackclub.com/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            messages: [
-              {
-                role: "user", 
-                content: `Which would win: ${pre} or ${mess}? Just give me the winner and a short explanation (1 sentence) in the form "[Insert winner] wins because [insert reason]". So if ${pre} would win against ${mess}, put "rock wins because [insert reason]". Otherwise, put "${mess} wins because [insert reason]." No ties! Don't add any extra punctuation or brackets/parathesis to the response.`
-              }
-            ]
-          })
-        });
-
-        const aiResponse = await response.json();
-        const reAI = aiResponse.choices[0].message.content;
-        const winner = reAI.split("</think>")[1].replace("\n", "");
-        const wincondition = winner.split("wins")[0];
-        if (wincondition.toLowerCase().includes(mess)) {
-          await client.chat.postMessage({
-            channel: channelToPost,
-            thread_ts: timestamp,
-            text: `${winner}\n\nSo, what would win against "${mess}"?`,
-          });
-
-          let theturn = 1;
-          if (getResp1.item.turn == 1) {
-            theturn = 2;
-          }
-
-          const putResp = await client.apps.datastore.put<
-            typeof multi.definition
-          >({
-            datastore: multi.name,
-            item: {
-              game: timestamp,
-              player1: getResp1.item.player1,
-              player2: getResp1.item.player2,
-              messageinput: mess,
-              score: -1,
-              finished: false,
-              listofinputs: (getResp1.item.listofinputs || []).concat(mess),
-              turn: theturn,
-            },
-          });
-          console.log(putResp);
-        } else if (wincondition.toLowerCase().includes(pre)) {
-          let the = "", lose = "";
-          if (getResp1.item.turn == 1) {
-            the = getResp1.item.player2;
-            lose = getResp1.item.player1;
-          } else {
-            the = getResp1.item.player1;
-            lose = getResp1.item.player2;
-          }
-          await client.chat.postMessage({
-            channel: channelToPost,
-            thread_ts: timestamp,
-            text: `Unfortunately ${winner}\n\n<@${the}> wins against <@${lose}>!`,
-          });
-          const putResp = await client.apps.datastore.put<
-            typeof multi.definition
-          >({
-            datastore: multi.name,
-            item: {
-              game: timestamp,
-              player1: getResp1.item.player1,
-              player2: getResp1.item.player2,
-              messageinput: mess,
-              score: -1,
-              finished: true,
-              listofinputs: (getResp1.item.listofinputs || []).concat(mess),
-            },
-          });
-          console.log(putResp);
-        }
-      }
+    if (getResp1.item.player1 == user || getResp1.item.player2 == user || getResp1.item.player3 == user || getResp1.item.player4 == user || getResp1.item.player5 == user || getResp1.item.player6 == user || getResp1.item.player7 == user || getResp1.item.player8 == user || getResp1.item.player9 == user || getResp1.item.player10 == user) {
+      await client.chat.postEphemeral({
+        channel: channelToPost,
+        user: user,
+        text: "You can't join twice!",
+        thread_ts: timestamp,
+      });
+      return { outputs: { } };
     }
     
+    if (getResp1.item.player10 || getResp1.item.player10 == user) {
+      await client.chat.postEphemeral({
+        channel: channelToPost,
+        user: user,
+        text: "Sorry, the lobby is full.",
+        thread_ts: timestamp,
+      });
+      return { outputs: { } };
+    }
+
+    if (! getResp1.item.player2) {
+      await client.apps.datastore.update<
+        typeof myDeath.definition
+      >({
+        datastore: myDeath.name,
+        item: {
+          ts: timestamp,
+          player2: user,
+          p2score: 0,
+          playersEntered: 2,
+        },
+      });
+    } else if (! getResp1.item.player3) {
+      await client.apps.datastore.update<
+        typeof myDeath.definition
+      >({
+        datastore: myDeath.name,
+        item: {
+          ts: timestamp,
+          player3: user,
+          p3score: 0,
+          playersEntered: 3,
+        },
+      });
+    } else if (! getResp1.item.player4) {
+      await client.apps.datastore.update<
+        typeof myDeath.definition
+      >({
+        datastore: myDeath.name,
+        item: {
+          ts: timestamp,
+          player4: user,
+          p4score: 0,
+          playersEntered: 4,
+        },
+      });
+    } else if (! getResp1.item.player5) {
+      await client.apps.datastore.update<
+        typeof myDeath.definition
+      >({
+        datastore: myDeath.name,
+        item: {
+          ts: timestamp,
+          player5: user,
+          p5score: 0,
+          playersEntered: 5,
+        },
+      });
+    } else if (! getResp1.item.player6) {
+      await client.apps.datastore.update<
+        typeof myDeath.definition
+      >({
+        datastore: myDeath.name,
+        item: {
+          ts: timestamp,
+          player6: user,
+          p6score: 0,
+          playersEntered: 6,
+        },
+      });
+    } else if (! getResp1.item.player7) {
+      await client.apps.datastore.update<
+        typeof myDeath.definition
+      >({
+        datastore: myDeath.name,
+        item: {
+          ts: timestamp,
+          player7: user,
+          p7score: 0,
+          playersEntered: 7,
+        },
+      });
+    } else if (! getResp1.item.player8) {
+      await client.apps.datastore.update<
+        typeof myDeath.definition
+      >({
+        datastore: myDeath.name,
+        item: {
+          ts: timestamp,
+          player8: user,
+          p8score: 0,
+          playersEntered: 8,
+        },
+      });
+    } else if (! getResp1.item.player9) {
+      await client.apps.datastore.update<
+        typeof myDeath.definition
+      >({
+        datastore: myDeath.name,
+        item: {
+          ts: timestamp,
+          player9: user,
+          p9score: 0,
+          playersEntered: 9,
+        },
+      });
+    } else {
+      await client.apps.datastore.update<
+        typeof myDeath.definition
+      >({
+        datastore: myDeath.name,
+        item: {
+          ts: timestamp,
+          player10: user,
+          p10score: 0,
+          playersEntered: 10,
+        },
+      });
+      await client.chat.postMessage({
+        channel: channelToPost,
+        text: "The lobby is now full! Please wait for the host to start the game.",
+        thread_ts: timestamp,
+      });
+    }
+
+    await client.reactions.add({
+      channel: channelToPost,
+      timestamp: mess,
+      name: "white_check_mark",
+    });
+
     return { outputs: { } };
   },
 );
