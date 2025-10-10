@@ -56,7 +56,26 @@ const form = startOmni.addStep(Schema.slack.functions.OpenForm,
             description: "Keep playing until someone loses"
           }
         ]
-      }
+      }, 
+      {
+        name: "type",
+        title: "What type of game?",
+        description: "You can go for a general (anything goes) game, or you can go for a magical game (only magic-related answers allowed)!",
+        type: Schema.types.string,
+        enum: ["general", "magic"],
+        choices: [
+          {
+            value: "general",
+            title: "Any move goes!",
+            description: "You can use literally anything"
+          },
+          {
+            value: "magic", 
+            title: "Only magical answers",
+            description: "You can only use magic-related answers"
+          }
+        ]
+      }, 
     ],
       required: ["channel"],
     },
@@ -69,6 +88,7 @@ startOmni.addStep(starteOmni, {
   user_id: startOmni.inputs.user_id,
   interactivity: form.outputs.interactivity,
   mode: form.outputs.fields.mode,
+  type: form.outputs.fields.type,
 });
 
 export default startOmni;

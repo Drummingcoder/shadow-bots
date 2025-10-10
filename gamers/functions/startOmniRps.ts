@@ -29,6 +29,10 @@ export const starteOmni = DefineFunction({
       mode: {
         type: Schema.types.string,
         description: "What game mode?"
+      },
+      type: {
+        type: Schema.types.string,
+        description: "What kind of game?",
       }
     },
     required: ["channel", "user_id"],
@@ -46,48 +50,93 @@ export default SlackFunction(
         text: `<@${inputs.user_id}>, ready to play infinite RPS? Just reply in this thread with your move, and see how high your score can go!`,
       });
 
-      await client.chat.postMessage({
-        channel: channelToPost,
-        text: "What can beat rock?",
-        thread_ts: firstText.ts,
-      })
-
-      const putResp = await client.apps.datastore.put<
-        typeof multi.definition
-      >({
-        datastore: multi.name,
-        item: {
-          game: firstText.ts,
-          player1: inputs.user_id,
-          messageinput: "",
-          score: 0,
-          finished: false,
-          listofinputs: ["rock"],
-        },
-      });
-      console.log(putResp);
+      if (inputs.type == "magic") {
+        await client.chat.postMessage({
+          channel: channelToPost,
+          text: "What can beat a flying pig?",
+          thread_ts: firstText.ts,
+        });
+        const putResp = await client.apps.datastore.put<
+          typeof multi.definition
+        >({
+          datastore: multi.name,
+          item: {
+            game: firstText.ts,
+            player1: inputs.user_id,
+            messageinput: "",
+            score: 0,
+            finished: false,
+            listofinputs: ["flying pig"],
+            type: "magic",
+          },
+        });
+        console.log(putResp);
+      } else {
+        await client.chat.postMessage({
+          channel: channelToPost,
+          text: "What can beat rock?",
+          thread_ts: firstText.ts,
+        });
+        const putResp = await client.apps.datastore.put<
+          typeof multi.definition
+        >({
+          datastore: multi.name,
+          item: {
+            game: firstText.ts,
+            player1: inputs.user_id,
+            messageinput: "",
+            score: 0,
+            finished: false,
+            listofinputs: ["rock"],
+            type: "general",
+          },
+        });
+        console.log(putResp);
+      }
       return { outputs: { } };
     } else if (inputs.mode == "multiple_answers") {
       const firstText = await client.chat.postMessage({
         channel: channelToPost,
         text: `<@${inputs.user_id}> has challenged <@${inputs.other_user}> to play infinite RPS? Player 1, make your first move!`,
       });
-      const putResp = await client.apps.datastore.put<
-        typeof multi.definition
-      >({
-        datastore: multi.name,
-        item: {
-          game: firstText.ts,
-          player1: inputs.user_id,
-          player2: inputs.other_user,
-          messageinput: "",
-          score: -1,
-          finished: false,
-          listofinputs: [],
-          turn: 1,
-        },
-      });
-      console.log(putResp);
+      if (inputs.type == "magic") {
+        const putResp = await client.apps.datastore.put<
+          typeof multi.definition
+        >({
+          datastore: multi.name,
+          item: {
+            game: firstText.ts,
+            player1: inputs.user_id,
+            player2: inputs.other_user,
+            messageinput: "",
+            score: -1,
+            finished: false,
+            listofinputs: [],
+            turn: 1,
+            type: "magic",
+          },
+        });
+        console.log(putResp);
+      } else {
+        const putResp = await client.apps.datastore.put<
+          typeof multi.definition
+        >({
+          datastore: multi.name,
+          item: {
+            game: firstText.ts,
+            player1: inputs.user_id,
+            player2: inputs.other_user,
+            messageinput: "",
+            score: -1,
+            finished: false,
+            listofinputs: [],
+            turn: 1,
+            type: "general",
+          },
+        });
+        console.log(putResp);
+      }
+      
       return { outputs: { } };
     }
 
@@ -139,20 +188,39 @@ export default SlackFunction(
       text: `<@${inputs.user_id}> has challenged <@${inputs.other_user}> to a game of Omniscient Rock, Paper, Scissors!`,
     });
 
-    const putResp = await client.apps.datastore.put<
-      typeof omnigames.definition
-    >({
-      datastore: omnigames.name,
-      item: {
-        number: gamenum.toString(),
-        player1: inputs.user_id,
-        p1input: "",
-        player2: inputs.other_user,
-        p2input: "",
-        finished: false
-      },
-    });
-    console.log(putResp);
+    if (inputs.type == "magic") {
+      const putResp = await client.apps.datastore.put<
+        typeof omnigames.definition
+      >({
+        datastore: omnigames.name,
+        item: {
+          number: gamenum.toString(),
+          player1: inputs.user_id,
+          p1input: "",
+          player2: inputs.other_user,
+          p2input: "",
+          finished: false,
+          type: "magic"
+        },
+      });
+      console.log(putResp);
+    } else {
+      const putResp = await client.apps.datastore.put<
+        typeof omnigames.definition
+      >({
+        datastore: omnigames.name,
+        item: {
+          number: gamenum.toString(),
+          player1: inputs.user_id,
+          p1input: "",
+          player2: inputs.other_user,
+          p2input: "",
+          finished: false,
+          type: "general"
+        },
+      });
+      console.log(putResp);
+    }
     
     const challenge = await client.chat.postMessage({
       channel: channelToPost,
@@ -499,7 +567,7 @@ export default SlackFunction(
           userId: body.user.id,
           channelId: body.channel?.id,
           messageTs: body.message?.ts,
-          gameId: body.actions[0].value
+          gameId: body.actions[0].value,
         }),
       }
   });
@@ -526,6 +594,36 @@ export default SlackFunction(
     id: metadata.gameId.toString(),
   });
 
+  if (pullValues.item.type == "magic") {
+    const response1 = await fetch("https://ai.hackclub.com/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messages: [
+          {
+            role: "user", 
+            content: `Is the term ${selectedMove} related to magic in any way? This is the definition of magic by the way, "the power of apparently influencing the course of events by using mysterious or supernatural forces." Please respond with a simple yes or no.`
+          }
+        ]
+      })
+    });
+
+    const rep2 = await response1.json();
+    const rep3 = rep2.choices[0].message.content;
+    const rep4 = rep3.split("</think>")[1].replace("\n", "");
+    console.log(rep4);
+    if (rep4.toLowerCase().includes("no")) {
+      return {
+        response_action: "errors",
+        errors: {
+          input_move: "That's not a magic-related move! Please choose something related to magic (supernatural or mysterious forces)."
+        }
+      };
+    }
+  }
+
   let p2Input = "";
   let fin = false;
   if (pullValues.item.p2input) {
@@ -533,7 +631,7 @@ export default SlackFunction(
     fin = true;
   }
 
-  const trythis = await client.apps.datastore.put<
+  const trythis = await client.apps.datastore.update<
     typeof omnigames.definition
   >({
     datastore: omnigames.name,
@@ -585,13 +683,13 @@ export default SlackFunction(
 
     const wincondition = winner.split("wins")[0];
     console.log("\nbro: ", wincondition);
-    if (wincondition.includes(p1)) {
+    if (wincondition.toLowerCase().includes(p1.toLowerCase())) {
       await client.chat.postMessage({
         channel: metadata.channelId,
         thread_ts: metadata.messageTs,
         text: `<@${pullValues.item.player1}>'s answer of ${p1} won against <@${pullValues.item.player2}>'s answer of ${p2}! ${winner}`,
       });
-    } else if (wincondition.includes(p2)) {
+    } else if (wincondition.toLowerCase().includes(p2.toLowerCase())) {
       await client.chat.postMessage({
         channel: metadata.channelId,
         thread_ts: metadata.messageTs,
@@ -625,6 +723,36 @@ export default SlackFunction(
     id: metadata.gameId.toString(),
   });
 
+  if (pullValues.item.type == "magic") {
+    const response1 = await fetch("https://ai.hackclub.com/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messages: [
+          {
+            role: "user", 
+            content: `Is the term ${selectedMove} related to magic in any way? This is the definition of magic by the way, "the power of apparently influencing the course of events by using mysterious or supernatural forces." Please respond with a simple yes or no.`
+          }
+        ]
+      })
+    });
+
+    const rep2 = await response1.json();
+    const rep3 = rep2.choices[0].message.content;
+    const rep4 = rep3.split("</think>")[1].replace("\n", "");
+    console.log(rep4);
+    if (rep4.toLowerCase().includes("no")) {
+      return {
+        response_action: "errors",
+        errors: {
+          input_move: "That's not a magic-related move! Please choose something related to magic (supernatural or mysterious forces)."
+        }
+      };
+    }
+  }
+
   let p1Input = "";
   let fin = false;
   if (pullValues.item.p1input) {
@@ -632,7 +760,7 @@ export default SlackFunction(
     fin = true;
   }
 
-  const trythis = await client.apps.datastore.put<
+  const trythis = await client.apps.datastore.update<
     typeof omnigames.definition
   >({
     datastore: omnigames.name,
@@ -684,13 +812,13 @@ export default SlackFunction(
 
     const wincondition = winner.split("wins")[0];
     console.log("\nbro: ", wincondition);
-    if (wincondition.includes(p1)) {
+    if (wincondition.toLowerCase().includes(p1.toLowerCase())) {
       await client.chat.postMessage({
         channel: metadata.channelId,
         thread_ts: metadata.messageTs,
         text: `<@${pullValues.item.player1}>'s answer of "${p1}" won against <@${pullValues.item.player2}>'s answer of "${p2}"! ${winner}`,
       });
-    } else if (wincondition.includes(p2)) {
+    } else if (wincondition.toLowerCase().includes(p2.toLowerCase())) {
       await client.chat.postMessage({
         channel: metadata.channelId,
         thread_ts: metadata.messageTs,
@@ -702,6 +830,8 @@ export default SlackFunction(
         thread_ts: metadata.messageTs,
         text: `Something went wrong.`,
       });
+      console.log ("p1:", p1);
+      console.log ("p2:", p2);
     }
   }
 });

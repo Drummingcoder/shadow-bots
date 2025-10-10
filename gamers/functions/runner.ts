@@ -53,6 +53,38 @@ export default SlackFunction(
         return { outputs: { } };
       }
       if (getResp1.item.messageinput == "") {
+        let starter = "rock";
+        if (getResp1.item.type == "magic") {
+          starter = "flying pig";
+          const magicresponse = await fetch("https://ai.hackclub.com/chat/completions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              messages: [
+                {
+                  role: "user", 
+                  content: `Is the term ${mess} related to magic in any way? This is the definition of magic by the way, "the power of apparently influencing the course of events by using mysterious or supernatural forces." Please respond with a simple yes or no.`
+                }
+              ]
+            })
+          });
+
+          const rep2 = await magicresponse.json();
+          const rep3 = rep2.choices[0].message.content;
+          const rep4 = rep3.split("</think>")[1].replace("\n", "");
+          console.log(rep4);
+          if (rep4.toLowerCase().includes("no")) {
+            await client.chat.postEphemeral({
+              channel: channelToPost,
+              user: user,
+              thread_ts: timestamp,
+              text: `That's not a magic-related move, please try again or change your answer.`,
+            });
+            return {outputs: { }};
+          }
+        }
         const response = await fetch("https://ai.hackclub.com/chat/completions", {
           method: "POST",
           headers: {
@@ -62,7 +94,7 @@ export default SlackFunction(
             messages: [
               {
                 role: "user", 
-                content: `Which would win: rock or ${mess}? Just give me the winner and a short explanation (1 sentence) in the form "[Insert winner] wins because [insert reason]". So if rock would win against ${mess}, put "rock wins because [insert reason]". Otherwise, put "${mess} wins because [insert reason]." No ties! Don't add any extra punctuation or brackets/parathesis to the response.`
+                content: `Which would win: ${starter} or ${mess}? Just give me the winner and a short explanation (1 sentence) in the form "[Insert winner] wins because [insert reason]". So if rock would win against ${mess}, put "rock wins because [insert reason]". Otherwise, put "${mess} wins because [insert reason]." No ties! Don't add any extra punctuation or brackets/parathesis to the response.`
               }
             ]
           })
@@ -78,7 +110,7 @@ export default SlackFunction(
             thread_ts: timestamp,
             text: `${winner}\n\nSo, what would win against "${mess}"?`,
           });
-          const putResp = await client.apps.datastore.put<
+          const putResp = await client.apps.datastore.update<
             typeof multi.definition
           >({
             datastore: multi.name,
@@ -99,7 +131,7 @@ export default SlackFunction(
             thread_ts: timestamp,
             text: `Unfortunately ${winner}\n\nYou achieved a score of ${getResp1.item.score}!`,
           });
-          const putResp = await client.apps.datastore.put<
+          const putResp = await client.apps.datastore.update<
             typeof multi.definition
           >({
             datastore: multi.name,
@@ -123,6 +155,37 @@ export default SlackFunction(
               channel: channelToPost,
               thread_ts: timestamp,
               text: `You can't reuse answers! Try again!`,
+            });
+            return { outputs: { } };
+          }
+        }
+
+        if (getResp1.item.type == "magic") {
+          const magicresponse = await fetch("https://ai.hackclub.com/chat/completions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              messages: [
+                {
+                  role: "user", 
+                  content: `Is the term ${mess} related to magic in any way? This is the definition of magic by the way, "the power of apparently influencing the course of events by using mysterious or supernatural forces." Please respond with a simple yes or no.`
+                }
+              ]
+            })
+          });
+
+          const rep2 = await magicresponse.json();
+          const rep3 = rep2.choices[0].message.content;
+          const rep4 = rep3.split("</think>")[1].replace("\n", "");
+          console.log(rep4);
+          if (rep4.toLowerCase().includes("no")) {
+            await client.chat.postEphemeral({
+              channel: channelToPost,
+              user: user,
+              thread_ts: timestamp,
+              text: `That's not a magic-related move, please try again or change your answer.`,
             });
             return { outputs: { } };
           }
@@ -155,7 +218,7 @@ export default SlackFunction(
           });
           const arr = (getResp1.item.listofinputs || []).concat(mess);
           console.log("array: ", arr);
-          const putResp = await client.apps.datastore.put<
+          const putResp = await client.apps.datastore.update<
             typeof multi.definition
           >({
             datastore: multi.name,
@@ -175,7 +238,7 @@ export default SlackFunction(
             thread_ts: timestamp,
             text: `Unfortunately ${winner}\n\nYou achieved a score of ${getResp1.item.score}!`,
           });
-          const putResp = await client.apps.datastore.put<
+          const putResp = await client.apps.datastore.update<
             typeof multi.definition
           >({
             datastore: multi.name,
@@ -205,12 +268,42 @@ export default SlackFunction(
         }
       }
       if (getResp1.item.messageinput == "") {
+        if (getResp1.item.type == "magic") {
+          const magicresponse = await fetch("https://ai.hackclub.com/chat/completions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              messages: [
+                {
+                  role: "user", 
+                  content: `Is the term ${mess} related to magic in any way? This is the definition of magic by the way, "the power of apparently influencing the course of events by using mysterious or supernatural forces." Please respond with a simple yes or no.`
+                }
+              ]
+            })
+          });
+
+          const rep2 = await magicresponse.json();
+          const rep3 = rep2.choices[0].message.content;
+          const rep4 = rep3.split("</think>")[1].replace("\n", "");
+          console.log(rep4);
+          if (rep4.toLowerCase().includes("no")) {
+            await client.chat.postEphemeral({
+              channel: channelToPost,
+              user: user,
+              thread_ts: timestamp,
+              text: `That's not a magic-related move, please try again or change your answer.`,
+            });
+            return {outputs: { }};
+          }
+        }
           await client.chat.postMessage({
             channel: channelToPost,
             thread_ts: timestamp,
             text: `So, player 2, what would win against "${mess}"?`,
           });
-          const putResp = await client.apps.datastore.put<
+          const putResp = await client.apps.datastore.update<
             typeof multi.definition
           >({
             datastore: multi.name,
@@ -237,6 +330,37 @@ export default SlackFunction(
               text: `You can't reuse answers! Try again!`,
             });
             return { outputs: { } };
+          }
+        }
+
+        if (getResp1.item.type == "magic") {
+          const magicresponse = await fetch("https://ai.hackclub.com/chat/completions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              messages: [
+                {
+                  role: "user", 
+                  content: `Is the term ${mess} related to magic in any way? This is the definition of magic by the way, "the power of apparently influencing the course of events by using mysterious or supernatural forces." Please respond with a simple yes or no.`
+                }
+              ]
+            })
+          });
+
+          const rep2 = await magicresponse.json();
+          const rep3 = rep2.choices[0].message.content;
+          const rep4 = rep3.split("</think>")[1].replace("\n", "");
+          console.log(rep4);
+          if (rep4.toLowerCase().includes("no")) {
+            await client.chat.postEphemeral({
+              channel: channelToPost,
+              user: user,
+              thread_ts: timestamp,
+              text: `That's not a magic-related move, please try again or change your answer.`,
+            });
+            return {outputs: { }};
           }
         }
 
@@ -271,7 +395,7 @@ export default SlackFunction(
             theturn = 2;
           }
 
-          const putResp = await client.apps.datastore.put<
+          const putResp = await client.apps.datastore.update<
             typeof multi.definition
           >({
             datastore: multi.name,
@@ -301,7 +425,7 @@ export default SlackFunction(
             thread_ts: timestamp,
             text: `Unfortunately ${winner}\n\n<@${the}> wins against <@${lose}>!`,
           });
-          const putResp = await client.apps.datastore.put<
+          const putResp = await client.apps.datastore.update<
             typeof multi.definition
           >({
             datastore: multi.name,

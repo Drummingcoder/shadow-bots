@@ -30,6 +30,9 @@ const multi = DefineDatastore({
     },
     turn: {
       type: Schema.types.number,
+    }, 
+    type: {
+      type: Schema.types.string,
     }
   },
 });

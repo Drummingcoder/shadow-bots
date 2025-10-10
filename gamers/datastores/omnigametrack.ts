@@ -21,6 +21,9 @@ const omnigames = DefineDatastore({
     },
     finished: {
       type: Schema.types.boolean,
+    }, 
+    type: {
+      type: Schema.types.string,
     }
   },
 });
