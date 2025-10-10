@@ -32,6 +32,7 @@ getDeath.addStep(dome, {
   user_id: getDeath.inputs.user,
   messagets: getDeath.inputs.messagets,
   threadts: getDeath.inputs.threadts,
+  message: getDeath.inputs.message,
 });
 
 export default getDeath;

@@ -34,11 +34,31 @@ export default SlackFunction(
       text: `<@${host}> wants to play a game of Death by AI! Anyone who wants to play with them, reply to this message.`
     });
 
+    let i = 0;
+    let getResp1 = await client.apps.datastore.get<
+      typeof myDeath.definition
+    >({
+      datastore: myDeath.name,
+      id: i.toString(),
+    });
+    
+    if (getResp1.item.ts) {
+      while (getResp1.item.ts) {
+        i++;
+        getResp1 = await client.apps.datastore.get<
+          typeof myDeath.definition
+        >({
+          datastore: myDeath.name,
+          id: i.toString(),
+        });
+      }
+    }
     const putResp = await client.apps.datastore.put<
       typeof myDeath.definition
     >({
       datastore: myDeath.name,
       item: {
+        number: i.toString(),
         ts: mess.ts,
         player1: host,
         p1score: 0,

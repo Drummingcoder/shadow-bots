@@ -26,13 +26,32 @@ const form = startDeath.addStep(Schema.slack.functions.OpenForm,
     description: "Do you have what it takes to survive?",
     fields: {
       elements: [
-      {
-        name: "channel",
-        title: "What channel to play in?",
-        description: "Pick any channel!",
-        type: Schema.slack.types.channel_id,
-      },
-    ],
+        {
+          name: "channel",
+          title: "What channel to play in?",
+          description: "Pick any channel!",
+          type: Schema.slack.types.channel_id,
+        },
+        {
+          name: "type",
+          title: "What kind of game to play",
+          description: "General is any scenario can happen, magic is that magical scenarios will happen.",
+          type: Schema.types.string,
+          enum: ["general", "magic"],
+          choices: [
+            {
+              value: "general",
+              title: "Any scenario can happen",
+              description: "Be prepared"
+            },
+            {
+              value: "magic", 
+              title: "Magical scenarios only",
+              description: "Get ready for the wildest trips of your life!"
+            }
+          ]
+          },
+        ],
       required: ["channel"],
     },
   },

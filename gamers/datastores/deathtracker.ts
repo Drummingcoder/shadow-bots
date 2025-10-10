@@ -2,8 +2,11 @@ import { DefineDatastore, Schema } from "deno-slack-sdk/mod.ts";
 
 const myDeath = DefineDatastore({
   name: "deathdata",
-  primary_key: "ts",
+  primary_key: "number",
   attributes: {
+    number: {
+      type: Schema.types.string,
+    },
     ts: {
       type: Schema.types.string,
     },
