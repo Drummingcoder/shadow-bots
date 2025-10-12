@@ -127,7 +127,7 @@ export default SlackFunction(
       return { outputs: {} };
     }
 
-    /*if (getResp1.item.player1 == user || getResp1.item.player2 == user || getResp1.item.player3 == user || getResp1.item.player4 == user || getResp1.item.player5 == user || getResp1.item.player6 == user || getResp1.item.player7 == user || getResp1.item.player8 == user || getResp1.item.player9 == user || getResp1.item.player10 == user) {
+    if (getResp1.item.player1 == user || getResp1.item.player2 == user || getResp1.item.player3 == user || getResp1.item.player4 == user || getResp1.item.player5 == user || getResp1.item.player6 == user || getResp1.item.player7 == user || getResp1.item.player8 == user || getResp1.item.player9 == user || getResp1.item.player10 == user) {
       await client.chat.postEphemeral({
         channel: channelToPost,
         user: user,
@@ -135,7 +135,7 @@ export default SlackFunction(
         thread_ts: timestamp,
       });
       return { outputs: { } };
-    }*/
+    }
     
     if (getResp1.item.player10 || getResp1.item.player10 == user) {
       await client.chat.postEphemeral({

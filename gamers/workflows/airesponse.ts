@@ -28,8 +28,8 @@ const form = playDeath.addStep(Schema.slack.functions.OpenForm,
       elements: [
         {
           name: "gamenum",
-          title: "What channel to play in?",
-          description: "Pick any channel!",
+          title: "What game number?",
+          description: "Which game are you responding to?",
           type: Schema.types.number,
         },
         {

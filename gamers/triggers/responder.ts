@@ -1,12 +1,12 @@
 import type { Trigger } from "deno-slack-sdk/types.ts";
 import { TriggerContextData, TriggerTypes } from "deno-slack-api/mod.ts";
-import startDeath from "../workflows/deathby.ts";
+import playDeath from "../workflows/airesponse.ts";
 
-const newTrigger: Trigger<typeof startDeath.definition> = {
+const newTrigger: Trigger<typeof playDeath.definition> = {
   type: TriggerTypes.Shortcut,
   name: "deathrespond",
   description: "Response for a game",
-  workflow: `#/workflows/${startDeath.definition.callback_id}`,
+  workflow: `#/workflows/${playDeath.definition.callback_id}`,
   inputs: {
     interactivity: {
       value: TriggerContextData.Shortcut.interactivity,
