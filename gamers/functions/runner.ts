@@ -129,7 +129,7 @@ export default SlackFunction(
           await client.chat.postMessage({
             channel: channelToPost,
             thread_ts: timestamp,
-            text: `Unfortunately ${winner}\n\nYou achieved a score of ${getResp1.item.score}!`,
+            text: `Unfortunately ${winner}\n\nYou achieved a score of ${getResp1.item.score}! Have a magical day!`,
           });
           const putResp = await client.apps.datastore.update<
             typeof multi.definition

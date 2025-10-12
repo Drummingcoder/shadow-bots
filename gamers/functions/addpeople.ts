@@ -51,7 +51,8 @@ export default SlackFunction(
     });
 
     if (getResp1.item.ts && getResp1.item.ts != timestamp) {
-      for (i = 1; getResp1.item.ts && getResp1.item.ts != timestamp; i++) {
+      while (getResp1.item.ts && getResp1.item.ts != timestamp) {
+        i++;
         getResp1 = await client.apps.datastore.get<
           typeof myDeath.definition
         >({

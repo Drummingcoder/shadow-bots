@@ -23,7 +23,7 @@ const form = startOmni.addStep(Schema.slack.functions.OpenForm,
     title: "Omniscient RPS",
     interactivity: startOmni.inputs.interactivity,
     submit_label: "Start!",
-    description: "You can use literally anything in this game!",
+    description: "You can use any kind of magic in this game!",
     fields: {
       elements: [
       {
@@ -56,7 +56,7 @@ const form = startOmni.addStep(Schema.slack.functions.OpenForm,
             description: "Keep playing until someone loses"
           }
         ]
-      }, 
+      }/*, 
       {
         name: "type",
         title: "What type of game?",
@@ -75,7 +75,7 @@ const form = startOmni.addStep(Schema.slack.functions.OpenForm,
             description: "You can only use magic-related answers"
           }
         ]
-      }, 
+      }, will reenable after review */
     ],
       required: ["channel"],
     },
@@ -88,7 +88,7 @@ startOmni.addStep(starteOmni, {
   user_id: startOmni.inputs.user_id,
   interactivity: form.outputs.interactivity,
   mode: form.outputs.fields.mode,
-  type: form.outputs.fields.type,
+  type: /*form.outputs.fields.type*/"magic",
 });
 
 export default startOmni;

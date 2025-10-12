@@ -12,7 +12,7 @@ import myDeath from "./datastores/deathtracker.ts";
 import getDeath from "./workflows/getpeople.ts";
 
 export default Manifest({
-  name: "Dokeshi",
+  name: "Magical Dokeshi",
   description: "Feeling a bit bored?",
   longDescription: "A bot that hosts games for you and your friends to play in Slack. I'm starting with a rock-paper-scissors game, but I have plans for more!\n\nUse the command `/playOmniRPS` to get started. At the current moment, it's a simple game of rock, paper, scissors. Choose a partner to play with, and a channel to play in! Use the buttons in the reply to the start message to make your move. Have fun!\n\nMore details and other features at: https://hackclub.slack.com/docs/T0266FRGM/F09HJ4A4AGN",
   icon: "assets/jester.jpeg",

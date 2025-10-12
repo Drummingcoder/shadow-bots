@@ -81,6 +81,9 @@ const myDeath = DefineDatastore({
     },
     finished: {
       type: Schema.types.boolean,
+    },
+    lastquestion: {
+      type: Schema.types.string,
     }
   },
 });

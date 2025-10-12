@@ -47,7 +47,7 @@ export default SlackFunction(
     if (!inputs.other_user) {
       const firstText = await client.chat.postMessage({
         channel: channelToPost,
-        text: `<@${inputs.user_id}>, ready to play infinite RPS? Just reply in this thread with your move, and see how high your score can go!`,
+        text: `<@${inputs.user_id}>, ready to play magical infinite RPS? Just reply in this thread with your move, and see how high your score can go!`,
       });
 
       if (inputs.type == "magic") {
