@@ -4,7 +4,7 @@ import myDeath from "../datastores/deathtracker.ts";
 export const startDeathGame = DefineFunction({
   callback_id: "start_dea",
   title: "Start Death Game",
-  description: "Start a game of Death by AI",
+  description: "Start a magical game of Death by AI",
   source_file: "functions/deathly.ts",
   input_parameters: {
     properties: {
@@ -29,10 +29,6 @@ export default SlackFunction(
   startDeathGame,
   async ({ inputs, client }) => {
     const host = inputs.user_id;
-    const mess = await client.chat.postMessage({
-      channel: inputs.channel,
-      text: `<@${host}> wants to play a game of Death by AI! Anyone who wants to play with them, reply to this message.`
-    });
 
     let i = 0;
     let getResp1 = await client.apps.datastore.get<
@@ -53,6 +49,12 @@ export default SlackFunction(
         });
       }
     }
+
+    const mess = await client.chat.postMessage({
+      channel: inputs.channel,
+      text: `Game number: ${i}\n<@${host}> wants to play a game of magical Death by AI! Anyone who wants to play with them, reply to this message.`
+    });
+
     const putResp = await client.apps.datastore.put<
       typeof myDeath.definition
     >({

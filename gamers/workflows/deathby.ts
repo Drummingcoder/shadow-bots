@@ -32,7 +32,7 @@ const form = startDeath.addStep(Schema.slack.functions.OpenForm,
           description: "Pick any channel!",
           type: Schema.slack.types.channel_id,
         },
-        {
+        /*{
           name: "type",
           title: "What kind of game to play",
           description: "General is any scenario can happen, magic is that magical scenarios will happen.",
@@ -50,7 +50,7 @@ const form = startDeath.addStep(Schema.slack.functions.OpenForm,
               description: "Get ready for the wildest trips of your life!"
             }
           ]
-          },
+          },*/
         ],
       required: ["channel"],
     },

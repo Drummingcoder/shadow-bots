@@ -22,7 +22,7 @@ export const dome = DefineFunction({
       },
       threadts: {
         type: Schema.types.string,
-        description: "reply here",
+        description: "reply here to this thread",
       },
       message: {
         type: Schema.types.string,
@@ -98,7 +98,7 @@ export default SlackFunction(
           messages: [
             {
               role: "user", 
-              content: `Give a scenario of any kind, it can be silly, it can be serious, it can be realistic, or it can be unrealistic. Just provide a scenario to survive, it can be of ANY kind. Make it around 150 characters or less. It has to end with the question, "How will you survive?"`
+              content: `Give a magical scenario of any kind, it can be silly, it can be serious, it can be realistic, or it can be unrealistic. Just provide a scenario to survive, it can be of ANY kind. It can be any place, any time, any reason, any resources, but the one thing it has to be is magical. Make it around 300 characters or less. It has to end with the question, "How will you survive?"`
             }
           ]
         })
@@ -109,9 +109,20 @@ export default SlackFunction(
       const rep4 = rep3.split("</think>")[1].replace("\n", "");
       await client.chat.postMessage({
         channel: channelToPost,
-        text: `Alright, your first scenario out of 10. Respond with the "/deathrespond" command.\n\n${rep4}`,
+        text: `Alright, here's your scenario. Respond with the "/deathrespond" command.\n\n${rep4}`,
         thread_ts: timestamp,
       });
+
+      const update2 = await client.apps.datastore.update<
+        typeof myDeath.definition
+      >({
+        datastore: myDeath.name,
+        item: {
+          number: i.toString(),
+          lastquestion: rep4,
+        },
+      });
+      console.log(update2);
 
       return { outputs: {} };
     }
