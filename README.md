@@ -1,48 +1,30 @@
-# Sans Tracker bot
+# Dokeshi bot
 
-Need to spend a little less time on Slack? Or just want to monitor your time?
+A fun bot for Hack Clubbers to laugh with and play each other!
 ## Description: 
-Features: 
-To start time tracking, mention the bot in Hack Club Slack channel #jesterly-hub.
-Don't include any other keywords like coins, "time today", or stop or else the bot
-won't respond. Follow the bot's prompts and respond with simple yes or nos (I need
-to make this more robust in the future). There's no need to ping the bot again, in
-fact, when answering the prompt, don't ping the bot, or else it will break. Once
-you answer yes to the last prompt, the bot will begin to track your time.
+Newest features: 
+Use '/playOmniRPS' to play a game of magical Omniscient Rock, Paper, Scissors. After choosing a channel to play in (it can be any public channel as long as the bot is in the channel), you can choose to play alone or play with another friend, but if you play alone, you automatically get lock into Multiple Answers mode. The mode selector determines how the game will run. In the 'One Toss' mode, you get to play one move, just like in a classic game of Rock Paper Scissors! In the Multiple Answers mode, you and your friend (or just yourself) go back and forth, giving answers that will beat the previous response until one of you fails. Magical responses only!
 
-The bot uses your presence (the green light next to your profile) to determine
-if you're online or offline. Please don't manually set your presence to away unless
-you're actually going offline, or else the bot will not track your time correctly.
-For every 30 minutes you spend on Slack, the bot will ping you in #jesterly-hub
-updating you about the amount of time you've spent today on Slack, unless you spend
-coins to skip it.
+You can also play magical Death by AI using the '/deathbyai' command. You can play with 1-10 people, simply respond in the thread to join the game! The host (the person who ran the command) can then start the game by responding with 'start' in the thread (don't add anything else). Once the game is started, use the '/deathrespond' command to respond to the magical prompt. Put the game number and channel you're playing in the form, and also put your survival strategy in. Once all players have put their responses in, the bot will announce the results in the channel.
 
-Speaking about coins, the bot is programmed to give you 1 coin for every hour you
-spend off Slack. This coin-giving will happen at 12:00 PST, where the bot will
-reset time active and away (perhaps in the future, it can keep a log on this), and
-distribute coins accordingly.
+Other features: 
+Start a game with '/playOmniRPS' (you can see the vision, right now it's just a regular RPS Bot). Simply put in who you want to play against and the channel to play in! The bot will send an initial "challenge declared" message, use the buttons in the reply to throw your move and see who wins! Note: another game can't be started unless the previous game has finished.
 
-To spend coins to skip the pings, use the command '/timetospend'. A form will show
-up showing you how many coins you have and allow you to enter a number of coins to
-spend. It was coded to prevent high numbers past the amount you have, so don't try
-it. As it's 1 coin per ping, if you spent 3 coins, the next 3 pings will be skipped.
-If you don't want to spend on skipping pings, well you can enjoy the hard-earned
-intrisic joy of seeing a number go up day by day.
+To flip a coin, in any channel, mention the bot @Dokeshi and say "flip a coin" or "flip coin", so like "@Dokeshi flip a coin". The bot will respond with heads or tails.
 
-To see your coins count or your time active today, mention the bot in a channel
-that it's in and state your request. You can say either "coins" or "time today"
-(the whole phrase, just "time" won't work) to see your coin count or the time
-tracked today.
+To roll an 8-ball, mention the bot and say something like '@Dokeshi Ask the 8-ball, "Should I leave my school?"' (the key word is 8-ball). The bot will roll the 8-ball and come up with a response.
+
+To roll a variable amount of dice, mention the bot and say something like "roll 2 dice" (the number can be any number, like 61 or 34), so you say something like "@Dokeshi roll 3 dice". Don't deviate from this form or else the bot will not work, so something like "@Dokeshi please roll 4 dice" won't work.
 
 ## Deploying the Bot
 This bot was made using the Deno Slack SDK, so to install and deploy it yourself,
 you need to install the Slack CLI and Deno SDK to deploy the bot.
-The Sans Tracker bot's code is stored inside the sans folder.
+The Dokeshi bot's code is stored inside the gamers folder.
 
 1. Clone the repository:
     ```bash
     git clone https://github.com/Drummingcoder/find-the-channel.git
-    cd sans
+    cd gamers
     ```
 2. Deploy the bot:
     ```bash
@@ -50,3 +32,7 @@ The Sans Tracker bot's code is stored inside the sans folder.
     ```
 
 It's as easy as that!
+
+## Video:
+Video of RPS in action:
+https://github.com/user-attachments/assets/66f3820a-1926-4501-b9f5-b58e5c238adc
