@@ -641,13 +641,13 @@ export default SlackFunction(
       if (getResp2.item.p1score == 1) {
         await client.chat.postMessage({
           channel: inputs.channel,
-          text: `You have succeeded! The AI says, "${getResp3.item.player1ans}"!`,
+          text: `You have succeeded! The AI says, "${getResp3.item.player1ans}"`,
           thread_ts: post.ts,
         });
       } else {
         await client.chat.postMessage({
           channel: inputs.channel,
-          text: `You have failed! The AI says, "${getResp3.item.player1ans}".`,
+          text: `You have failed! The AI says, "${getResp3.item.player1ans}"`,
           thread_ts: post.ts,
         });
       }
@@ -662,13 +662,13 @@ export default SlackFunction(
         if (getResp2.item.p2score == 1) {
           await client.chat.postMessage({
             channel: inputs.channel,
-            text: `You have succeeded! The AI says, "${getResp3.item.player2ans}"!`,
+            text: `You have succeeded! The AI says, "${getResp3.item.player2ans}"`,
             thread_ts: post.ts,
           });
         } else {
           await client.chat.postMessage({
             channel: inputs.channel,
-            text: `You have failed! The AI says, "${getResp3.item.player2ans}".`,
+            text: `You have failed! The AI says, "${getResp3.item.player2ans}"`,
             thread_ts: post.ts,
           });
         }
@@ -684,13 +684,13 @@ export default SlackFunction(
         if (getResp2.item.p3score == 1) {
           await client.chat.postMessage({
             channel: inputs.channel,
-            text: `You have succeeded! The AI says, "${getResp3.item.player3ans}"!`,
+            text: `You have succeeded! The AI says, "${getResp3.item.player3ans}"`,
             thread_ts: post.ts,
           });
         } else {
           await client.chat.postMessage({
             channel: inputs.channel,
-            text: `You have failed! The AI says, "${getResp3.item.player3ans}".`,
+            text: `You have failed! The AI says, "${getResp3.item.player3ans}"`,
             thread_ts: post.ts,
           });
         }
@@ -706,13 +706,13 @@ export default SlackFunction(
         if (getResp2.item.p4score == 1) {
           await client.chat.postMessage({
             channel: inputs.channel,
-            text: `You have succeeded! The AI says, "${getResp3.item.player4ans}"!`,
+            text: `You have succeeded! The AI says, "${getResp3.item.player4ans}"`,
             thread_ts: post.ts,
           });
         } else {
           await client.chat.postMessage({
             channel: inputs.channel,
-            text: `You have failed! The AI says, "${getResp3.item.player4ans}".`,
+            text: `You have failed! The AI says, "${getResp3.item.player4ans}"`,
             thread_ts: post.ts,
           });
         }
@@ -728,13 +728,13 @@ export default SlackFunction(
         if (getResp2.item.p5score == 1) {
           await client.chat.postMessage({
             channel: inputs.channel,
-            text: `You have succeeded! The AI says, "${getResp3.item.player5ans}"!`,
+            text: `You have succeeded! The AI says, "${getResp3.item.player5ans}"`,
             thread_ts: post.ts,
           });
         } else {
           await client.chat.postMessage({
             channel: inputs.channel,
-            text: `You have failed! The AI says, "${getResp3.item.player5ans}".`,
+            text: `You have failed! The AI says, "${getResp3.item.player5ans}"`,
             thread_ts: post.ts,
           });
         }
@@ -750,13 +750,13 @@ export default SlackFunction(
         if (getResp2.item.p6score == 1) {
           await client.chat.postMessage({
             channel: inputs.channel,
-            text: `You have succeeded! The AI says, "${getResp3.item.player6ans}"!`,
+            text: `You have succeeded! The AI says, "${getResp3.item.player6ans}"`,
             thread_ts: post.ts,
           });
         } else {
           await client.chat.postMessage({
             channel: inputs.channel,
-            text: `You have failed! The AI says, "${getResp3.item.player6ans}".`,
+            text: `You have failed! The AI says, "${getResp3.item.player6ans}"`,
             thread_ts: post.ts,
           });
         }
@@ -772,13 +772,13 @@ export default SlackFunction(
         if (getResp2.item.p7score == 1) {
           await client.chat.postMessage({
             channel: inputs.channel,
-            text: `You have succeeded! The AI says, "${getResp3.item.player7ans}"!`,
+            text: `You have succeeded! The AI says, "${getResp3.item.player7ans}"`,
             thread_ts: post.ts,
           });
         } else {
           await client.chat.postMessage({
             channel: inputs.channel,
-            text: `You have failed! The AI says, "${getResp3.item.player7ans}".`,
+            text: `You have failed! The AI says, "${getResp3.item.player7ans}"`,
             thread_ts: post.ts,
           });
         }
@@ -794,13 +794,13 @@ export default SlackFunction(
         if (getResp2.item.p8score == 1) {
           await client.chat.postMessage({
             channel: inputs.channel,
-            text: `You have succeeded! The AI says, "${getResp3.item.player8ans}"!`,
+            text: `You have succeeded! The AI says, "${getResp3.item.player8ans}"`,
             thread_ts: post.ts,
           });
         } else {
           await client.chat.postMessage({
             channel: inputs.channel,
-            text: `You have failed! The AI says, "${getResp3.item.player8ans}".`,
+            text: `You have failed! The AI says, "${getResp3.item.player8ans}"`,
             thread_ts: post.ts,
           });
         }
@@ -816,13 +816,13 @@ export default SlackFunction(
         if (getResp2.item.p9score == 1) {
           await client.chat.postMessage({
             channel: inputs.channel,
-            text: `You have succeeded! The AI says, "${getResp3.item.player9ans}"!`,
+            text: `You have succeeded! The AI says, "${getResp3.item.player9ans}"`,
             thread_ts: post.ts,
           });
         } else {
           await client.chat.postMessage({
             channel: inputs.channel,
-            text: `You have failed! The AI says, "${getResp3.item.player9ans}".`,
+            text: `You have failed! The AI says, "${getResp3.item.player9ans}"`,
             thread_ts: post.ts,
           });
         }
@@ -838,13 +838,13 @@ export default SlackFunction(
         if (getResp2.item.p10score == 1) {
           await client.chat.postMessage({
             channel: inputs.channel,
-            text: `You have succeeded! The AI says, "${getResp3.item.player10ans}"!`,
+            text: `You have succeeded! The AI says, "${getResp3.item.player10ans}"`,
             thread_ts: post.ts,
           });
         } else {
           await client.chat.postMessage({
             channel: inputs.channel,
-            text: `You have failed! The AI says, "${getResp3.item.player10ans}".`,
+            text: `You have failed! The AI says, "${getResp3.item.player10ans}"`,
             thread_ts: post.ts,
           });
         }

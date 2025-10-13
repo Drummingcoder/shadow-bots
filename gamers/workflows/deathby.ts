@@ -20,7 +20,7 @@ const startDeath = DefineWorkflow({
 
 const form = startDeath.addStep(Schema.slack.functions.OpenForm,
   {
-    title: "Death by AI",
+    title: "Magical Death by AI",
     interactivity: startDeath.inputs.interactivity,
     submit_label: "Start!",
     description: "Do you have what it takes to survive?",

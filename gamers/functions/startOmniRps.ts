@@ -97,7 +97,7 @@ export default SlackFunction(
     } else if (inputs.mode == "multiple_answers") {
       const firstText = await client.chat.postMessage({
         channel: channelToPost,
-        text: `<@${inputs.user_id}> has challenged <@${inputs.other_user}> to play infinite RPS? Player 1, make your first move!`,
+        text: `<@${inputs.user_id}> has challenged <@${inputs.other_user}> to play magical infinite RPS? Player 1, make your first move!`,
       });
       if (inputs.type == "magic") {
         const putResp = await client.apps.datastore.put<
@@ -185,7 +185,7 @@ export default SlackFunction(
 
     const firstText = await client.chat.postMessage({
       channel: channelToPost,
-      text: `<@${inputs.user_id}> has challenged <@${inputs.other_user}> to a game of Omniscient Rock, Paper, Scissors!`,
+      text: `<@${inputs.user_id}> has challenged <@${inputs.other_user}> to a game of magical Omniscient Rock, Paper, Scissors!`,
     });
 
     if (inputs.type == "magic") {
