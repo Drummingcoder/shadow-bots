@@ -98,7 +98,7 @@ export default SlackFunction(
           messages: [
             {
               role: "user", 
-              content: `Give a magical scenario of any kind, it can be silly, it can be serious, it can be realistic, or it can be unrealistic. Just provide a scenario to survive, it can be of ANY kind. It can be any place, any time, any reason, any resources, but the one thing it has to be is magical. Make it around 300 characters or less. It has to end with the question, "How will you survive?"`
+              content: `Give a magical scenario of any kind, it can be silly, it can be serious, it can be realistic, or it can be unrealistic. Just provide a scenario to survive, it can be of ANY kind. It can be any place, any time, any reason, any resources, but the one thing it has to be is magical. Make it around 300 characters or less. It has to end with the question, "How will you survive?" Make sure that the scenario is complete, no cut-off situations!`
             }
           ]
         })

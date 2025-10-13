@@ -180,7 +180,7 @@ export default SlackFunction(
           messages: [
             {
               role: "user", 
-              content: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."`
+              content: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]." Don't put any extra punctuation, and make sure to evaluate the response based on if the player is likely to survive the scenario provided, nothing else.`
             }
           ]
         })
