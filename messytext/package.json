@@ -1,0 +1,17 @@
+{
+  "name": "mess-up-my-text",
+  "version": "2.0.0",
+  "description": "Scrambles up your text",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@slack/bolt": "^4.2.0"
+  },
+  "devDependencies": {
+    "@slack/cli-hooks": "^1.2.1"
+  }
+}
