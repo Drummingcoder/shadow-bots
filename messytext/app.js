@@ -7,9 +7,9 @@ const app = new App({
   appToken: process.env.SLACK_APP_TOKEN
 });
 
-app.command('/messytext', async ({ ack, say, client, command}) => {
+app.command('/messytext', async ({ ack, body, client, command}) => {
   await ack();
-  const userText = command.text;
+  const userText = body.text;
   const channel = command.channel_id;
   const username = command.user_id;
 
@@ -28,7 +28,7 @@ app.command('/messytext', async ({ ack, say, client, command}) => {
         "A": "Ɐ", "B": "ꓭ", "C": "Ɔ", "D": "ꓷ", "E": "Ǝ", "F": "Ⅎ", "G": "ꓨ", "H": "H", "I": "I", "J": "ſ", "K": "ꓘ", "L": "ꓶ", "M": "W", "N": "N", "O": "O", "P": "Ԁ", "Q": "Ꝺ", "R": "ꓤ", "S": "S", "T": "ꓕ", "U": "ꓵ", "V": "ꓥ", "W": "M", "X": "X", "Y": "⅄", "Z": "Z"};
   let text = "";
 
-  if (Math.random() < 0.35) {
+  if (Math.random() < 0.666) {
     const random = Math.random()
     if (random < 0.3333) {
       for (let j = userText.length - 1; j >= 0; j--) {
@@ -106,7 +106,7 @@ app.command('/messytext', async ({ ack, say, client, command}) => {
   });
 });
 
-app.command('/translatetons', async ({ ack, say, client, command}) => {
+app.command('/messyai', async ({ ack, client, command}) => {
   await ack();
   const userText = command.text;
   const channel = command.channel_id;
@@ -122,46 +122,110 @@ app.command('/translatetons', async ({ ack, say, client, command}) => {
   }
 
   let text = userText;
-  let sourceLang = "en", targetLang = "";
-  const listoflang = [
-  "aa", "ab", "ae", "af", "ak", "am", "an", "ar", "as", "av",
-  "ay", "az", "ba", "be", "bg", "bi", "bm", "bn", "bo", "br",
-  "bs", "ca", "ce", "ch", "co", "cr", "cs", "cu", "cv", "cy",
-  "da", "de", "dv", "dz", "ee", "el", "en", "eo", "es", "et",
-  "eu", "fa", "ff", "fi", "fj", "fo", "fr", "fy", "ga", "gd",
-  "gl", "gn", "gu", "gv", "ha", "he", "hi", "ho", "hr", "ht",
-  "hu", "hy", "hz", "ia", "id", "ie", "ig", "ii", "ik", "io",
-  "is", "it", "iu", "ja", "jv", "ka", "kg", "ki", "kj", "kk",
-  "kl", "km", "kn", "ko", "kr", "ks", "ku", "kv", "kw", "ky",
-  "la", "lb", "lg", "li", "ln", "lo", "lt", "lu", "lv", "mg",
-  "mh", "mi", "mk", "ml", "mn", "mr", "ms", "mt", "my", "na",
-  "nb", "nd", "ne", "ng", "nl", "nn", "no", "nr", "nv", "ny",
-  "oc", "oj", "om", "or", "os", "pa", "pi", "pl", "ps", "pt",
-  "qu", "rm", "rn", "ro", "ru", "rw", "sa", "sc", "sd", "se",
-  "sg", "si", "sk", "sl", "sm", "sn", "so", "sq", "sr", "ss",
-  "st", "su", "sv", "sw", "ta", "te", "tg", "th", "ti", "tk",
-  "tl", "tn", "to", "tr", "ts", "tt", "tw", "ty", "ug", "uk",
-  "ur", "uz", "ve", "vi", "vo", "wa", "wo", "xh", "yi", "yo",
-  "za", "zh", "zu"];
 
-  for (let i = 0; i < 5; i++) {
-    let response = await fetch(`https://translate.flossboxin.org.in/translate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-          q: text,          
-          source: sourceLang,
-          target: targetLang,
-          format: 'text',
-          api_key: '',
-      }),
-    });
-    const data = await response.json();
-    const rep = data.translatedText;
-    text = rep;
+  const response1 = await fetch("https://ai.hackclub.com/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      messages: [
+        {
+          role: "user", 
+          content: `I'm going to give you text, and your job is to make the text funny. You can reverse the message's meaning, you can change words so that they mean something that barely relates ot the original word, you can even change it to something completely funny and unrelated! Just make it entirely random! Don't add any extra punctuation, but you can vary the length of the response! Make it nonsensical, even! Here's the text to change up: "${text}"`
+        }
+      ]
+    })
+  });
+
+  if (!response1.ok) {
+    console.log("Error:", response1);
   }
+
+  const rep2 = await response1.json();
+  console.log(rep2);
+  const rep3 = rep2.choices[0].message.content;
+  const rep4 = rep3.split("</think>")[1];
+  text = rep4;
+
+  await client.chat.postMessage({
+    channel: channel,
+    text: text,
+    username: displayname,
+    icon_url: display.profile.image_512,
+  });
+});
+
+app.command('/whispertext', async ({ ack, body, client, command}) => {
+  await ack();
+  const mytext = body.text;
+  console.log("Text: ", body.text);
+  const channel = command.channel_id;
+  const username = command.user_id;
+
+  const arr = mytext.split("> ");
+  const usertosend = arr[0].split("|")[0].split("@")[1];
+  const userText = arr[1];
+
+  const display = await client.users.profile.get({
+    user: username,
+  });
+
+  let displayname = display.profile.display_name;
+  if (displayname == "") {
+    displayname = display.profile.real_name;
+  }
+
+  await client.chat.postEphemeral({
+    channel: channel,
+    text: userText,
+    user: usertosend,
+    username: displayname,
+    icon_url: display.profile.image_512,
+  });
+});
+
+app.command('/messyai', async ({ ack, say, client, command}) => {
+  await ack();
+  const userText = command.text;
+  const channel = command.channel_id;
+  const username = command.user_id;
+
+  const display = await client.users.profile.get({
+    user: username,
+  });
+
+  let displayname = display.profile.display_name;
+  if (displayname == "") {
+    displayname = display.profile.real_name;
+  }
+
+  let text = userText;
+
+  const response1 = await fetch("https://ai.hackclub.com/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      messages: [
+        {
+          role: "user", 
+          content: `I'm going to give you text, and your job is to make the text funny. You can reverse the message's meaning, you can change words so that they mean something that barely relates ot the original word, you can even change it to something completely funny and unrelated! Just make it entirely random! Don't add any extra punctuation, but you can vary the length of the response! Make it nonsensical, even! Here's the text to change up: "${text}"`
+        }
+      ]
+    })
+  });
+
+  if (!response1.ok) {
+    console.log("Error:", response1);
+  }
+
+  const rep2 = await response1.json();
+  console.log(rep2);
+  const rep3 = rep2.choices[0].message.content;
+  const rep4 = rep3.split("</think>")[1];
+  text = rep4;
 
   await client.chat.postMessage({
     channel: channel,
@@ -172,7 +236,6 @@ app.command('/translatetons', async ({ ack, say, client, command}) => {
 });
 
 (async () => {
-  // Start your app
   await app.start(process.env.PORT || 3000);
 
   app.logger.info('The messytext app is running! Please migrate to Jester soon');
