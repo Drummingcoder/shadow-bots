@@ -1,6 +1,4 @@
 const { App } = require('@slack/bolt');
-
-// Initializes your app with your bot token and app token
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
   socketMode: true,
@@ -102,6 +100,7 @@ app.command('/messytext', async ({ ack, body, client, command}) => {
     channel: channel,
     text: text,
     username: displayname,
+    thread_ts: command.thread_ts,
     icon_url: display.profile.image_512,
   });
 });
@@ -132,7 +131,7 @@ app.command('/messyai', async ({ ack, client, command}) => {
       messages: [
         {
           role: "user", 
-          content: `I'm going to give you text, and your job is to make the text funny. You can reverse the message's meaning, you can change words so that they mean something that barely relates ot the original word, you can even change it to something completely funny and unrelated! Just make it entirely random! Don't add any extra punctuation, but you can vary the length of the response! Make it nonsensical, even! Here's the text to change up: "${text}"`
+          content: `Here is some text, please make it funny by reversing the meaning, changing words around, or make it completely funny and unrelated! Make sure it's random and no extra punctuation, but vary the length of the response! Here's the text to change: "${text}"`
         }
       ]
     })
@@ -185,54 +184,143 @@ app.command('/whispertext', async ({ ack, body, client, command}) => {
   });
 });
 
-app.command('/messyai', async ({ ack, say, client, command}) => {
-  await ack();
-  const userText = command.text;
-  const channel = command.channel_id;
-  const username = command.user_id;
-
-  const display = await client.users.profile.get({
-    user: username,
-  });
-
-  let displayname = display.profile.display_name;
-  if (displayname == "") {
-    displayname = display.profile.real_name;
-  }
-
-  let text = userText;
-
-  const response1 = await fetch("https://ai.hackclub.com/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      messages: [
-        {
-          role: "user", 
-          content: `I'm going to give you text, and your job is to make the text funny. You can reverse the message's meaning, you can change words so that they mean something that barely relates ot the original word, you can even change it to something completely funny and unrelated! Just make it entirely random! Don't add any extra punctuation, but you can vary the length of the response! Make it nonsensical, even! Here's the text to change up: "${text}"`
-        }
-      ]
-    })
-  });
-
-  if (!response1.ok) {
-    console.log("Error:", response1);
-  }
-
-  const rep2 = await response1.json();
-  console.log(rep2);
-  const rep3 = rep2.choices[0].message.content;
-  const rep4 = rep3.split("</think>")[1];
-  text = rep4;
-
+app.event('app_mention', async ({ event, client }) => {
   await client.chat.postMessage({
-    channel: channel,
-    text: text,
-    username: displayname,
-    icon_url: display.profile.image_512,
+    channel: event.channel,
+    text: "Checking...",
+    thread_ts: event.ts,
   });
+  if ((event.text.includes("kys") || event.text.includes("kill yourself")) || (event.text.includes("leave"))) {
+    await client.conversations.leave({
+      channel: event.channel,
+    });
+    await client.chat.postMessage({
+      channel: event.channel,
+      text: "I have left the channel. If you want me to rejoin, please invite me again!",
+      thread_ts: event.ts,
+    });
+    return { outputs: { } };
+  }
+
+  const myMessage = `${event.text}`;
+  let cursor = "";
+  let realID = true;
+  const matches = myMessage.match(/<([^>]+)>/g);
+  console.log("getID:" , matches);
+  let target_id = "";
+  const userMatch = myMessage.match(/user:(\w+)/);
+  console.log("userID:" , userMatch);
+  if (matches && matches.length > 2) {
+    target_id = matches[1]?.replace("<@", "").replace(">", "");
+  } else if ((matches && matches.length == 2) && (userMatch && userMatch.length >= 1)) {
+    target_id = userMatch[1];
+    realID = false;
+  } else {
+    if (myMessage.includes("fuck") && ((myMessage.includes("u") || myMessage.includes("you")) || myMessage.includes("Jester"))) {
+      await client.chat.postMessage({
+        channel: event.channel,
+        text: "You wanna do it with me? UwU",
+        thread_ts: event.ts,
+      });
+    } else {
+      await client.chat.postMessage({
+        channel: event.channel,
+        text: "Sorry, this response isn't supported yet. This is still a work in progress!",
+        thread_ts: event.ts,
+      });
+    }
+    return { outputs: { error: "No response for this yet" } };
+  }
+
+  if (target_id) {
+    console.log("target:" , target_id);
+  }
+  let channel = [""];
+  if (realID) {
+    channel = matches[2]?.split("|");
+  } else {
+    channel = matches[1]?.split("|");
+  }
+  console.log("channel:" , channel);
+  const theChannel = channel[0].replace("<#", "");
+
+  let place = await client.conversations.members({
+    channel: theChannel,
+    cursor: cursor,
+  });
+
+  let result = false;
+  if (realID) {
+    if (place.members && place.members.includes(target_id)) {
+      result = true;
+    }
+  } else {
+    if (place.members) {
+      for (const member of place.members) {
+        const userInfo = await client.users.info({ user: member });
+        if (userInfo.ok && (userInfo.user?.profile.real_name.toLowerCase() === target_id.toLowerCase() || userInfo.user?.profile.display_name.toLowerCase() === target_id.toLowerCase())) {
+          result = true;
+          break;
+        }
+        console.log("user:", userInfo);
+      }
+    }
+  }
+  
+  do {
+    if (place.response_metadata?.next_cursor) {
+      cursor = place.response_metadata.next_cursor;
+      place = await client.conversations.members({
+        channel: theChannel,
+        cursor: cursor,
+      });
+    }
+    if (realID) {
+      if (place.members && place.members.includes(target_id)) {
+        result = true;
+      }
+    } else {
+      if (place.members) {
+        for (const member of place.members) {
+          const userInfo = await client.users.info({ user: member });
+          if (userInfo.ok && userInfo.user?.name.toLowerCase() === target_id.toLowerCase()) {
+            result = true;
+            break;
+          }
+        }
+      }
+    }
+  } while (place?.response_metadata?.next_cursor);
+
+  if (result) {
+    if (realID) {
+      await client.chat.postMessage({
+        channel: event.channel,
+        text: `Yes, <@${target_id}> is in <#${theChannel}>`,
+        thread_ts: event.ts,
+      });
+    } else {
+      await client.chat.postMessage({
+        channel: event.channel,
+        text: `Yes, ${target_id} is in <#${theChannel}>`,
+        thread_ts: event.ts,
+      });
+    }
+  } else {
+    if (realID) {
+      await client.chat.postMessage({
+        channel: event.channel,
+        text: `No, <@${target_id}> is not in <#${theChannel}>`,
+        thread_ts: event.ts,
+      });
+    } else {
+      await client.chat.postMessage({
+        channel: event.channel,
+        text: `No, ${target_id} is not in <#${theChannel}>`,
+        thread_ts: event.ts,
+      });
+    }
+  }
 });
 
 (async () => {
