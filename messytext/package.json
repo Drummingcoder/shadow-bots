@@ -5,11 +5,14 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test\" && exit 1"
   },
   "license": "MIT",
   "dependencies": {
-    "@slack/bolt": "^4.2.0"
+    "@google/genai": "^1.25.0",
+    "@google/generative-ai": "^0.24.1",
+    "@slack/bolt": "^4.2.0",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@slack/cli-hooks": "^1.2.1"

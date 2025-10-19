@@ -1,9 +1,34 @@
 const { App } = require('@slack/bolt');
+const { GoogleGenAI } = require('@google/genai');
+const crypto = require('crypto');
+
+const sqlite3 = require('sqlite3').verbose();
+const path = require('path');
+
+const db = new sqlite3.Database(path.join(__dirname, 'messytext.db'));
+db.serialize(() => {
+  db.run(`CREATE TABLE IF NOT EXISTS messages (
+    user_hash TEXT PRIMARY KEY,
+    person_talking_to TEXT,
+    thread TEXT,
+    mythread TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
+
+  db.run(`CREATE TABLE IF NOT EXISTS target (
+    integer INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id TEXT,
+    thread TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
+});
+
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
   socketMode: true,
   appToken: process.env.SLACK_APP_TOKEN
 });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 app.command('/messytext', async ({ ack, body, client, command}) => {
   await ack();
@@ -122,30 +147,12 @@ app.command('/messyai', async ({ ack, client, command}) => {
 
   let text = userText;
 
-  const response1 = await fetch("https://ai.hackclub.com/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      messages: [
-        {
-          role: "user", 
-          content: `Here is some text, please make it funny by reversing the meaning, changing words around, or make it completely funny and unrelated! Make sure it's random and no extra punctuation, but vary the length of the response! Here's the text to change: "${text}"`
-        }
-      ]
-    })
+  const response = await ai.models.generateContent({
+    model: "gemini-2.5-flash",
+    contents: `Here is some text, please make it funny by reversing the meaning, changing words around, or make it completely funny and unrelated! Make sure it's random and no extra punctuation, but vary the length of the response! Here's the text to change: "${text}"`,
   });
-
-  if (!response1.ok) {
-    console.log("Error:", response1);
-  }
-
-  const rep2 = await response1.json();
-  console.log(rep2);
-  const rep3 = rep2.choices[0].message.content;
-  const rep4 = rep3.split("</think>")[1];
-  text = rep4;
+  console.log("Here's the object", response);
+  text = response.text;
 
   await client.chat.postMessage({
     channel: channel,
@@ -320,6 +327,92 @@ app.event('app_mention', async ({ event, client }) => {
         thread_ts: event.ts,
       });
     }
+  }
+});
+
+app.event('message', async ({ event, client }) => {
+  if (event.channel_type !== 'im') {
+    return;
+  }
+
+  let user_id = event.user;
+  const salt = 'mommyfire';
+  const saltedhash = crypto.createHash('sha256').update(user_id + salt).digest('hex');
+  
+  if (/^<@U\w+>$/.test(event.text) == true && !event.thread_ts) {
+    const user_talking = event.text.split(">")[0].split("|")[0].split("@")[1];
+    if (user_talking !== "U091EPSQ3E3") {
+      await client.chat.postMessage({
+        channel: event.channel,
+        text: `Sorry, you can only use this to talk to Shadowlight for now.`,
+      });
+      return;
+    }
+
+    const dmChannel = await client.conversations.open({
+      users: user_talking
+    });
+
+    const username = saltedhash.substring(0,10);
+    const firstmes = await client.chat.postMessage({
+      channel: dmChannel.channel.id,
+      text: `Someone wants to talk to you!`,
+      username: username,
+    });
+
+    db.get('SELECT * FROM messages WHERE user_hash = ?', [saltedhash], (err, row) => {
+      const targetUserId = event.text;
+      
+      db.run('INSERT INTO messages (user_hash, person_talking_to, thread, mythread) VALUES (?, ?, ?, ?)',
+      [saltedhash, targetUserId, firstmes.ts, event.ts], (err) => {
+        if (err) {
+          console.error('Error:', err);
+          client.chat.postMessage({
+            channel: event.channel,
+            text: `Error connecting to that person. Please try again.`,
+          });
+        } else {
+          client.chat.postMessage({
+            channel: event.channel,
+            text: `Ok, connecting you to ${targetUserId}! Please reply in this thread to converse with the other user!`,
+          });
+        }
+      });
+    });
+    return;
+  }
+
+  if (event.thread_ts) {
+    const username = saltedhash.substring(0,10);
+    db.get('SELECT * FROM messages WHERE user_hash = ?', [saltedhash], async (err, row) => {    
+      if (row && row.person_talking_to) {
+        console.log("talking to", row.person_talking_to);
+        const user_talking = row.person_talking_to.split(">")[0].split("|")[0].split("@")[1];
+        console.log(user_talking);
+        const dmChannel = await client.conversations.open({
+          users: user_talking
+        });
+        console.log("dm: ", dmChannel);
+        
+        let threadts = row.thread;
+        await client.chat.postMessage({
+          channel: dmChannel.channel.id,
+          text: `${event.text}`,
+          thread_ts: threadts,
+          username: username,
+        });
+      } else {
+        await client.chat.postMessage({
+          channel: event.channel,
+          text: `Hey! To connect to someone, mention them like: @grass, and replace grass with anyone you like`,
+        });
+      }
+    });
+  } else {
+    await client.chat.postMessage({
+      channel: event.channel,
+      text: `Hey! Here's your hash: ${saltedhash}. To connect to someone, mention them like: @Grass, and replace Grass with anyone you like`,
+    });
   }
 });
 
