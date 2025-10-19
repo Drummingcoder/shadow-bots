@@ -16,8 +16,7 @@ db.serialize(() => {
   )`);
 
   db.run(`CREATE TABLE IF NOT EXISTS target (
-    integer INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id TEXT,
+    targeted TEXT PRIMARY KEY,
     thread TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
@@ -28,7 +27,7 @@ const app = new App({
   socketMode: true,
   appToken: process.env.SLACK_APP_TOKEN
 });
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: "AIzaSyC2rmBwJs0hu288h3IEOtsEyXAMGY_An1o" });
 
 app.command('/messytext', async ({ ack, body, client, command}) => {
   await ack();
@@ -206,7 +205,7 @@ app.event('app_mention', async ({ event, client }) => {
       text: "I have left the channel. If you want me to rejoin, please invite me again!",
       thread_ts: event.ts,
     });
-    return { outputs: { } };
+    return;
   }
 
   const myMessage = `${event.text}`;
@@ -236,7 +235,7 @@ app.event('app_mention', async ({ event, client }) => {
         thread_ts: event.ts,
       });
     }
-    return { outputs: { error: "No response for this yet" } };
+    return;
   }
 
   if (target_id) {
@@ -336,6 +335,31 @@ app.event('message', async ({ event, client }) => {
   }
 
   let user_id = event.user;
+
+  /*if (event.thread_ts) {
+    db.get('SELECT * FROM target WHERE targeted = ?', [user_id], (err, row) => {
+      if (row & row.thread) {
+
+      
+        db.run('INSERT INTO messages (user_hash, person_talking_to, thread, mythread) VALUES (?, ?, ?, ?)',
+        [saltedhash, targetUserId, firstmes.ts, event.ts], (err) => {
+          if (err) {
+            console.error('Error:', err);
+            client.chat.postMessage({
+              channel: event.channel,
+              text: `Error connecting to that person. Please try again.`,
+            });
+          } else {
+            client.chat.postMessage({
+              channel: event.channel,
+              text: `Ok, connecting you to ${targetUserId}! Please reply in this thread to converse with the other user!`,
+            });
+          }
+        });
+      }
+    });
+  }*/
+
   const salt = 'mommyfire';
   const saltedhash = crypto.createHash('sha256').update(user_id + salt).digest('hex');
   
@@ -377,6 +401,21 @@ app.event('message', async ({ event, client }) => {
             text: `Ok, connecting you to ${targetUserId}! Please reply in this thread to converse with the other user!`,
           });
         }
+      });
+
+      db.get('SELECT * FROM target WHERE targeted = ?', [user_talking], (err, row) => {
+        let ingo = [];
+        if (row && row.thread) {
+          ingo = JSON.parse(row.thread);
+        }
+        ingo.push({first: firstmes.ts, timestamp: event.ts});
+
+        db.run('INSERT INTO target (targeted, thread) VALUES (?, ?)',
+        [user_talking, JSON.stringify(ingo)], (err) => {
+          if (err) {
+            console.error('Error:', err);
+          }
+        });
       });
     });
     return;
