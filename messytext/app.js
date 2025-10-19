@@ -348,18 +348,21 @@ app.event('message', async ({ event, client }) => {
       displayname = display.profile.real_name;
     }
 
-    db.get('SELECT * FROM target WHERE thisthread = ?', [event.thread_ts], (err, row) => {
-      if (row && row.thread) {
-        go = false;
-        client.chat.postMessage({
-          channel: row.channel,
-          text: `${event.text}`,
-          thread_ts: row.thread,
-          username: displayname,
-          icon_url: display.profile.image_512,
-        });
-        return;
-      }
+    await new Promise((resolve, reject) => {
+      db.get('SELECT * FROM target WHERE thisthread = ?', [event.thread_ts], (err, row) => {
+        if (err) reject(err);
+        if (row && row.thread) {
+          go = false;
+          client.chat.postMessage({
+            channel: row.channel,
+            text: `${event.text}`,
+            thread_ts: row.thread,
+            username: displayname,
+            icon_url: display.profile.image_512,
+          });
+        }
+        resolve();
+      });
     });
   }
 
@@ -436,7 +439,7 @@ app.event('message', async ({ event, client }) => {
         });
       }
     });
-  } else {
+  } else if (go == true) {
     await client.chat.postMessage({
       channel: event.channel,
       text: `Hey! That doesn't work! To connect to someone, mention them like: @Grass, and replace Grass with anyone you like, or please reply in thread.`,
@@ -447,5 +450,5 @@ app.event('message', async ({ event, client }) => {
 (async () => {
   await app.start(process.env.PORT || 3000);
 
-  app.logger.info('The messytext app is running! Please migrate to Jester soon');
+  app.logger.info('The messytext app is running! Rename to Jester soon');
 })();
