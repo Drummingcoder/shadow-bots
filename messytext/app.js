@@ -16,8 +16,9 @@ db.serialize(() => {
   )`);
 
   db.run(`CREATE TABLE IF NOT EXISTS target (
-    targeted TEXT PRIMARY KEY,
+    thisthread TEXT PRIMARY KEY,
     thread TEXT,
+    channel TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 });
@@ -330,35 +331,37 @@ app.event('app_mention', async ({ event, client }) => {
 });
 
 app.event('message', async ({ event, client }) => {
-  if (event.channel_type !== 'im') {
+  if (event.channel_type !== 'im' || event.bot_id) {
     return;
   }
 
   let user_id = event.user;
+  let go = true;
 
-  /*if (event.thread_ts) {
-    db.get('SELECT * FROM target WHERE targeted = ?', [user_id], (err, row) => {
-      if (row & row.thread) {
+  if (event.thread_ts) {
+    const display = await client.users.profile.get({
+      user: user_id,
+    });
 
-      
-        db.run('INSERT INTO messages (user_hash, person_talking_to, thread, mythread) VALUES (?, ?, ?, ?)',
-        [saltedhash, targetUserId, firstmes.ts, event.ts], (err) => {
-          if (err) {
-            console.error('Error:', err);
-            client.chat.postMessage({
-              channel: event.channel,
-              text: `Error connecting to that person. Please try again.`,
-            });
-          } else {
-            client.chat.postMessage({
-              channel: event.channel,
-              text: `Ok, connecting you to ${targetUserId}! Please reply in this thread to converse with the other user!`,
-            });
-          }
+    let displayname = display.profile.display_name;
+    if (displayname == "") {
+      displayname = display.profile.real_name;
+    }
+
+    db.get('SELECT * FROM target WHERE thisthread = ?', [event.thread_ts], (err, row) => {
+      if (row && row.thread) {
+        go = false;
+        client.chat.postMessage({
+          channel: row.channel,
+          text: `${event.text}`,
+          thread_ts: row.thread,
+          username: displayname,
+          icon_url: display.profile.image_512,
         });
+        return;
       }
     });
-  }*/
+  }
 
   const salt = 'mommyfire';
   const saltedhash = crypto.createHash('sha256').update(user_id + salt).digest('hex');
@@ -368,13 +371,13 @@ app.event('message', async ({ event, client }) => {
     if (user_talking !== "U091EPSQ3E3") {
       await client.chat.postMessage({
         channel: event.channel,
-        text: `Sorry, you can only use this to talk to Shadowlight for now.`,
+        text: `Sorry, you can only use this to talk to Shadowlight for now. I'll work on adding predetermined messages for anyone later!`,
       });
       return;
     }
 
     const dmChannel = await client.conversations.open({
-      users: user_talking
+      users: user_talking,
     });
 
     const username = saltedhash.substring(0,10);
@@ -384,54 +387,40 @@ app.event('message', async ({ event, client }) => {
       username: username,
     });
 
-    db.get('SELECT * FROM messages WHERE user_hash = ?', [saltedhash], (err, row) => {
-      const targetUserId = event.text;
-      
-      db.run('INSERT INTO messages (user_hash, person_talking_to, thread, mythread) VALUES (?, ?, ?, ?)',
-      [saltedhash, targetUserId, firstmes.ts, event.ts], (err) => {
-        if (err) {
-          console.error('Error:', err);
-          client.chat.postMessage({
-            channel: event.channel,
-            text: `Error connecting to that person. Please try again.`,
-          });
-        } else {
-          client.chat.postMessage({
-            channel: event.channel,
-            text: `Ok, connecting you to ${targetUserId}! Please reply in this thread to converse with the other user!`,
-          });
-        }
-      });
-
-      db.get('SELECT * FROM target WHERE targeted = ?', [user_talking], (err, row) => {
-        let ingo = [];
-        if (row && row.thread) {
-          ingo = JSON.parse(row.thread);
-        }
-        ingo.push({first: firstmes.ts, timestamp: event.ts});
-
-        db.run('INSERT INTO target (targeted, thread) VALUES (?, ?)',
-        [user_talking, JSON.stringify(ingo)], (err) => {
-          if (err) {
-            console.error('Error:', err);
-          }
+    const targetUserId = event.text;
+    db.run('INSERT OR REPLACE INTO messages (user_hash, person_talking_to, thread, mythread) VALUES (?, ?, ?, ?)',
+    [saltedhash, targetUserId, firstmes.ts, event.ts], (err) => {
+      if (err) {
+        console.error('Error:', err);
+        client.chat.postMessage({
+          channel: event.channel,
+          text: `Error connecting to that person. Please try again.`,
         });
-      });
+        return;
+      }
     });
+    const newthreadts = await client.chat.postMessage({
+      channel: event.channel,
+      text: `Ok, connecting you to ${targetUserId}! Please reply in this thread to converse with the other user!`,
+    });
+    db.run('INSERT INTO target (thisthread, thread, channel) VALUES (?, ?, ?)',
+    [firstmes.ts, newthreadts.ts, event.channel], (err) => {
+      if (err) {
+        console.error('Error:', err);
+      }
+    });
+        
     return;
   }
 
-  if (event.thread_ts) {
+  if (event.thread_ts && go) {
     const username = saltedhash.substring(0,10);
     db.get('SELECT * FROM messages WHERE user_hash = ?', [saltedhash], async (err, row) => {    
       if (row && row.person_talking_to) {
-        console.log("talking to", row.person_talking_to);
         const user_talking = row.person_talking_to.split(">")[0].split("|")[0].split("@")[1];
-        console.log(user_talking);
         const dmChannel = await client.conversations.open({
           users: user_talking
         });
-        console.log("dm: ", dmChannel);
         
         let threadts = row.thread;
         await client.chat.postMessage({
@@ -450,7 +439,7 @@ app.event('message', async ({ event, client }) => {
   } else {
     await client.chat.postMessage({
       channel: event.channel,
-      text: `Hey! Here's your hash: ${saltedhash}. To connect to someone, mention them like: @Grass, and replace Grass with anyone you like`,
+      text: `Hey! That doesn't work! To connect to someone, mention them like: @Grass, and replace Grass with anyone you like, or please reply in thread.`,
     });
   }
 });
