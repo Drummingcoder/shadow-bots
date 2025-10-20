@@ -2,8 +2,13 @@
 
 A fun bot for Hack Clubbers to laugh with and play each other!
 ## Description: 
-Features: 
-Start a game with '/playOmniRPS' (you can see the vision, right now it's just a regular RPS Bot). Simply put in who you want to play against and the channel to play in! The bot will send an initial "challenge declared" message, use the buttons in the reply to throw your move and see who wins! Note: another game can't be started unless the previous game has finished.
+Newest features: 
+Use '/playOmniRPS' to play a game of magical Omniscient Rock, Paper, Scissors. After choosing a channel to play in (it can be any public channel as long as the bot is in the channel), you can choose to play alone or play with another friend, but if you play alone, you automatically get lock into Multiple Answers mode. The mode selector determines how the game will run. In the 'One Toss' mode, you get to play one move, just like in a classic game of Rock Paper Scissors! In the Multiple Answers mode, you and your friend (or just yourself) go back and forth, giving answers that will beat the previous response until one of you fails. Magical responses only!
+
+You can also play magical Death by AI using the '/deathbyai' command. You can play with 1-10 people, simply respond in the thread to join the game! The host (the person who ran the command) can then start the game by responding with 'start' in the thread (don't add anything else). Once the game is started, use the '/deathrespond' command to respond to the magical prompt. Put the game number and channel you're playing in the form, and also put your survival strategy in. Once all players have put their responses in, the bot will announce the results in the channel.
+
+Other features: 
+Start a game with '/playRPS'. Simply put in who you want to play against and the channel to play in! The bot will send an initial "challenge declared" message, use the buttons in the reply to throw your move and see who wins! Note: another game can't be started unless the previous game has finished.
 
 To flip a coin, in any channel, mention the bot @Dokeshi and say "flip a coin" or "flip coin", so like "@Dokeshi flip a coin". The bot will respond with heads or tails.
 

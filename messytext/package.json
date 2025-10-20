@@ -1,11 +1,11 @@
 {
-  "name": "messy-text",
+  "name": "Jester",
   "version": "2.0.0",
   "description": "Scrambles up your text",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "echo \"Error: no test\" && exit 1"
+    "test": "echo \"Error: no testing available\" && exit 1"
   },
   "license": "MIT",
   "dependencies": {

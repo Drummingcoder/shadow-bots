@@ -450,5 +450,5 @@ app.event('message', async ({ event, client }) => {
 (async () => {
   await app.start(process.env.PORT || 3000);
 
-  app.logger.info('The messytext app is running! Rename to Jester soon');
+  app.logger.info('The Jester app is running!');
 })();
