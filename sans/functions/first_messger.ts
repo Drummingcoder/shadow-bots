@@ -34,6 +34,32 @@ export default SlackFunction(
   messenger,
   async ({ inputs, client }) => {
     const userID = inputs.user;
+    const myMessage = inputs.message;
+    if (userID == "U09L63WBP9B") {
+      const newuserID = myMessage?.split(" ")[1].split("@")[1].split(">")[0];
+      let i = 0;
+      let getResp5 = await client.apps.datastore.get<
+        typeof usertime.definition
+      >({
+        datastore: usertime.name,
+        id: i,
+      });
+      for (i = 1; getResp5.item.user_id != newuserID; i++) {
+        getResp5 = await client.apps.datastore.get<
+          typeof usertime.definition
+        >({
+          datastore: usertime.name,
+          id: i,
+        });
+      }
+
+      await client.chat.postMessage({
+        channel: inputs.channel,
+        thread_ts: inputs.messagets,
+        text: `${getResp5.item.timeOnline} ${getResp5.item.timeOffline}`
+      });
+      return { outputs: {} };
+    }
 
     const getResp = await client.apps.datastore.get<
       typeof trackUsers.definition
@@ -41,7 +67,6 @@ export default SlackFunction(
       datastore: trackUsers.name,
       id: userID,
     });
-    const myMessage = inputs.message;
 
     if (myMessage?.includes("coin") && getResp.item?.tracking) {
       await client.chat.postMessage({
