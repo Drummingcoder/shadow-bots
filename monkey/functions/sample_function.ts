@@ -41,7 +41,7 @@ export default SlackFunction(
     const matches = [...mess.matchAll(userMentionRegex)];
 
     if (mess.includes("add")) {
-      if (inputs.user != "U091EPSQ3E3") {
+      if (user != "U091EPSQ3E3" || (! mess.includes("wellington"))) {
         return { outputs: {  } };
       }
       const usertoadd = matches[1];
@@ -76,6 +76,7 @@ export default SlackFunction(
           users: usertoadd,
         });
       }
+      
       const putResp = await client.apps.datastore.put<
         typeof letsgo.definition
       >({
@@ -88,6 +89,11 @@ export default SlackFunction(
         },
       });
       console.log(putResp);
+      await client.chat.postMessage({
+        channel: chan,
+        text: "It's going!",
+        message_ts: time,
+      });
     } else {
       await client.chat.postMessage({
         channel: inputs.channel,
