@@ -71,63 +71,70 @@ export default SlackFunction(
       return { outputs: {} }; 
     }
 
-    const tojoin = await client.conversations.list({
-      types: "public_channel",
-      limit: 100,
-      cursor: getResp.item.cursor,
-    });
-
-    if ((! tojoin.ok) && tojoin.error == "ratelimited") {
-      const putResp = await client.apps.datastore.put<
-        typeof letsnotgo.definition
-      >({
-        datastore: letsnotgo.name,
-        item: {
-          therate: "adder",
-          limited: true,
-          count: 0,
-        },
+    let tojoin;
+    try {
+      tojoin = await client.conversations.list({
+        types: "public_channel",
+        limit: 100,
+        cursor: getResp.item.cursor,
       });
-      console.log(putResp);
-      return {outputs: {}};
+    } catch (error: any) {
+      if (error.data?.error === "ratelimited") {
+        await client.apps.datastore.update<
+          typeof letsnotgo.definition
+        >({
+          datastore: letsnotgo.name,
+          item: {
+            therate: "adder",
+            limited: true,
+            count: 0,
+          },
+        });
+        return {outputs: {}};
+      }
     }
 
     for (const channel of tojoin.channels) {
-      const first = await client.conversations.join({
-        channel: channel.id,
-      });
-      if ((! first.ok) && first.error == "ratelimited") {
-        const putResp = await client.apps.datastore.put<
-          typeof letsnotgo.definition
-        >({
-          datastore: letsnotgo.name,
-          item: {
-            therate: "adder",
-            limited: true,
-            count: 0,
-          },
+      try {
+        await client.conversations.join({
+          channel: channel.id,
         });
-        console.log(putResp);
-        return {outputs: {}};
+      } catch (error: any) {
+        if (error.data?.error === "ratelimited") {
+          await client.apps.datastore.update<
+            typeof letsnotgo.definition
+          >({
+            datastore: letsnotgo.name,
+            item: {
+              therate: "adder",
+              limited: true,
+              count: 0,
+            },
+          });
+          return {outputs: {}};
+        }
       }
 
-      const second = await client.conversations.invite({
-        channel: channel.id,
-        users: getResp.item.user,
-      });
-      if ((! second.ok) && second.error == "ratelimited") {
-        const putResp = await client.apps.datastore.put<
-          typeof letsnotgo.definition
-        >({
-          datastore: letsnotgo.name,
-          item: {
-            therate: "adder",
-            limited: true,
-            count: 0,
-          },
+      try {
+        await client.conversations.invite({
+          channel: channel.id,
+          users: getResp.item.user,
         });
-        console.log(putResp);
-        return {outputs: {}};
+      } catch (error: any) {
+        if (error.data?.error === "ratelimited") {
+          const putResp = await client.apps.datastore.put<
+            typeof letsnotgo.definition
+          >({
+            datastore: letsnotgo.name,
+            item: {
+              therate: "adder",
+              limited: true,
+              count: 0,
+            },
+          });
+          console.log(putResp);
+          return {outputs: {}};
+        }
       }
     }
 
