@@ -78,7 +78,7 @@ export default SlackFunction(
     });
 
     if (! tojoin.ok) {
-      const putResp = await client.apps.datastore.update<
+      const putResp = await client.apps.datastore.put<
         typeof letsnotgo.definition
       >({
         datastore: letsnotgo.name,
@@ -88,18 +88,47 @@ export default SlackFunction(
           count: 0,
         },
       });
-      console.log(putResp)
+      console.log(putResp);
       return {outputs: {}};
     }
 
     for (const channel of tojoin.channels) {
-      await client.conversations.join({
+      const first = await client.conversations.join({
         channel: channel.id,
       });
-      await client.conversations.invite({
+      if (! first.ok) {
+        const putResp = await client.apps.datastore.put<
+          typeof letsnotgo.definition
+        >({
+          datastore: letsnotgo.name,
+          item: {
+            therate: "adder",
+            limited: true,
+            count: 0,
+          },
+        });
+        console.log(putResp);
+        return {outputs: {}};
+      }
+
+      const second = await client.conversations.invite({
         channel: channel.id,
         users: getResp.item.user,
       });
+      if (! second.ok) {
+        const putResp = await client.apps.datastore.put<
+          typeof letsnotgo.definition
+        >({
+          datastore: letsnotgo.name,
+          item: {
+            therate: "adder",
+            limited: true,
+            count: 0,
+          },
+        });
+        console.log(putResp);
+        return {outputs: {}};
+      }
     }
 
     if (tojoin.response_metadata?.next_cursor) {
