@@ -41,10 +41,10 @@ export default SlackFunction(
     const matches = [...mess.matchAll(userMentionRegex)];
 
     if (mess.includes("add")) {
-      if (user != "U091EPSQ3E3" || (! mess.includes("wellington"))) {
+      if ((user != "U091EPSQ3E3" && user != "U09N91BDG3U") || (! mess.includes("wellington"))) {
         return { outputs: {  } };
       }
-      const usertoadd = matches[1];
+      const usertoadd = matches[1][1];
       let num = 0;
       let getResp = await client.apps.datastore.get<
         typeof letsgo.definition
@@ -97,7 +97,7 @@ export default SlackFunction(
     } else {
       await client.chat.postMessage({
         channel: inputs.channel,
-        text: `Are you a whopperflower? Cuz you whoop me up like a waifu.`
+        text: `Are you a whopperflower? Cuz you whoop me up like my waifu.`
       });
     }
 

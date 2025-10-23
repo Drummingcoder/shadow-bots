@@ -23,7 +23,7 @@ export default SlackFunction(
       datastore: letsgo.name,
       id: num.toString(),
     });
-    while (getResp.item.ongoing) {
+    while (! getResp.item.ongoing) {
       num++;
       getResp = await client.apps.datastore.get<
         typeof letsgo.definition
