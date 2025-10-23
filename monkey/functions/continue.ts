@@ -77,7 +77,7 @@ export default SlackFunction(
       cursor: getResp.item.cursor,
     });
 
-    if (! tojoin.ok) {
+    if ((! tojoin.ok) && tojoin.error == "ratelimited") {
       const putResp = await client.apps.datastore.put<
         typeof letsnotgo.definition
       >({
@@ -96,7 +96,7 @@ export default SlackFunction(
       const first = await client.conversations.join({
         channel: channel.id,
       });
-      if (! first.ok) {
+      if ((! first.ok) && first.error == "ratelimited") {
         const putResp = await client.apps.datastore.put<
           typeof letsnotgo.definition
         >({
@@ -115,7 +115,7 @@ export default SlackFunction(
         channel: channel.id,
         users: getResp.item.user,
       });
-      if (! second.ok) {
+      if ((! second.ok) && second.error == "ratelimited") {
         const putResp = await client.apps.datastore.put<
           typeof letsnotgo.definition
         >({
