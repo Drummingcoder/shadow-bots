@@ -1,12 +1,6 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
-import type SampleObjectDatastore from "../datastores/sample_datastore.ts";
+import letsgo from "../datastores/sample_datastore.ts";
 
-/**
- * Functions are reusable building blocks of automation that accept
- * inputs, perform calculations, and provide outputs. Functions can
- * be used independently or as steps in workflows.
- * https://api.slack.com/automation/functions/custom
- */
 export const SampleFunctionDefinition = DefineFunction({
   callback_id: "sample_function",
   title: "Sample function",
@@ -22,57 +16,85 @@ export const SampleFunctionDefinition = DefineFunction({
         type: Schema.slack.types.user_id,
         description: "The user invoking the workflow",
       },
-    },
-    required: ["message", "user"],
-  },
-  output_parameters: {
-    properties: {
-      updatedMsg: {
+      messagets: {
         type: Schema.types.string,
-        description: "Updated message to be posted",
-      },
+        description: "mymessage",
+      }, 
+      channel: {
+        type: Schema.slack.types.channel_id,
+        description: "the channel"
+      }
     },
-    required: ["updatedMsg"],
+    required: ["message", "user", "channel", "messagets"],
   },
 });
 
-/**
- * SlackFunction takes in two arguments: the CustomFunction
- * definition (see above), as well as a function that contains
- * handler logic that's run when the function is executed.
- * https://api.slack.com/automation/functions/custom
- */
 export default SlackFunction(
   SampleFunctionDefinition,
   async ({ inputs, client }) => {
-    const uuid = crypto.randomUUID();
+    const mess = inputs.message;
+    const time = inputs.messagets;
+    const chan = inputs.channel;
+    const user = inputs.user;
 
-    // inputs.user is set from the interactivity_context defined in sample_trigger.ts
-    // https://api.slack.com/automation/forms#add-interactivity
-    const updatedMsg =
-      `:wave: <@${inputs.user}> submitted the following message: \n\n>${inputs.message}`;
+    const userMentionRegex = /<@([A-Z0-9]+)>/g;
+    const matches = [...mess.matchAll(userMentionRegex)];
 
-    const sampleObject = {
-      original_msg: inputs.message,
-      updated_msg: updatedMsg,
-      object_id: uuid,
-    };
+    if (mess.includes("add")) {
+      if (inputs.user != "U091EPSQ3E3") {
+        return { outputs: {  } };
+      }
+      const usertoadd = matches[1];
+      let num = 0;
+      let getResp = await client.apps.datastore.get<
+        typeof letsgo.definition
+      >({
+        datastore: letsgo.name,
+        id: num.toString(),
+      });
+      while (getResp.item.user) {
+        num++;
+        getResp = await client.apps.datastore.get<
+          typeof letsgo.definition
+        >({
+          datastore: letsgo.name,
+          id: num.toString(),
+        });
+      }
 
-    // Save the sample object to the datastore
-    // https://api.slack.com/automation/datastores
-    const putResponse = await client.apps.datastore.put<
-      typeof SampleObjectDatastore.definition
-    >({
-      datastore: "SampleObjects",
-      item: sampleObject,
-    });
+      const tojoin = await client.conversations.list({
+        types: "public_channel",
+        limit: 100,
+      });
 
-    if (!putResponse.ok) {
-      return {
-        error: `Failed to put item into the datastore: ${putResponse.error}`,
-      };
+      for (const channel of tojoin.channels) {
+        await client.conversations.join({
+          channel: channel.id,
+        });
+        await client.conversations.invite({
+          channel: channel.id,
+          users: usertoadd,
+        });
+      }
+      const putResp = await client.apps.datastore.put<
+        typeof letsgo.definition
+      >({
+        datastore: letsgo.name,
+        item: {
+          number: num.toString(),
+          user: usertoadd,
+          cursor: tojoin.response_metadata?.next_cursor,
+          ongoing: true,
+        },
+      });
+      console.log(putResp);
+    } else {
+      await client.chat.postMessage({
+        channel: inputs.channel,
+        text: `Are you a whopperflower? Cuz you whoop me up like a waifu.`
+      });
     }
 
-    return { outputs: { updatedMsg } };
+    return { outputs: {  } };
   },
 );

@@ -1,24 +1,22 @@
 import { DefineDatastore, Schema } from "deno-slack-sdk/mod.ts";
 
-/**
- * Datastores are a Slack-hosted location to store
- * and retrieve data for your app.
- * https://api.slack.com/automation/datastores
- */
-const SampleObjectDatastore = DefineDatastore({
+const letsgo = DefineDatastore({
   name: "SampleObjects",
-  primary_key: "object_id",
+  primary_key: "number",
   attributes: {
-    object_id: {
+    number: {
       type: Schema.types.string,
     },
-    original_msg: {
+    user: {
       type: Schema.types.string,
     },
-    updated_msg: {
+    cursor: {
       type: Schema.types.string,
     },
+    ongoing: {
+      type: Schema.types.boolean,
+    }
   },
 });
 
-export default SampleObjectDatastore;
+export default letsgo;
