@@ -1,5 +1,6 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import letsgo from "../datastores/sample_datastore.ts";
+import letsnotgo from "../datastores/rate.ts";
 
 export const comeonseeya = DefineFunction({
   callback_id: "continuing",
@@ -16,6 +17,39 @@ export const comeonseeya = DefineFunction({
 export default SlackFunction(
   comeonseeya,
   async ({ inputs, client }) => {
+    const getResp1 = await client.apps.datastore.get<
+      typeof letsnotgo.definition
+    >({
+      datastore: letsnotgo.name,
+      id: "adder",
+    });
+
+    if (getResp1.item.limited == true) {
+      if (getResp1.item.count < 2) {
+        await client.apps.datastore.update<
+          typeof letsnotgo.definition
+        >({
+          datastore: letsnotgo.name,
+          item: {
+            therate: "adder",
+            count: (getResp1.item.count + 1),
+          },
+        });
+      } else {
+        await client.apps.datastore.update<
+          typeof letsnotgo.definition
+        >({
+          datastore: letsnotgo.name,
+          item: {
+            therate: "adder",
+            limited: false,
+            count: 0,
+          },
+        });
+      }
+      return {outputs: {}};
+    }
+
     let num = 0;
     let getResp = await client.apps.datastore.get<
       typeof letsgo.definition
@@ -42,6 +76,21 @@ export default SlackFunction(
       limit: 100,
       cursor: getResp.item.cursor,
     });
+
+    if (! tojoin.ok) {
+      const putResp = await client.apps.datastore.update<
+        typeof letsnotgo.definition
+      >({
+        datastore: letsnotgo.name,
+        item: {
+          therate: "adder",
+          limited: true,
+          count: 0,
+        },
+      });
+      console.log(putResp)
+      return {outputs: {}};
+    }
 
     for (const channel of tojoin.channels) {
       await client.conversations.join({
