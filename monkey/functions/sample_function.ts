@@ -92,12 +92,12 @@ export default SlackFunction(
       await client.chat.postMessage({
         channel: chan,
         text: "It's going!",
-        message_ts: time,
+        messagets: time,
       });
     } else {
       await client.chat.postMessage({
         channel: inputs.channel,
-        text: `Are you a whopperflower? Cuz you whoop me up like my waifu.`
+        text: `Are you a whopperflower? Cuz it's heating up in here...`
       });
     }
 
