@@ -32,7 +32,7 @@ export const mymessagedaily = DefineFunction({
       },
       date: {
         type: Schema.slack.types.date,
-      }
+      },
     },
     required: ["user", "channel", "time", "timezone"],
   },
@@ -52,9 +52,9 @@ export default SlackFunction(
       await client.chat.postEphemeral({
         channel: inputs.channel,
         user: inputs.user,
-        text: "Please register for Sans time tracking if you want this daily reminder."
+        text: "Please register for Sans time tracking if you want this daily reminder. Read the docs for instructions on how to do so."
       });
-      return { outputs: {}};
+      return { outputs: { }};
     }
 
     const getname = await client.users.info({
@@ -72,9 +72,9 @@ export default SlackFunction(
       await client.chat.postEphemeral({
         channel: inputs.channel,
         user: inputs.user,
-        text: "You can't create another reminder!"
+        text: "You can't create another reminder! (just yet)"
       });
-      return {outputs: {}};
+      return { outputs: { }};
     }
 
     const time = `${inputs.date}T${inputs.time}:00`;
@@ -99,6 +99,6 @@ export default SlackFunction(
     });
 
     console.log(trigger);
-    return { outputs: {} };
+    return { outputs: { }};
   },
 );

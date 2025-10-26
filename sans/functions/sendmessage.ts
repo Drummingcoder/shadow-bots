@@ -1,6 +1,5 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import trackUsers from "../datastores/users.ts";
-import nodupreminds from "../datastores/havereminder.ts";
 import usertime from "../datastores/timeusers.ts";
 
 export const othersend = DefineFunction({
@@ -47,7 +46,7 @@ export default SlackFunction(
       });
     }
 
-    const getHackatime = await fetch("https://hackatime.hackclub.com/api/v1/users/current/statusbar/today", {
+    const getHackatime = await fetch(`https://hackatime.hackclub.com/api/hackatime/v1/users/current/statusbar/today`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${inputs.apikey}`,
@@ -56,6 +55,7 @@ export default SlackFunction(
     });
 
     const data = await getHackatime.json();
+    console.log(data);
 
     const hoursSlack = getResp.item.timeOnline / 60;
     const minSlack = getResp.item.timeOnline % 60;
@@ -64,14 +64,21 @@ export default SlackFunction(
     const hourshack = Math.floor(seconds / 3600);
     const minshack = Math.floor((seconds % 3600) / 60);
 
-    const airesponse = await fetch("https://api.openai.com/v1/chat/completions", {
+    const airesponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${"sk-mnopqrstijkl5678mnopqrstijkl5678mnopqrst"}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        contents: [
+          {
+            parts: [{ text: `The user is a Hack Club member who has spent ${getResp.item.timeOnline} seconds on Hack Club Slack, a messaging platform for all Hack Clubbers, and spent ${seconds} seconds coding today. Could you provide some comments fitting your character in fall season. Try to encourage the user to either do better if they spent more time on Slack than Hackatime (because it's better to do more coding than texting after all), or to congratulate them and try and get them to spend more time on Hackatime if they spent more time on Hackatime.` }],
+          },
+        ],
+      }),
+    });
+
+    /*model: "gpt-4o-mini",
         messages: [
           {
             "role": "system",
@@ -81,18 +88,20 @@ export default SlackFunction(
             "content": `The user is a Hack Club member who has spent ${getResp.item.timeOnline} seconds on Hack Club Slack, a messaging platform for all Hack Clubbers, and spent ${seconds} seconds coding today. Could you provide some comments fitting your character in fall season. Try to encourage the user to either do better if they spent more time on Slack than Hackatime (because it's better to do more coding than texting after all), or to congratulate them and try and get them to spend more time on Hackatime if they spent more time on Hackatime.`,
           },
         ],
-      }),
-    });
+        */
+    console.log(airesponse);
 
     const thedata = await airesponse.json();
     const text = thedata.choices[0].message.content;
 
-    await client.chat.postMessage({
+    const threadfirst = await client.chat.postMessage({
       channel: inputs.channel,
-      text: `Hey <@${inputs.user}>, here are your stats for today:\nTime spent on Slack: ${hoursSlack} hours and ${minSlack}.\nHackatime stats: ${hourshack} hours and ${minshack} minutes on Hackatime.\n\n`,
+      text: `Hey <@${inputs.user}>, here are your stats for today:\nTime spent on Slack: ${hoursSlack} hours and ${minSlack}.\nHackatime stats: ${hourshack} hours and ${minshack} minutes on Hackatime.\n\nHere's what I think: ${text}`,
     });
 
+    /*
 
+    */
 
     return { outputs: {} };
   },
