@@ -69,7 +69,7 @@ export default SlackFunction(
     });
 
     if (checkpls.item.havereminder) {
-      const noyou = await client.chat.postEphemeral({
+      await client.chat.postEphemeral({
         channel: inputs.channel,
         user: inputs.user,
         text: "You can't create another reminder!"
@@ -77,7 +77,7 @@ export default SlackFunction(
       return {outputs: {}};
     }
 
-    const time = `${}`
+    const time = `${inputs.date}T${inputs.time}:00`;
 
     const trigger = await client.workflows.triggers.create({
       name: `Daily Update for ${getname.profile.real_name}`,
@@ -89,8 +89,8 @@ export default SlackFunction(
         user: { value: inputs.user },
       },
       schedule: {
-        start_time: inputs.time,
-        timezone: ,
+        start_time: time,
+        timezone: inputs.timezone,
         frequency: {
           type: "daily",
           repeats_every: 1,
@@ -98,7 +98,7 @@ export default SlackFunction(
       },
     });
 
-
+    console.log(trigger);
     return { outputs: {} };
   },
 );
