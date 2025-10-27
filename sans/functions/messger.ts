@@ -28,9 +28,10 @@ export const messenger = DefineFunction({
       },
       threadpin: {
         type: Schema.types.string,
+        description: "where to pin bud",
       }
     },
-    required: ["message", "user", "channel", "messagets", "threadpin"],
+    required: ["message", "user", "channel" ],
   },
 });
 
@@ -44,6 +45,9 @@ export default SlackFunction(
       id: inputs.messagets,
     });
 
+    console.log("thread:", inputs.threadpin);
+    console.log("message:", inputs.messagets);
+
     if (getmyResp.item.responded && inputs.user != "U09HU7HMSNP") {
       const dayPattern = /^day \d+:/;
       if (dayPattern.test(inputs.message.toLowerCase())) {
@@ -54,11 +58,36 @@ export default SlackFunction(
         console.log(test);
       }
 
-      await client.chat.postMessage({
-        channel: inputs.channel,
-        text: "Received. More will be added later",
-        thread_ts: inputs.messagets,
+      const airesponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [{ text: `The user is a Hack Club member who said this about their day: ${inputs.message}. Could you make a story fitting Sans (from Undertale) in fall season that tries to comfort them if they're having a bad day or have fun if they're having a good day? Try to make the user happier. Please provide around a 300 word response without any headers, titles, or extra punctuation.` }],
+            },
+          ],
+        }),
       });
+      const thedata = await airesponse.json();
+      console.log(thedata);
+      const text = thedata.candidates[0].content.parts[0].text;
+
+      if (thedata.candidates) {
+        await client.chat.postMessage({
+          channel: inputs.channel,
+          text: `Nice, this is what I have to say about that: \n${text}`,
+          thread_ts: inputs.messagets,
+        });
+      } else {
+        await client.chat.postMessage({
+          channel: inputs.channel,
+          text: "Received. There was a problem with the AI.",
+          thread_ts: inputs.messagets,
+        });
+      }
 
       await client.apps.datastore.update<
         typeof theonechecker.definition

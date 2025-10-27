@@ -32,7 +32,7 @@ responder.addStep(messenger, {
   message: responder.inputs.message,
   user: responder.inputs.user,
   messagets: responder.inputs.threadts,
-  threadpin: responder.inputs.messagets,
+  threadpin: responder.inputs.threadts || responder.inputs.messagets,
 });
 
 export default responder;

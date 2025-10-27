@@ -1,35 +1,57 @@
-# Jester bot
-A bot for Hack Clubbers to channel check and chat!
-## Description:
-New features: 
-Use the '/messytext' to send an interesting text to any channel. Just make sure that the bot is in the channel, and send your message using '/messytext [insert your text here]'! The bot will then modify your message (flip some of your text upside down, backwards, and even mess with the formatting) and send it to the channel! Not supported in threads unfortunately.
-If you want to send an ephemeral message (the "Only visible to you" message) to another people, use the '/whispertext' command. Again, make sure that the bot is in the channel, and use '/whispertext @User [Insert your text here]'. The bot will then send that message to the other person in the channel so that only they can see it.
-If you want to anonymously DM me (Shadowlight), mention me in Jester's DM (type "@Shadowlight", nothing else or it will not work). A message will appear where you can respond in thread to talk to me. Your messages will be anonymous because your user id will be hashed and I can't see whose sending these messages. I can then respond in that thread to talk to you, two-way communication. At the current point, you can only use the bot to talk to me, no one else so that anon rules aren't broken.
+# Sans Tracker bot
 
-Old features:
-This Slack bot checks to see if a certain person is in a channel. Right now,
-it can't check if a user is in a channel with more than 1000 people yet or is in a private channel,
-but I'm working on removing that limit.
+Now in fall season, would you like a daily reminder in your channel? Need to spend a little less time on Slack? Or just want to monitor your time?
+## Description: 
+New features (the ones to review):
+You can now send a reminder complete with the amount of time you spend on Slack and the amount of time you spent on Hackatime. Simply use the '/createdaily' command in any channel and fill in the channel to send to, your Hackatime API key, the time in 24-hour time to send the reminder, the date to start sending, and your timezone in IANA format! (something like "America/Los_Angeles"). You will get a confirmation message in the channel that you send it to.
 
-Disabled features (violates Hack Club's anonymous bot rules):
-You can anonymously react to any message with an emoji of your choice! Just use the shortcut '/anon-emoji' and provide the message link and the emoji name (without colons) in the form provided. It works in any private or public channel, even if it's not in the channel!. You can also remove a reaction made with Jester by reacting with the same emoji on the same message, which does mean only one person can react to the message with the same emoji (meaning that if one person reacts to a message with one emoji and another person reacts with the same emoji on that message, the reaction will be removed). 
+At the time that you specified, every day, the bot will send a summary of your activity as well as comments related to the time you spent on Slack and Hackatime that fits the fall season. You can then reply in the thread with details about your day. If you start the reply with "Day ##:" (replace ## with any number), the bot will pin the parent message to the channel. If not, it will not pin the thread. Regardless of how you start your message, the bot will respond with comments to either cheer you up and have fun depending on what you tell it.
 
-You can also react to all new messages of a certain person using the '/annoy-emoji' command, which means that if you put something like a grass emoji on a person like @grass, all new messages that grass sends will be reacted to with the grass emoji. This only works if the bot is in the channel (public or private). All you need to do is enter the user and the emoji into the form that shows up! To remove the auto-react, simply type reenter the form and choose the same person and emoji. If you choose a different emoji, the auto-react will simply be updated with the new reaction.
+The bot needs to be in the channel that you are going to send the reminder to in order for it to work. You also need to be registered with the Sans time tracking feature as well.
 
-## Usage:
-For example, if you wanted to check if a person was in #announcements, you would 
-use this format: "@Jester is @user in #confessions-meta?"
-Jester is the name of the bot, and it will return a response based on 
-whether or not the user is in the channel.
+You can also use the '/testmydaily' command to instantly try out the reminder in the channel that you run the command in. Just make sure to provide your api key!
+
+Old features: 
+To start time tracking, mention the bot in Hack Club Slack channel #jesterly-hub.
+Don't include any other keywords like coins, "time today", or stop or else the bot
+won't respond. Follow the bot's prompts and respond with simple yes or nos (I need
+to make this more robust in the future). There's no need to ping the bot again, in
+fact, when answering the prompt, don't ping the bot, or else it will break. Once
+you answer yes to the last prompt, the bot will begin to track your time.
+
+The bot uses your presence (the green light next to your profile) to determine
+if you're online or offline. Please don't manually set your presence to away unless
+you're actually going offline, or else the bot will not track your time correctly.
+For every 30 minutes you spend on Slack, the bot will ping you in #jesterly-hub
+updating you about the amount of time you've spent today on Slack, unless you spend
+coins to skip it.
+
+Speaking about coins, the bot is programmed to give you 1 coin for every hour you
+spend off Slack. This coin-giving will happen at 12:00 PST, where the bot will
+reset time active and away (perhaps in the future, it can keep a log on this), and
+distribute coins accordingly.
+
+To spend coins to skip the pings, use the command '/timetospend'. A form will show
+up showing you how many coins you have and allow you to enter a number of coins to
+spend. It was coded to prevent high numbers past the amount you have, so don't try
+it. As it's 1 coin per ping, if you spent 3 coins, the next 3 pings will be skipped.
+If you don't want to spend on skipping pings, well you can enjoy the hard-earned
+intrisic joy of seeing a number go up day by day.
+
+To see your coins count or your time active today, mention the bot in a channel
+that it's in and state your request. You can say either "coins" or "time today"
+(the whole phrase, just "time" won't work) to see your coin count or the time
+tracked today.
 
 ## Deploying the Bot
 This bot was made using the Deno Slack SDK, so to install and deploy it yourself,
 you need to install the Slack CLI and Deno SDK to deploy the bot.
+The Sans Tracker bot's code is stored inside the sans folder.
 
 1. Clone the repository:
     ```bash
     git clone https://github.com/Drummingcoder/find-the-channel.git
-    cd find-channel
+    cd sans
     ```
 2. Deploy the bot:
     ```bash
@@ -37,8 +59,3 @@ you need to install the Slack CLI and Deno SDK to deploy the bot.
     ```
 
 It's as easy as that!
-
-## Video:
-
-Video of the channel checking feature of the bot in action:
-[https://github.com/Drummingcoder/find-the-channel/blob/main/Screen%20recording%202025-09-14%203.21.21%20PM.webm](https://github.com/user-attachments/assets/a17aed3b-d09f-4444-9b0b-bd9b1c4da554)
