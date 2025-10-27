@@ -18,6 +18,9 @@ const responder = DefineWorkflow({
       },
       channel: {
         type: Schema.slack.types.channel_id,
+      },
+      messagets: {
+        type: Schema.types.string,
       }
     },
     required: ["user", "message", "channel"],
@@ -29,6 +32,7 @@ responder.addStep(messenger, {
   message: responder.inputs.message,
   user: responder.inputs.user,
   messagets: responder.inputs.threadts,
+  threadpin: responder.inputs.messagets,
 });
 
 export default responder;

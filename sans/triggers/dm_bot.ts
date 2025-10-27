@@ -36,6 +36,9 @@ const sampleTrigger: Trigger<typeof responder.definition> = {
     threadts: {
       value: TriggerContextData.Event.MessagePosted.thread_ts,
     },
+    messagets: {
+      value: TriggerContextData.Event.MessagePosted.message_ts,
+    },
   },
 };
 

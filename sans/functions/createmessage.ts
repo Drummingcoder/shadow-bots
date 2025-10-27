@@ -78,9 +78,10 @@ export default SlackFunction(
     }
 
     const time = `${inputs.date}T${inputs.time}:00`;
+    console.log(getname);
 
     const trigger = await client.workflows.triggers.create({
-      name: `Daily Update for ${getname.profile.real_name}`,
+      name: `Daily Update for ${getname.user.profile.real_name}`,
       workflow: `#/workflows/${letsmakethe.definition.callback_id}`,
       type: TriggerTypes.Scheduled,
       inputs: {
@@ -99,6 +100,12 @@ export default SlackFunction(
     });
 
     console.log(trigger);
+
+    await client.chat.postEphemeral({
+      channel: inputs.channel,
+      user: inputs.user,
+      text: "The reminder has been created.",
+    });
     return { outputs: { }};
   },
 );

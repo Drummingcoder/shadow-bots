@@ -1,6 +1,7 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
 import trackUsers from "../datastores/users.ts";
 import usertime from "../datastores/timeusers.ts";
+import theonechecker from "../datastores/response.ts";
 
 export const messenger = DefineFunction({
   callback_id: "responses",
@@ -24,15 +25,55 @@ export const messenger = DefineFunction({
       messagets: {
         type: Schema.types.string,
         description: "The timestamp of the message",
+      },
+      threadpin: {
+        type: Schema.types.string,
       }
     },
-    required: ["message", "user", "channel", "messagets"],
+    required: ["message", "user", "channel", "messagets", "threadpin"],
   },
 });
 
 export default SlackFunction(
   messenger,
   async ({ inputs, client }) => {
+    const getmyResp = await client.apps.datastore.get<
+      typeof theonechecker.definition
+    >({
+      datastore: theonechecker.name,
+      id: inputs.messagets,
+    });
+
+    if (getmyResp.item.responded && inputs.user != "U09HU7HMSNP") {
+      const dayPattern = /^day \d+:/;
+      if (dayPattern.test(inputs.message.toLowerCase())) {
+        const test = await client.pins.add({
+          channel: inputs.channel,
+          timestamp: inputs.threadpin,
+        });
+        console.log(test);
+      }
+
+      await client.chat.postMessage({
+        channel: inputs.channel,
+        text: "Received. More will be added later",
+        thread_ts: inputs.messagets,
+      });
+
+      await client.apps.datastore.update<
+        typeof theonechecker.definition
+      >({
+        datastore: theonechecker.name,
+        item: {
+          threadts: inputs.messagets,
+          responded: false,
+        },
+      });
+
+      return { outputs: { } };
+    }
+
+
     const userID = inputs.user;
     const message = inputs.message;
     const mests = inputs.messagets;
