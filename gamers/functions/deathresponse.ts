@@ -65,7 +65,7 @@ export default SlackFunction(
     }
 
     if (getResp1.item.player1 == user) {
-      const response1 = await fetch("https://ai.hackclub.com/chat/completions", {
+      /*const response1 = await fetch("https://ai.hackclub.com/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -82,6 +82,25 @@ export default SlackFunction(
       const rep2 = await response1.json();
       const rep3 = rep2.choices[0].message.content;
       const rep4 = rep3.split("</think>")[1].replace("\n", "");
+      const rep5 = rep4.split("because")[0];*/
+
+      const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [{ text: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."` }],
+            },
+          ],
+        }),
+      });
+      const thedata = await airesponse1.json();
+      console.log(thedata);
+      const text = thedata.candidates[0].content.parts[0].text;
+      const rep4 = text.replaceAll("\n", "");
       const rep5 = rep4.split("because")[0];
       
       if (rep5.toLowerCase().includes("yes")) {
@@ -118,23 +137,23 @@ export default SlackFunction(
       });
       console.log(putResp2);
     } else if (getResp1.item.player2 == user) {
-      const response1 = await fetch("https://ai.hackclub.com/chat/completions", {
+      const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: [
+          contents: [
             {
-              role: "user", 
-              content: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."`
-            }
-          ]
-        })
+              parts: [{ text: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."` }],
+            },
+          ],
+        }),
       });
-      const rep2 = await response1.json();
-      const rep3 = rep2.choices[0].message.content;
-      const rep4 = rep3.split("</think>")[1].replace("\n", "");
+      const thedata = await airesponse1.json();
+      console.log(thedata);
+      const text = thedata.candidates[0].content.parts[0].text;
+      const rep4 = text.replaceAll("\n", "");
       const rep5 = rep4.split("because")[0];
       
       if (rep5.toLowerCase().includes("yes")) {
@@ -171,23 +190,23 @@ export default SlackFunction(
       });
       console.log(putResp2);
     } else if (getResp1.item.player3 == user) {
-      const response1 = await fetch("https://ai.hackclub.com/chat/completions", {
+      const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: [
+          contents: [
             {
-              role: "user", 
-              content: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]." Don't put any extra punctuation, and make sure to evaluate the response based on if the player is likely to survive the scenario provided, nothing else.`
-            }
-          ]
-        })
+              parts: [{ text: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]." Don't put any extra punctuation, and make sure to evaluate the response based on if the player is likely to survive the scenario provided, nothing else.` }],
+            },
+          ],
+        }),
       });
-      const rep2 = await response1.json();
-      const rep3 = rep2.choices[0].message.content;
-      const rep4 = rep3.split("</think>")[1].replace("\n", "");
+      const thedata = await airesponse1.json();
+      console.log(thedata);
+      const text = thedata.candidates[0].content.parts[0].text;
+      const rep4 = text.replaceAll("\n", "");
       const rep5 = rep4.split("because")[0];
       
       if (rep5.toLowerCase().includes("yes")) {
@@ -224,23 +243,23 @@ export default SlackFunction(
       });
       console.log(putResp2);
     } else if (getResp1.item.player4 == user) {
-      const response1 = await fetch("https://ai.hackclub.com/chat/completions", {
+      const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: [
+          contents: [
             {
-              role: "user", 
-              content: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."`
-            }
-          ]
-        })
+              parts: [{ text: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."` }],
+            },
+          ],
+        }),
       });
-      const rep2 = await response1.json();
-      const rep3 = rep2.choices[0].message.content;
-      const rep4 = rep3.split("</think>")[1].replace("\n", "");
+      const thedata = await airesponse1.json();
+      console.log(thedata);
+      const text = thedata.candidates[0].content.parts[0].text;
+      const rep4 = text.replaceAll("\n", "");
       const rep5 = rep4.split("because")[0];
       
       if (rep5.toLowerCase().includes("yes")) {
@@ -277,23 +296,23 @@ export default SlackFunction(
       });
       console.log(putResp2);
     } else if (getResp1.item.player5 == user) {
-      const response1 = await fetch("https://ai.hackclub.com/chat/completions", {
+      const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: [
+          contents: [
             {
-              role: "user", 
-              content: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."`
-            }
-          ]
-        })
+              parts: [{ text: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."` }],
+            },
+          ],
+        }),
       });
-      const rep2 = await response1.json();
-      const rep3 = rep2.choices[0].message.content;
-      const rep4 = rep3.split("</think>")[1].replace("\n", "");
+      const thedata = await airesponse1.json();
+      console.log(thedata);
+      const text = thedata.candidates[0].content.parts[0].text;
+      const rep4 = text.replaceAll("\n", "");
       const rep5 = rep4.split("because")[0];
       
       if (rep5.toLowerCase().includes("yes")) {
@@ -330,23 +349,23 @@ export default SlackFunction(
       });
       console.log(putResp2);
     } else if (getResp1.item.player6 == user) {
-      const response1 = await fetch("https://ai.hackclub.com/chat/completions", {
+      const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: [
+          contents: [
             {
-              role: "user", 
-              content: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."`
-            }
-          ]
-        })
+              parts: [{ text: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."` }],
+            },
+          ],
+        }),
       });
-      const rep2 = await response1.json();
-      const rep3 = rep2.choices[0].message.content;
-      const rep4 = rep3.split("</think>")[1].replace("\n", "");
+      const thedata = await airesponse1.json();
+      console.log(thedata);
+      const text = thedata.candidates[0].content.parts[0].text;
+      const rep4 = text.replaceAll("\n", "");
       const rep5 = rep4.split("because")[0];
       
       if (rep5.toLowerCase().includes("yes")) {
@@ -383,23 +402,23 @@ export default SlackFunction(
       });
       console.log(putResp2);
     } else if (getResp1.item.player7 == user) {
-      const response1 = await fetch("https://ai.hackclub.com/chat/completions", {
+      const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: [
+          contents: [
             {
-              role: "user", 
-              content: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."`
-            }
-          ]
-        })
+              parts: [{ text: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."` }],
+            },
+          ],
+        }),
       });
-      const rep2 = await response1.json();
-      const rep3 = rep2.choices[0].message.content;
-      const rep4 = rep3.split("</think>")[1].replace("\n", "");
+      const thedata = await airesponse1.json();
+      console.log(thedata);
+      const text = thedata.candidates[0].content.parts[0].text;
+      const rep4 = text.replaceAll("\n", "");
       const rep5 = rep4.split("because")[0];
       
       if (rep5.toLowerCase().includes("yes")) {
@@ -436,23 +455,23 @@ export default SlackFunction(
       });
       console.log(putResp2);
     } else if (getResp1.item.player8 == user) {
-      const response1 = await fetch("https://ai.hackclub.com/chat/completions", {
+      const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: [
+          contents: [
             {
-              role: "user", 
-              content: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."`
-            }
-          ]
-        })
+              parts: [{ text: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."` }],
+            },
+          ],
+        }),
       });
-      const rep2 = await response1.json();
-      const rep3 = rep2.choices[0].message.content;
-      const rep4 = rep3.split("</think>")[1].replace("\n", "");
+      const thedata = await airesponse1.json();
+      console.log(thedata);
+      const text = thedata.candidates[0].content.parts[0].text;
+      const rep4 = text.replaceAll("\n", "");
       const rep5 = rep4.split("because")[0];
       
       if (rep5.toLowerCase().includes("yes")) {
@@ -489,23 +508,23 @@ export default SlackFunction(
       });
       console.log(putResp2);
     } else if (getResp1.item.player9 == user) {
-      const response1 = await fetch("https://ai.hackclub.com/chat/completions", {
+      const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: [
+          contents: [
             {
-              role: "user", 
-              content: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."`
-            }
-          ]
-        })
+              parts: [{ text: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."` }],
+            },
+          ],
+        }),
       });
-      const rep2 = await response1.json();
-      const rep3 = rep2.choices[0].message.content;
-      const rep4 = rep3.split("</think>")[1].replace("\n", "");
+      const thedata = await airesponse1.json();
+      console.log(thedata);
+      const text = thedata.candidates[0].content.parts[0].text;
+      const rep4 = text.replaceAll("\n", "");
       const rep5 = rep4.split("because")[0];
       
       if (rep5.toLowerCase().includes("yes")) {
@@ -542,23 +561,23 @@ export default SlackFunction(
       });
       console.log(putResp2);
     } else if (getResp1.item.player10 == user) {
-      const response1 = await fetch("https://ai.hackclub.com/chat/completions", {
+      const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: [
+          contents: [
             {
-              role: "user", 
-              content: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."`
-            }
-          ]
-        })
+              parts: [{ text: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."` }],
+            },
+          ],
+        }),
       });
-      const rep2 = await response1.json();
-      const rep3 = rep2.choices[0].message.content;
-      const rep4 = rep3.split("</think>")[1].replace("\n", "");
+      const thedata = await airesponse1.json();
+      console.log(thedata);
+      const text = thedata.candidates[0].content.parts[0].text;
+      const rep4 = text.replaceAll("\n", "");
       const rep5 = rep4.split("because")[0];
       
       if (rep5.toLowerCase().includes("yes")) {

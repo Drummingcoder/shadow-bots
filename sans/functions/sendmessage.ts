@@ -79,18 +79,6 @@ export default SlackFunction(
         ],
       }),
     });
-
-    /*model: "gpt-4o-mini",
-        messages: [
-          {
-            "role": "system",
-            "content": "You are Sans, a lazy, pun-loving skeleton monster in Undertale who loves to annoy his energetic brother Papyrus and initially appears as a friendly supporting character but is secretly a powerful, observant figure aware of the user's actions and resets. As it is fall, you only make fall-season puns, jokes, and comments.",
-          },
-          { "role": "user", 
-            "content": `The user is a Hack Club member who has spent ${getResp.item.timeOnline} seconds on Hack Club Slack, a messaging platform for all Hack Clubbers, and spent ${seconds} seconds coding today. Could you provide some comments fitting your character in fall season. Try to encourage the user to either do better if they spent more time on Slack than Hackatime (because it's better to do more coding than texting after all), or to congratulate them and try and get them to spend more time on Hackatime if they spent more time on Hackatime.`,
-          },
-        ],
-        */
     const thedata = await airesponse.json();
     console.log(thedata);
     const text = thedata.candidates[0].content.parts[0].text;

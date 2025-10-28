@@ -56,7 +56,7 @@ export default SlackFunction(
         let starter = "rock";
         if (getResp1.item.type == "magic") {
           starter = "flying pig";
-          const magicresponse = await fetch("https://ai.hackclub.com/chat/completions", {
+          /*const magicresponse = await fetch("https://ai.hackclub.com/chat/completions", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -74,7 +74,26 @@ export default SlackFunction(
           const rep2 = await magicresponse.json();
           const rep3 = rep2.choices[0].message.content;
           const rep4 = rep3.split("</think>")[1].replace("\n", "");
-          console.log(rep4);
+          console.log(rep4);*/
+
+          const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              contents: [
+                {
+                  parts: [{ text: `Is the term ${mess} related to magic in any way? This is the definition of magic by the way, "the power of apparently influencing the course of events by using mysterious or supernatural forces." Please respond with a simple yes or no.` }],
+                },
+              ],
+            }),
+          });
+
+          const thedata1 = await airesponse1.json();
+          console.log(thedata1);
+          const rep4 = thedata1.candidates[0].content.parts[0].text;
+
           if (rep4.toLowerCase().includes("no")) {
             await client.chat.postEphemeral({
               channel: channelToPost,
@@ -85,7 +104,7 @@ export default SlackFunction(
             return {outputs: { }};
           }
         }
-        const response = await fetch("https://ai.hackclub.com/chat/completions", {
+        /*const response = await fetch("https://ai.hackclub.com/chat/completions", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -102,7 +121,26 @@ export default SlackFunction(
 
         const aiResponse = await response.json();
         const reAI = aiResponse.choices[0].message.content;
-        const winner = reAI.split("</think>")[1].replace("\n", "");
+        const winner = reAI.split("</think>")[1].replace("\n", "");*/
+
+        const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [{ text: `Which would win: ${starter} or ${mess}? Just give me the winner and a short explanation (1 sentence) in the form "[Insert winner] wins because [insert reason]". So if rock would win against ${mess}, put "rock wins because [insert reason]". Otherwise, put "${mess} wins because [insert reason]." No ties! Don't add any extra punctuation or brackets/parathesis to the response.` }],
+              },
+            ],
+          }),
+        });
+
+        const thedata1 = await airesponse1.json();
+        console.log(thedata1);
+        const winner = thedata1.candidates[0].content.parts[0].text.replaceAll('\n', '');
+
         const wincondition = winner.split("wins")[0];
         if (wincondition.toLowerCase().includes(mess.toLowerCase())) {
           await client.chat.postMessage({
@@ -161,7 +199,7 @@ export default SlackFunction(
         }
 
         if (getResp1.item.type == "magic") {
-          const magicresponse = await fetch("https://ai.hackclub.com/chat/completions", {
+          /*const magicresponse = await fetch("https://ai.hackclub.com/chat/completions", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -179,7 +217,27 @@ export default SlackFunction(
           const rep2 = await magicresponse.json();
           const rep3 = rep2.choices[0].message.content;
           const rep4 = rep3.split("</think>")[1].replace("\n", "");
+          console.log(rep4);*/
+
+          const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              contents: [
+                {
+                  parts: [{ text: `Is the term ${mess} related to magic in any way? This is the definition of magic by the way, "the power of apparently influencing the course of events by using mysterious or supernatural forces." Please respond with a simple yes or no.` }],
+                },
+              ],
+            }),
+          });
+
+          const thedata1 = await airesponse1.json();
+          console.log(thedata1);
+          const rep4 = thedata1.candidates[0].content.parts[0].text;
           console.log(rep4);
+
           if (rep4.toLowerCase().includes("no")) {
             await client.chat.postEphemeral({
               channel: channelToPost,
@@ -191,7 +249,7 @@ export default SlackFunction(
           }
         }
 
-        const response = await fetch("https://ai.hackclub.com/chat/completions", {
+        /*const response = await fetch("https://ai.hackclub.com/chat/completions", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -208,7 +266,25 @@ export default SlackFunction(
 
         const aiResponse = await response.json();
         const reAI = aiResponse.choices[0].message.content;
-        const winner = reAI.split("</think>")[1].replace("\n", "");
+        const winner = reAI.split("</think>")[1].replace("\n", "");*/
+
+        const airesponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [{ text: `Which would win: ${pre} or ${mess}? Just give me the winner and a short explanation (1 sentence) in the form "[Insert winner] wins because [insert reason]". So if ${pre} would win against ${mess}, put "rock wins because [insert reason]". Otherwise, put "${mess} wins because [insert reason]." No ties! Don't add any extra punctuation or brackets/parathesis to the response.` }],
+              },
+            ],
+          }),
+        });
+        const thedata = await airesponse.json();
+        console.log(thedata);
+        const winner = thedata.candidates[0].content.parts[0].text.replaceAll('\n', '');
+
         const wincondition = winner.split("wins")[0];
         if (wincondition.toLowerCase().includes(mess.toLowerCase())) {
           await client.chat.postMessage({
@@ -269,7 +345,7 @@ export default SlackFunction(
       }
       if (getResp1.item.messageinput == "") {
         if (getResp1.item.type == "magic") {
-          const magicresponse = await fetch("https://ai.hackclub.com/chat/completions", {
+          /*const magicresponse = await fetch("https://ai.hackclub.com/chat/completions", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -287,7 +363,25 @@ export default SlackFunction(
           const rep2 = await magicresponse.json();
           const rep3 = rep2.choices[0].message.content;
           const rep4 = rep3.split("</think>")[1].replace("\n", "");
-          console.log(rep4);
+          console.log(rep4);*/
+
+          const airesponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              contents: [
+                {
+                  parts: [{ text: `Is the term ${mess} related to magic in any way? This is the definition of magic by the way, "the power of apparently influencing the course of events by using mysterious or supernatural forces." Please respond with a simple yes or no.` }],
+                },
+              ],
+            }),
+          });
+          const thedata = await airesponse.json();
+          console.log(thedata);
+          const rep4 = thedata.candidates[0].content.parts[0].text;
+
           if (rep4.toLowerCase().includes("no")) {
             await client.chat.postEphemeral({
               channel: channelToPost,
@@ -334,7 +428,7 @@ export default SlackFunction(
         }
 
         if (getResp1.item.type == "magic") {
-          const magicresponse = await fetch("https://ai.hackclub.com/chat/completions", {
+          /*const magicresponse = await fetch("https://ai.hackclub.com/chat/completions", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -352,7 +446,25 @@ export default SlackFunction(
           const rep2 = await magicresponse.json();
           const rep3 = rep2.choices[0].message.content;
           const rep4 = rep3.split("</think>")[1].replace("\n", "");
-          console.log(rep4);
+          console.log(rep4);*/
+
+          const airesponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              contents: [
+                {
+                  parts: [{ text: `Is the term ${mess} related to magic in any way? This is the definition of magic by the way, "the power of apparently influencing the course of events by using mysterious or supernatural forces." Please respond with a simple yes or no.` }],
+                },
+              ],
+            }),
+          });
+          const thedata = await airesponse.json();
+          console.log(thedata);
+          const rep4 = thedata.candidates[0].content.parts[0].text;
+
           if (rep4.toLowerCase().includes("no")) {
             await client.chat.postEphemeral({
               channel: channelToPost,
@@ -364,7 +476,7 @@ export default SlackFunction(
           }
         }
 
-        const response = await fetch("https://ai.hackclub.com/chat/completions", {
+        /*const response = await fetch("https://ai.hackclub.com/chat/completions", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -381,7 +493,26 @@ export default SlackFunction(
 
         const aiResponse = await response.json();
         const reAI = aiResponse.choices[0].message.content;
-        const winner = reAI.split("</think>")[1].replace("\n", "");
+        const winner = reAI.split("</think>")[1].replace("\n", "");*/
+
+        const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [{ text: `Which would win: ${pre} or ${mess}? Just give me the winner and a short explanation (1 sentence) in the form "[Insert winner] wins because [insert reason]". So if ${pre} would win against ${mess}, put "rock wins because [insert reason]". Otherwise, put "${mess} wins because [insert reason]." No ties! Don't add any extra punctuation or brackets/parathesis to the response.` }],
+              },
+            ],
+          }),
+        });
+
+        const thedata1 = await airesponse1.json();
+        console.log(thedata1);
+        const winner = thedata1.candidates[0].content.parts[0].text;
+
         const wincondition = winner.split("wins")[0];
         if (wincondition.toLowerCase().includes(mess.toLowerCase())) {
           await client.chat.postMessage({

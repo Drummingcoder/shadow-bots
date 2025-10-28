@@ -89,7 +89,7 @@ export default SlackFunction(
       });
       console.log(update);
 
-      const response1 = await fetch("https://ai.hackclub.com/chat/completions", {
+      /*const response1 = await fetch("https://ai.hackclub.com/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -106,7 +106,25 @@ export default SlackFunction(
 
       const rep2 = await response1.json();
       const rep3 = rep2.choices[0].message.content;
-      const rep4 = rep3.split("</think>")[1].replace("\n", "");
+      const rep4 = rep3.split("</think>")[1].replace("\n", "");*/
+
+      const airesponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [{ text: `Give a magical scenario of any kind, it can be silly, it can be serious, it can be realistic, or it can be unrealistic. Just provide a scenario to survive, it can be of ANY kind. It can be any place, any time, any reason, any resources, but the one thing it has to be is magical. Make it around 300 characters or less. It has to end with the question, "How will you survive?" Make sure that the scenario is complete, no cut-off situations!` }],
+            },
+          ],
+        }),
+      });
+      const thedata = await airesponse.json();
+      console.log(thedata);
+      const rep4 = thedata.candidates[0].content.parts[0].text.replaceAll("\n", "");;
+
       await client.chat.postMessage({
         channel: channelToPost,
         text: `Alright, here's your scenario. Respond with the "/deathrespond" command.\n\n${rep4}`,
