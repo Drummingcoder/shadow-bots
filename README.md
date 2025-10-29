@@ -59,3 +59,5 @@ The Sans Tracker bot's code is stored inside the sans folder.
     ```
 
 It's as easy as that!
+
+Video demo of the Sans bot's daily reminder: 
