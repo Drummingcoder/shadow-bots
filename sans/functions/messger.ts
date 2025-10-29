@@ -58,24 +58,25 @@ export default SlackFunction(
         console.log(test);
       }
 
-      const airesponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+      const airesponse1 = await fetch(`https://api.cloudflare.com/client/v4/accounts/${"de299eff7ceaa5006bd30245bd9a6c77"}/ai/run/${"@cf/meta/llama-3.1-8b-instruct"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${"trcWfRL7kg_P8I0Denn_tIngbsf1ZszdZ08In75F"}`, 
         },
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: `The user is a Hack Club member who said this about their day: ${inputs.message}. Could you make a story fitting Sans (from Undertale) in fall season that tries to comfort them if they're having a bad day or have fun if they're having a good day? Try to make the user happier. Please provide around a 300 word response without any headers, titles, or extra punctuation.` }],
-            },
+          messages: [
+            { role: "user", content: `The user is a Hack Club member who said this about their day: ${inputs.message}. Could you make a story fitting Sans (from Undertale) in fall season that tries to comfort them if they're having a bad day or have fun if they're having a good day? Try to make the user happier. Please provide around a 300 word response without any headers, titles, or extra punctuation.`}
           ],
+          max_tokens: 500, 
+          temperature: 0.8,
         }),
       });
-      const thedata = await airesponse.json();
+      const thedata = await airesponse1.json();
       console.log(thedata);
-      const text = thedata.candidates[0].content.parts[0].text;
+      const text = thedata.result.response.trim();
 
-      if (thedata.candidates) {
+      if (thedata.result) {
         await client.chat.postMessage({
           channel: inputs.channel,
           text: `Nice, this is what I have to say about that: \n${text}`,
@@ -101,7 +102,6 @@ export default SlackFunction(
 
       return { outputs: { } };
     }
-
 
     const userID = inputs.user;
     const message = inputs.message;

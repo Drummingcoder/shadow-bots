@@ -66,22 +66,24 @@ export default SlackFunction(
     const hoursdecimal = seconds / 3600.0;
     const minshack = Math.floor((seconds % 3600) / 60);
 
-    const airesponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+    const airesponse1 = await fetch(`https://api.cloudflare.com/client/v4/accounts/${"de299eff7ceaa5006bd30245bd9a6c77"}/ai/run/${"@cf/meta/llama-3.1-8b-instruct"}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${"trcWfRL7kg_P8I0Denn_tIngbsf1ZszdZ08In75F"}`, 
       },
       body: JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: `The user is a Hack Club member who has spent ${hoursSlackdec} hours on Slack messaging and ${hoursdecimal} hours coding today. Could you provide some comments fitting Sans (from Undertale) in fall season. Try to encourage the user to either do better or to congratulate them and help them spend more time on Hackatime. Please provide a short 100-word response without any headers, titles, or extra punctuation.` }],
-          },
+        messages: [
+          { role: "user", content: `The user is a Hack Club member who has spent ${hoursSlackdec} hours on Slack messaging and ${hoursdecimal} hours coding today. Could you provide some comments fitting Sans (from Undertale) in fall season. Try to encourage the user to either do better or to congratulate them and help them spend more time on Hackatime. Please provide a short 100-word response without any headers, titles, or extra punctuation.`}
         ],
+        max_tokens: 300, 
+        temperature: 0.8,
       }),
     });
-    const thedata = await airesponse.json();
+
+    const thedata = await airesponse1.json();
     console.log(thedata);
-    const text = thedata.candidates[0].content.parts[0].text;
+    const text = thedata.result.response.trim();
 
     const threadfirst = await client.chat.postMessage({
       channel: inputs.channel,
