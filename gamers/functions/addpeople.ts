@@ -108,22 +108,24 @@ export default SlackFunction(
       const rep3 = rep2.choices[0].message.content;
       const rep4 = rep3.split("</think>")[1].replace("\n", "");*/
 
-      const airesponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+      const airesponse1 = await fetch(`https://api.cloudflare.com/client/v4/accounts/${"de299eff7ceaa5006bd30245bd9a6c77"}/ai/run/${"@cf/meta/llama-3.1-8b-instruct"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${"trcWfRL7kg_P8I0Denn_tIngbsf1ZszdZ08In75F"}`, 
         },
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: `Give a magical scenario of any kind, it can be silly, it can be serious, it can be realistic, or it can be unrealistic. Just provide a scenario to survive, it can be of ANY kind. It can be any place, any time, any reason, any resources, but the one thing it has to be is magical. Make it around 300 characters or less. It has to end with the question, "How will you survive?" Make sure that the scenario is complete, no cut-off situations!` }],
-            },
+          messages: [
+            { role: "user", content: `Give a magical scenario of any kind, it can be silly, it can be serious, it can be realistic, or it can be unrealistic. Just provide a scenario to survive, it can be of ANY kind. It can be any place, any time, any reason, any resources, but the one thing it has to be is magical. Make it around 300 characters or less. It has to end with the question, "How will you survive?" Make sure that the scenario is complete, no cut-off situations!`}
           ],
+          max_tokens: 3, 
+          temperature: 0.1,
         }),
       });
-      const thedata = await airesponse.json();
-      console.log(thedata);
-      const rep4 = thedata.candidates[0].content.parts[0].text.replaceAll("\n", "");;
+
+      const thedata1 = await airesponse1.json();
+      console.log(thedata1);
+      const rep4 = thedata1.result.response.trim();
 
       await client.chat.postMessage({
         channel: channelToPost,

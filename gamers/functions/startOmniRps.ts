@@ -615,23 +615,25 @@ export default SlackFunction(
     const rep4 = rep3.split("</think>")[1].replace("\n", "");
     console.log(rep4);*/
 
-    const airesponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+    const aiResponse = await fetch(`https://api.cloudflare.com/client/v4/accounts/${"de299eff7ceaa5006bd30245bd9a6c77"}/ai/run/${"@cf/meta/llama-3.1-8b-instruct"}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${"trcWfRL7kg_P8I0Denn_tIngbsf1ZszdZ08In75F"}`, 
       },
       body: JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: `Is the term ${selectedMove} related to magic in any way? This is the definition of magic by the way, "the power of apparently influencing the course of events by using mysterious or supernatural forces." Please respond with a simple yes or no.` }],
-          },
+        messages: [
+            { role: "system", content: 'You are a concise, helpful assistant. Your only function is to determine if a term is related to magic based on the provided definition. You must only respond with a single word: "Yes" or "No".' },
+            { role: "user", content: `Is the term "${selectedMove}" related to magic in any way? The definition of magic is: "the power of apparently influencing the course of events by using mysterious or supernatural forces." Please respond with a simple yes or no.`}
         ],
+        max_tokens: 3, 
+        temperature: 0.1,
       }),
     });
-    const thedata = await airesponse.json();
-    console.log(thedata);
-    const rep4 = thedata.candidates[0].content.parts[0].text;
 
+    const theData = await aiResponse.json();
+    console.log(theData);
+    const rep4 = theData.result.response.trim();
 
     if (rep4.toLowerCase().includes("no")) {
       return {
@@ -700,23 +702,25 @@ export default SlackFunction(
     console.log("\nCut:", reAI);
     console.log("\nwinner: ", winner);*/
 
-    const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+    const airesponse1 = await fetch(`https://api.cloudflare.com/client/v4/accounts/${"de299eff7ceaa5006bd30245bd9a6c77"}/ai/run/${"@cf/meta/llama-3.1-8b-instruct"}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${"trcWfRL7kg_P8I0Denn_tIngbsf1ZszdZ08In75F"}`, 
       },
       body: JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: `Who would win: ${p1} or ${p2}? Just give me the winner and a short explanation (1 sentence) in the form "[Insert winner] wins because [insert reason]". So if ${p1} would win against ${p2}, put "${p1} wins because [insert reason]". Otherwise, put "${p2} wins because [insert reason]." No ties! Don't add any extra punctuation or brackets/parathesis to the response.` }],
-          },
+        messages: [
+            { role: "system", content: 'You are a battle simulation expert in a game of Rock, Paper, Scissors, but you can use anything. Your task is to select a single winner between two combatants and provide a one-sentence explanation. Your entire response MUST strictly follow the exact format: "[Winner Name] wins because [reason]." Do not include any extra text, punctuation, or formatting outside of the specified structure.' },
+            { role: "user", content: `Who would win: ${p1} or ${p2}? Just give me the winner and a short explanation (1 sentence) in the form "[Insert winner] wins because [insert reason]". So if ${p1} would win against ${p2}, put "${p1} wins because [insert reason]". Otherwise, put "${p2} wins because [insert reason]." No ties! Don't add any extra punctuation or brackets/parathesis to the response.`}
         ],
+        max_tokens: 100, 
+        temperature: 0.8,
       }),
     });
 
     const thedata1 = await airesponse1.json();
     console.log(thedata1);
-    const winner = thedata1.candidates[0].content.parts[0].text;
+    const winner = thedata1.result.response.trim();
 
     const wincondition = winner.replaceAll('\n', '').split("wins")[0];
     console.log("\nbro: ", wincondition);
@@ -781,23 +785,25 @@ export default SlackFunction(
     const rep4 = rep3.split("</think>")[1].replace("\n", "");
     console.log(rep4);*/
 
-    const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+    const aiResponse = await fetch(`https://api.cloudflare.com/client/v4/accounts/${"de299eff7ceaa5006bd30245bd9a6c77"}/ai/run/${"@cf/meta/llama-3.1-8b-instruct"}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${"trcWfRL7kg_P8I0Denn_tIngbsf1ZszdZ08In75F"}`, 
       },
       body: JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: `Is the term ${selectedMove} related to magic in any way? This is the definition of magic by the way, "the power of apparently influencing the course of events by using mysterious or supernatural forces." Please respond with a simple yes or no.` }],
-          },
+        messages: [
+            { role: "system", content: 'You are a concise, helpful assistant. Your only function is to determine if a term is related to magic based on the provided definition. You must only respond with a single word: "Yes" or "No".' },
+            { role: "user", content: `Is the term "${selectedMove}" related to magic in any way? The definition of magic is: "the power of apparently influencing the course of events by using mysterious or supernatural forces." Please respond with a simple yes or no.`}
         ],
+        max_tokens: 3, 
+        temperature: 0.1,
       }),
     });
 
-    const thedata1 = await airesponse1.json();
-    console.log(thedata1);
-    const rep4 = thedata1.candidates[0].content.parts[0].text;
+    const theData = await aiResponse.json();
+    console.log(theData);
+    const rep4 = theData.result.response.trim();
 
     if (rep4.toLowerCase().includes("no")) {
       return {
@@ -866,23 +872,25 @@ export default SlackFunction(
     console.log("\nCut:", reAI);
     console.log("\nwinner: ", winner);*/
 
-    const airesponse2 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+    const airesponse1 = await fetch(`https://api.cloudflare.com/client/v4/accounts/${"de299eff7ceaa5006bd30245bd9a6c77"}/ai/run/${"@cf/meta/llama-3.1-8b-instruct"}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${"trcWfRL7kg_P8I0Denn_tIngbsf1ZszdZ08In75F"}`, 
       },
       body: JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: `Who would win: ${p1} or ${p2}? Just give me the winner and a short explanation (1 sentence) in the form "[Insert winner] wins because [insert reason]". So if ${p1} would win against ${p2}, put "${p1} wins because [insert reason]". Otherwise, put "${p2} wins because [insert reason]." No ties! Don't add any extra punctuation or brackets/parathesis to the response.` }],
-          },
+        messages: [
+            { role: "system", content: 'You are a battle simulation expert in a game of Rock, Paper, Scissors, but you can use anything. Your task is to select a single winner between two combatants and provide a one-sentence explanation. Your entire response MUST strictly follow the exact format: "[Winner Name] wins because [reason]." Do not include any extra text, punctuation, or formatting outside of the specified structure.' },
+            { role: "user", content: `Who would win: ${p1} or ${p2}? Just give me the winner and a short explanation (1 sentence) in the form "[Insert winner] wins because [insert reason]". So if ${p1} would win against ${p2}, put "${p1} wins because [insert reason]". Otherwise, put "${p2} wins because [insert reason]." No ties! Don't add any extra punctuation or brackets/parathesis to the response.`}
         ],
+        max_tokens: 100, 
+        temperature: 0.8,
       }),
     });
 
-    const thedata2 = await airesponse2.json();
-    console.log(thedata2);
-    const winner = thedata2.candidates[0].content.parts[0].text;
+    const thedata1 = await airesponse1.json();
+    console.log(thedata1);
+    const winner = thedata1.result.response.trim();
 
     const wincondition = winner.replaceAll('\n', '').split("wins")[0];
     console.log("\nbro: ", wincondition);

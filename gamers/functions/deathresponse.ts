@@ -84,22 +84,24 @@ export default SlackFunction(
       const rep4 = rep3.split("</think>")[1].replace("\n", "");
       const rep5 = rep4.split("because")[0];*/
 
-      const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+      const airesponse1 = await fetch(`https://api.cloudflare.com/client/v4/accounts/${"de299eff7ceaa5006bd30245bd9a6c77"}/ai/run/${"@cf/meta/llama-3.1-8b-instruct"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${"trcWfRL7kg_P8I0Denn_tIngbsf1ZszdZ08In75F"}`, 
         },
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."` }],
-            },
+          messages: [
+              { role: "system", content: 'You are a survival expert. Analyze the provided scenario and the proposed response. Answer with a simple yes or no, followed by a 1 to 3 sentence justification. You MUST strictly adhere to one of the following two formats and no others: "yes because [insert 1-3 sentence reason]" or "no because [insert 1-3 sentence reason]". Do not add any extra text or commentary.' },
+              { role: "user", content: `This is a survival scenario: ${getResp1.item.lastquestion}\n\nWill this response survive the scenario provided: ${inputs.respo}.`}
           ],
+          max_tokens: 150, 
+          temperature: 0.3,
         }),
       });
       const thedata = await airesponse1.json();
       console.log(thedata);
-      const text = thedata.candidates[0].content.parts[0].text;
+      const text = thedata.result.response.trim();
       const rep4 = text.replaceAll("\n", "");
       const rep5 = rep4.split("because")[0];
       
@@ -137,22 +139,24 @@ export default SlackFunction(
       });
       console.log(putResp2);
     } else if (getResp1.item.player2 == user) {
-      const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+      const airesponse1 = await fetch(`https://api.cloudflare.com/client/v4/accounts/${"de299eff7ceaa5006bd30245bd9a6c77"}/ai/run/${"@cf/meta/llama-3.1-8b-instruct"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${"trcWfRL7kg_P8I0Denn_tIngbsf1ZszdZ08In75F"}`, 
         },
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."` }],
-            },
+          messages: [
+              { role: "system", content: 'You are a survival expert. Analyze the provided scenario and the proposed response. Answer with a simple yes or no, followed by a 1 to 3 sentence justification. You MUST strictly adhere to one of the following two formats and no others: "yes because [insert 1-3 sentence reason]" or "no because [insert 1-3 sentence reason]". Do not add any extra text or commentary.' },
+              { role: "user", content: `This is a survival scenario: ${getResp1.item.lastquestion}\n\nWill this response survive the scenario provided: ${inputs.respo}.`}
           ],
+          max_tokens: 150, 
+          temperature: 0.3,
         }),
       });
       const thedata = await airesponse1.json();
       console.log(thedata);
-      const text = thedata.candidates[0].content.parts[0].text;
+      const text = thedata.result.response.trim();
       const rep4 = text.replaceAll("\n", "");
       const rep5 = rep4.split("because")[0];
       
@@ -190,22 +194,24 @@ export default SlackFunction(
       });
       console.log(putResp2);
     } else if (getResp1.item.player3 == user) {
-      const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+      const airesponse1 = await fetch(`https://api.cloudflare.com/client/v4/accounts/${"de299eff7ceaa5006bd30245bd9a6c77"}/ai/run/${"@cf/meta/llama-3.1-8b-instruct"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${"trcWfRL7kg_P8I0Denn_tIngbsf1ZszdZ08In75F"}`, 
         },
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]." Don't put any extra punctuation, and make sure to evaluate the response based on if the player is likely to survive the scenario provided, nothing else.` }],
-            },
+          messages: [
+              { role: "system", content: 'You are a survival expert. Analyze the provided scenario and the proposed response. Answer with a simple yes or no, followed by a 1 to 3 sentence justification. You MUST strictly adhere to one of the following two formats and no others: "yes because [insert 1-3 sentence reason]" or "no because [insert 1-3 sentence reason]". Do not add any extra text or commentary.' },
+              { role: "user", content: `This is a survival scenario: ${getResp1.item.lastquestion}\n\nWill this response survive the scenario provided: ${inputs.respo}.`}
           ],
+          max_tokens: 150, 
+          temperature: 0.3,
         }),
       });
       const thedata = await airesponse1.json();
       console.log(thedata);
-      const text = thedata.candidates[0].content.parts[0].text;
+      const text = thedata.result.response.trim();
       const rep4 = text.replaceAll("\n", "");
       const rep5 = rep4.split("because")[0];
       
@@ -243,22 +249,24 @@ export default SlackFunction(
       });
       console.log(putResp2);
     } else if (getResp1.item.player4 == user) {
-      const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+      const airesponse1 = await fetch(`https://api.cloudflare.com/client/v4/accounts/${"de299eff7ceaa5006bd30245bd9a6c77"}/ai/run/${"@cf/meta/llama-3.1-8b-instruct"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${"trcWfRL7kg_P8I0Denn_tIngbsf1ZszdZ08In75F"}`, 
         },
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."` }],
-            },
+          messages: [
+              { role: "system", content: 'You are a survival expert. Analyze the provided scenario and the proposed response. Answer with a simple yes or no, followed by a 1 to 3 sentence justification. You MUST strictly adhere to one of the following two formats and no others: "yes because [insert 1-3 sentence reason]" or "no because [insert 1-3 sentence reason]". Do not add any extra text or commentary.' },
+              { role: "user", content: `This is a survival scenario: ${getResp1.item.lastquestion}\n\nWill this response survive the scenario provided: ${inputs.respo}.`}
           ],
+          max_tokens: 150, 
+          temperature: 0.3,
         }),
       });
       const thedata = await airesponse1.json();
       console.log(thedata);
-      const text = thedata.candidates[0].content.parts[0].text;
+      const text = thedata.result.response.trim();
       const rep4 = text.replaceAll("\n", "");
       const rep5 = rep4.split("because")[0];
       
@@ -296,22 +304,24 @@ export default SlackFunction(
       });
       console.log(putResp2);
     } else if (getResp1.item.player5 == user) {
-      const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+      const airesponse1 = await fetch(`https://api.cloudflare.com/client/v4/accounts/${"de299eff7ceaa5006bd30245bd9a6c77"}/ai/run/${"@cf/meta/llama-3.1-8b-instruct"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${"trcWfRL7kg_P8I0Denn_tIngbsf1ZszdZ08In75F"}`, 
         },
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."` }],
-            },
+          messages: [
+              { role: "system", content: 'You are a survival expert. Analyze the provided scenario and the proposed response. Answer with a simple yes or no, followed by a 1 to 3 sentence justification. You MUST strictly adhere to one of the following two formats and no others: "yes because [insert 1-3 sentence reason]" or "no because [insert 1-3 sentence reason]". Do not add any extra text or commentary.' },
+              { role: "user", content: `This is a survival scenario: ${getResp1.item.lastquestion}\n\nWill this response survive the scenario provided: ${inputs.respo}.`}
           ],
+          max_tokens: 150, 
+          temperature: 0.3,
         }),
       });
       const thedata = await airesponse1.json();
       console.log(thedata);
-      const text = thedata.candidates[0].content.parts[0].text;
+      const text = thedata.result.response.trim();
       const rep4 = text.replaceAll("\n", "");
       const rep5 = rep4.split("because")[0];
       
@@ -349,22 +359,24 @@ export default SlackFunction(
       });
       console.log(putResp2);
     } else if (getResp1.item.player6 == user) {
-      const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+      const airesponse1 = await fetch(`https://api.cloudflare.com/client/v4/accounts/${"de299eff7ceaa5006bd30245bd9a6c77"}/ai/run/${"@cf/meta/llama-3.1-8b-instruct"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${"trcWfRL7kg_P8I0Denn_tIngbsf1ZszdZ08In75F"}`, 
         },
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."` }],
-            },
+          messages: [
+              { role: "system", content: 'You are a survival expert. Analyze the provided scenario and the proposed response. Answer with a simple yes or no, followed by a 1 to 3 sentence justification. You MUST strictly adhere to one of the following two formats and no others: "yes because [insert 1-3 sentence reason]" or "no because [insert 1-3 sentence reason]". Do not add any extra text or commentary.' },
+              { role: "user", content: `This is a survival scenario: ${getResp1.item.lastquestion}\n\nWill this response survive the scenario provided: ${inputs.respo}.`}
           ],
+          max_tokens: 150, 
+          temperature: 0.3,
         }),
       });
       const thedata = await airesponse1.json();
       console.log(thedata);
-      const text = thedata.candidates[0].content.parts[0].text;
+      const text = thedata.result.response.trim();
       const rep4 = text.replaceAll("\n", "");
       const rep5 = rep4.split("because")[0];
       
@@ -402,17 +414,19 @@ export default SlackFunction(
       });
       console.log(putResp2);
     } else if (getResp1.item.player7 == user) {
-      const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+      const airesponse1 = await fetch(`https://api.cloudflare.com/client/v4/accounts/${"de299eff7ceaa5006bd30245bd9a6c77"}/ai/run/${"@cf/meta/llama-3.1-8b-instruct"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${"trcWfRL7kg_P8I0Denn_tIngbsf1ZszdZ08In75F"}`, 
         },
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."` }],
-            },
+          messages: [
+              { role: "system", content: 'You are a survival expert. Analyze the provided scenario and the proposed response. Answer with a simple yes or no, followed by a 1 to 3 sentence justification. You MUST strictly adhere to one of the following two formats and no others: "yes because [insert 1-3 sentence reason]" or "no because [insert 1-3 sentence reason]". Do not add any extra text or commentary.' },
+              { role: "user", content: `This is a survival scenario: ${getResp1.item.lastquestion}\n\nWill this response survive the scenario provided: ${inputs.respo}.`}
           ],
+          max_tokens: 150, 
+          temperature: 0.3,
         }),
       });
       const thedata = await airesponse1.json();
@@ -455,22 +469,25 @@ export default SlackFunction(
       });
       console.log(putResp2);
     } else if (getResp1.item.player8 == user) {
-      const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+      const airesponse1 = await fetch(`https://api.cloudflare.com/client/v4/accounts/${"de299eff7ceaa5006bd30245bd9a6c77"}/ai/run/${"@cf/meta/llama-3.1-8b-instruct"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${"trcWfRL7kg_P8I0Denn_tIngbsf1ZszdZ08In75F"}`, 
         },
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."` }],
-            },
+          messages: [
+              { role: "system", content: 'You are a survival expert. Analyze the provided scenario and the proposed response. Answer with a simple yes or no, followed by a 1 to 3 sentence justification. You MUST strictly adhere to one of the following two formats and no others: "yes because [insert 1-3 sentence reason]" or "no because [insert 1-3 sentence reason]". Do not add any extra text or commentary.' },
+              { role: "user", content: `This is a survival scenario: ${getResp1.item.lastquestion}\n\nWill this response survive the scenario provided: ${inputs.respo}.`}
           ],
+          max_tokens: 150, 
+          temperature: 0.3,
         }),
       });
+              
       const thedata = await airesponse1.json();
       console.log(thedata);
-      const text = thedata.candidates[0].content.parts[0].text;
+      const text = thedata.result.response.trim();
       const rep4 = text.replaceAll("\n", "");
       const rep5 = rep4.split("because")[0];
       
@@ -508,22 +525,25 @@ export default SlackFunction(
       });
       console.log(putResp2);
     } else if (getResp1.item.player9 == user) {
-      const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+      const airesponse1 = await fetch(`https://api.cloudflare.com/client/v4/accounts/${"de299eff7ceaa5006bd30245bd9a6c77"}/ai/run/${"@cf/meta/llama-3.1-8b-instruct"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${"trcWfRL7kg_P8I0Denn_tIngbsf1ZszdZ08In75F"}`, 
         },
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."` }],
-            },
+          messages: [
+              { role: "system", content: 'You are a survival expert. Analyze the provided scenario and the proposed response. Answer with a simple yes or no, followed by a 1 to 3 sentence justification. You MUST strictly adhere to one of the following two formats and no others: "yes because [insert 1-3 sentence reason]" or "no because [insert 1-3 sentence reason]". Do not add any extra text or commentary.' },
+              { role: "user", content: `This is a survival scenario: ${getResp1.item.lastquestion}\n\nWill this response survive the scenario provided: ${inputs.respo}.`}
           ],
+          max_tokens: 150, 
+          temperature: 0.3,
         }),
       });
+          
       const thedata = await airesponse1.json();
       console.log(thedata);
-      const text = thedata.candidates[0].content.parts[0].text;
+      const text = thedata.result.response.trim();
       const rep4 = text.replaceAll("\n", "");
       const rep5 = rep4.split("because")[0];
       
@@ -561,22 +581,24 @@ export default SlackFunction(
       });
       console.log(putResp2);
     } else if (getResp1.item.player10 == user) {
-      const airesponse1 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${"AIzaSyB8Kni3A8SOQPL2aCDd2uMIPRIiFHGcilE"}`, {
+      const airesponse1 = await fetch(`https://api.cloudflare.com/client/v4/accounts/${"de299eff7ceaa5006bd30245bd9a6c77"}/ai/run/${"@cf/meta/llama-3.1-8b-instruct"}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${"trcWfRL7kg_P8I0Denn_tIngbsf1ZszdZ08In75F"}`, 
         },
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: `This is a survival scenario: ${getResp1}\n\nWill this response survive the scenario provided: ${inputs.respo}\n\nAnswer with a simple yes or no and a one to three sentence justification. If the answer is yes, then respond: "yes because [insert reason]". If the answer is no, then respond, "no because [insert reason]."` }],
-            },
+          messages: [
+              { role: "system", content: 'You are a survival expert. Analyze the provided scenario and the proposed response. Answer with a simple yes or no, followed by a 1 to 3 sentence justification. You MUST strictly adhere to one of the following two formats and no others: "yes because [insert 1-3 sentence reason]" or "no because [insert 1-3 sentence reason]". Do not add any extra text or commentary.' },
+              { role: "user", content: `This is a survival scenario: ${getResp1.item.lastquestion}\n\nWill this response survive the scenario provided: ${inputs.respo}.`}
           ],
+          max_tokens: 150, 
+          temperature: 0.3,
         }),
       });
       const thedata = await airesponse1.json();
       console.log(thedata);
-      const text = thedata.candidates[0].content.parts[0].text;
+      const text = thedata.result.response.trim();
       const rep4 = text.replaceAll("\n", "");
       const rep5 = rep4.split("because")[0];
       
