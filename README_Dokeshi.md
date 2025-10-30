@@ -34,8 +34,9 @@ The Dokeshi bot's code is stored inside the gamers folder.
 It's as easy as that!
 
 ## Video:
-Video Demo of New Features (Omni RPS and Death by AI):
-
+Video Demo of New Features:
+Death by AI: https://github.com/user-attachments/assets/fa5d3dee-933c-477a-baa6-72d5da0e5214
+Omniscient RPS: https://github.com/user-attachments/assets/144c2d95-a812-44fe-ad23-23fc9d395f33
 
 
 Video of RPS in action:
