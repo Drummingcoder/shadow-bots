@@ -20,7 +20,7 @@ const domake = DefineWorkflow({
 
 const form = domake.addStep(Schema.slack.functions.OpenForm,
   {
-    title: "Spend Your Coins",
+    title: "Create a reminder!",
     interactivity: domake.inputs.interactivity,
     submit_label: "Create!",
     description: `Let's create a reminder! Make sure you being tracked using the Sans Tracker or else this won't work.`,

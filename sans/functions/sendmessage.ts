@@ -74,7 +74,7 @@ export default SlackFunction(
       },
       body: JSON.stringify({
         messages: [
-          { role: "user", content: `The user is a Hack Club member who has spent ${hoursSlackdec} hours on Slack messaging and ${hoursdecimal} hours coding today. Could you provide some comments fitting Sans (from Undertale) in fall season. Try to encourage the user to either do better or to congratulate them and help them spend more time on Hackatime. Please provide a short 100-word response without any headers, titles, or extra punctuation.`}
+          { role: "user", content: `The user is a Hack Club member who has spent ${hoursSlackdec} hours on Slack messaging and ${hoursdecimal} hours coding today. Could you provide some comments fitting Sans (from Undertale) in fall season. Make some bad fall jokes, some bad puns, and just be Sans. Try to encourage the user to either do better or to congratulate them and help them spend more time on Hackatime. Please provide a short 100-word response.`}
         ],
         max_tokens: 300, 
         temperature: 0.8,

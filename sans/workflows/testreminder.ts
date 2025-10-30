@@ -23,7 +23,7 @@ const testremind = DefineWorkflow({
 
 const form = testremind.addStep(Schema.slack.functions.OpenForm,
   {
-    title: "Spend Your Coins",
+    title: "Test a Reminder!",
     interactivity: testremind.inputs.interactivity,
     submit_label: "Let's go!",
     description: `Let's create a reminder! Make sure you being tracked using the Sans Tracker or else this won't work.`,

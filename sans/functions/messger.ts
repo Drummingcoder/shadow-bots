@@ -66,7 +66,7 @@ export default SlackFunction(
         },
         body: JSON.stringify({
           messages: [
-            { role: "user", content: `The user is a Hack Club member who said this about their day: ${inputs.message}. Could you make a story fitting Sans (from Undertale) in fall season that tries to comfort them if they're having a bad day or have fun if they're having a good day? Try to make the user happier. Please provide around a 300 word response without any headers, titles, or extra punctuation.`}
+            { role: "user", content: `The user is a Hack Club member who said this about their day: ${inputs.message}. Could you make a story fitting Sans (from Undertale) in fall season that tries to comfort them if they're having a bad day or have fun if they're having a good day? Try to make the user happier. Make some bad jokes, some bad puns, just be Sans. Please provide around a 300 word response without any headers or titles.`}
           ],
           max_tokens: 500, 
           temperature: 0.8,
