@@ -14,7 +14,7 @@ const SampleWorkflow = DefineWorkflow({
 SampleWorkflow.addStep(
   Schema.slack.functions.SendMessage,
   {
-    channel_id: "C09FQS5HRHS",
+    channel_id: "C09UCPKMXJN",
     message: "Time to run Sans",
   },
 );

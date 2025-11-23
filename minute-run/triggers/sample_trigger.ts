@@ -4,13 +4,13 @@ import SampleWorkflow from "../workflows/sample_workflow.ts";
 
 const sampleTrigger: Trigger<typeof SampleWorkflow.definition> = {
   type: TriggerTypes.Scheduled,
-  name: "Trigger60",
+  name: "Tri59",
   description: "Runs every minute",
   workflow: `#/workflows/${SampleWorkflow.definition.callback_id}`,
   inputs: {},
   schedule: {
-    start_time: `${2025}-${10}-${2}T11:59:00`,
-    end_time: "2050-05-01T14:00:00Z",
+    start_time: `${2025}-${11}-${23}T10:59:00`,
+    end_time: "2100-05-01T14:00:00Z",
     timezone: "America/Los_Angeles",
     frequency: {
       type: "hourly",
