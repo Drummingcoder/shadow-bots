@@ -48,7 +48,7 @@ export default SlackFunction(
     console.log("thread:", inputs.threadpin);
     console.log("message:", inputs.messagets);
 
-    if (getmyResp.item.responded && inputs.user != "U09HU7HMSNP") {
+    if (getmyResp.item.responded && inputs.user != "U0A09UZK4K0") {
       const dayPattern = /^day \d+:/;
       if (dayPattern.test(inputs.message.toLowerCase())) {
         const test = await client.pins.add({
