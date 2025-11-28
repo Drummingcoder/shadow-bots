@@ -9,7 +9,7 @@ const sampleTrigger: Trigger<typeof SampleWorkflow.definition> = {
   workflow: `#/workflows/${SampleWorkflow.definition.callback_id}`,
   inputs: {},
   schedule: {
-    start_time: `${2025}-${11}-${23}T10:59:00`,
+    start_time: `${2025}-${11}-${28}T01:59:00`,
     end_time: "2100-05-01T14:00:00Z",
     timezone: "America/Los_Angeles",
     frequency: {
