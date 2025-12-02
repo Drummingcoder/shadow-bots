@@ -1,8 +1,11 @@
-# Sans Tracker bot
+# Winter Sans bot
 
-Now in fall season, would you like a daily reminder in your channel? Need to spend a little less time on Slack? Or just want to monitor your time?
+Now in winter season, a quirky response bot? Or would you like a daily reminder in your channel? Need to spend a little less time on Slack? Or just want to monitor your time?
 ## Description: 
-New features (the ones to review):
+Newer features (the ones to review):
+On the Hack Club Slack, being invited to the channel called shadowlights-last-dance will now get this bot to give you a quirky welcome based on your situation. It also has a 20% chance to reply to any message with a fun retort, and now gives reminders based on the witner season.
+
+New features:
 You can now send a reminder complete with the amount of time you spend on Slack and the amount of time you spent on Hackatime. Simply use the '/createdaily' command in any channel and fill in the channel to send to, your Hackatime API key, the time in 24-hour time to send the reminder, the date to start sending, and your timezone in IANA format! (something like "America/Los_Angeles"). You will get a confirmation message in the channel that you send it to.
 
 At the time that you specified, every day, the bot will send a summary of your activity as well as comments related to the time you spent on Slack and Hackatime that fits the fall season. You can then reply in the thread with details about your day. If you start the reply with "Day ##:" (replace ## with any number), the bot will pin the parent message to the channel. If not, it will not pin the thread. Regardless of how you start your message, the bot will respond with comments to either cheer you up and have fun depending on what you tell it.
