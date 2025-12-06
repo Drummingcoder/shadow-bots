@@ -115,6 +115,31 @@ export default SlackFunction(
     });
 
     if ((mests != getResp.item?.messagets) || !mests) {
+      if (Math.random() < 0.2) {
+        const airesponse1 = await fetch(`https://api.cloudflare.com/client/v4/accounts/${"de299eff7ceaa5006bd30245bd9a6c77"}/ai/run/${"@cf/meta/llama-3.1-8b-instruct"}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${"trcWfRL7kg_P8I0Denn_tIngbsf1ZszdZ08In75F"}`, 
+          },
+          body: JSON.stringify({
+            messages: [
+              { role: "user", content: `As the character Sans from Undertale, please respond with a non-sensical retort to this message, and make it winter-themed. For example, if the message was Hello, you could say "Did you mean goodbye you snowman?" or you could say "What a boring greeting." Be creative and try to emulate how Sans would act, and choose a random emotion, like mean or playful. Limit your response to around two sentences of 20 words each (more or less). Here is the message to respond to: ${inputs.message}.`}
+            ],
+            max_tokens: 200, 
+            temperature: 0.9,
+          }),
+        });
+        const thedata = await airesponse1.json();
+        console.log(thedata);
+        const text = thedata.result.response.trim();
+        const rep3 = await client.chat.postMessage({
+          channel: inputs.channel,
+          text: text,
+          thread_ts: inputs.messagets,
+        });
+        console.log(rep3);
+      }
       return { outputs: {} };
     }
 
@@ -137,7 +162,7 @@ export default SlackFunction(
           await client.chat.postMessage({
             channel: inputs.channel,
             thread_ts: inputs.messagets,
-            text: "There are rules to my tracking, you can't manual set your presence to away like that. What, scared of a green light on your profile? I need that to track you ya know? So uh, kindly turn it on for me?"
+            text: "There are rules to my tracking, you can't manual set your presence to away like that. What, scared of a green light on your profile? I need that to track ya know? So uh, kindly turn it on for me?"
           });
         }
         await client.chat.postMessage({
